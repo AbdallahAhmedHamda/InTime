@@ -1,0 +1,23 @@
+.side-nav-container {
+  background-color: white;
+  display: grid;
+  align-items: center;
+  position: fixed;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 10;
+  direction: rtl;
+  transition: width 0.3s ease;
+}
+
+.side-nav-container::-webkit-scrollbar {
+  width: 5px;
+}
+
+.side-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  transition: margin-left 0.3s ease-out;
+}
