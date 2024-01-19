@@ -13,7 +13,7 @@ export default function Calendar() {
 
   return (
     <div>
-      <p className='page-names'>Calendar</p>
+      <p className='page-name'>Calendar</p>
     </div>
   )
 }
