@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useSelector } from 'react-redux'
 import {
   select,
   area,
@@ -11,37 +12,8 @@ import {
 
 export default function ProgressGraph() {
   const svgRef = useRef()
-  const todayDate = new Date()
-  const months = Array.from({ length: 12 }, (_, i) => {
-    return new Date(
-      todayDate.getFullYear(),
-      i + todayDate.getMonth() + 1,
-      todayDate.getDate()
-    ).toLocaleString('en-US', { month: 'short' })
-  })
-  const days = Array.from({ length: 7 }, (_, i) => {
-    return new Date(
-      todayDate.getFullYear(),
-      todayDate.getMonth(),
-      i + todayDate.getDate() + 1
-    ).toLocaleString('en-US', { weekday: 'short' })
-  })
 
-  const [data, setData] = useState({
-    total: 321,
-    monthly: {
-      points: [300, 400, 310, 190, 230, 155, 155, 90, 200, 0, 450, 300],
-      xAxis: months
-    },
-    weekly: {
-      points: [320, 80, 600, 400],
-      xAxis:['week1', 'week2', 'week3', 'week4']
-    },
-    daily: {
-      points: [10, 50, 20, 190, 100, 70, 50],
-      xAxis: days
-    }
-  })
+  const points = useSelector((state) => state.user.points)
   const [currentGraph, setCurrentGraph] = useState('monthly')
 
   // create the graph
@@ -60,13 +32,13 @@ export default function ProgressGraph() {
             .remove()
 
           // axis scales
-          const xScale = scaleLinear([0, data[type].xAxis.length - 1], [50, 815])
-          const yScale = scaleLinear([0, Math.max(...data[type].points)], [190, 30])
+          const xScale = scaleLinear([0, points[type].xAxis.length - 1], [50, 815])
+          const yScale = scaleLinear([0, Math.max(...points[type].points)], [190, 30])
 
           // x-axis
           const xAxis = axisTop(xScale)
             .tickSize(0)
-            .tickFormat(d => data[type].xAxis[d])
+            .tickFormat(d => points[type].xAxis[d])
           svg
             .append('g')
             .attr('class', 'x-axis')
@@ -132,7 +104,7 @@ export default function ProgressGraph() {
           // fill the area with the gradiant
           svg
             .selectAll('.filled-area')
-            .data([data[type].points])
+            .data([points[type].points])
             .join('path')
             .attr('d', areaGenerator)
             .attr('fill', 'url(#gradient)')
@@ -140,7 +112,7 @@ export default function ProgressGraph() {
           // area top stroke
           svg
             .selectAll('.stroke-area')
-            .data([data[type].points])
+            .data([points[type].points])
             .join('path')
             .attr('class', 'stroke-area')
             .attr('d', areaGenerator.lineY1())
@@ -148,10 +120,10 @@ export default function ProgressGraph() {
             .attr('stroke', '#5468E7')
             .attr('stroke-width', 3)
 
-          // data circles
+          // points circles
           svg
             .selectAll('circle')
-            .data(data[type].points)
+            .data(points[type].points)
             .join('circle')
             .attr('r', 5)
             .attr('cx', (_, i) => xScale(i))
@@ -248,7 +220,7 @@ export default function ProgressGraph() {
       }
     }
     createGraph(currentGraph)
-  }, [data, currentGraph])
+  }, [points, currentGraph])
 
   return (
     <div className='progress-graph-container'>

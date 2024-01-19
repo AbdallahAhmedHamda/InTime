@@ -25,6 +25,7 @@ export default function Navbar() {
     if (showDropdown) {
       setShowDropdown(false)
     }
+    // eslint-disable-next-line
   }, [currentPage])
 
   // hide account dropdown when user clicks outside it

@@ -1,38 +1,34 @@
 import { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import CompletedIcon from '../../SVG/Home/CompletedIcon'
 import InProgressIcon from '../../SVG/Home/InProgressIcon'
 import TotalIcon from '../../SVG/Home/TotalIcon'
 
+const calculatePercentageDifference = (thisMonth, lastMonth) => {
+  if (lastMonth === 0) {
+    // Handle division by zero
+    return 0
+  }
+
+  return parseFloat(((thisMonth / lastMonth) * 100 - 100).toFixed(2))
+}
+
 export default function Progess() {
-  const [userProgress, setUserProgress] = useState(
-    {
-      completed:
-        {
-          overall: 27,
-          thisMonth: 20,
-          lastMonth: 16
-        },
-      inProgress:
-        {
-          overall: 8,
-          thisMonth: 7,
-          lastMonth: 7
-        },
-      points:
-        {
-          overall: 270,
-          thisMonth: 27,
-          lastMonth: 30
-        }
-    }
-  )
-  const [percentages, setPercentages] = useState(
-    {
-      completed: parseFloat((userProgress.completed.thisMonth / userProgress.completed.lastMonth * 100 - 100).toFixed(2)),
-      inProgress: parseFloat((userProgress.inProgress.thisMonth / userProgress.inProgress.lastMonth * 100 - 100).toFixed(2)),
-      points: parseFloat((userProgress.points.thisMonth / userProgress.points.lastMonth * 100 - 100).toFixed(2))
-    }
-  )
+  const tasksProgress = useSelector((state) => state.user.tasksProgress)
+  const [percentages, setPercentages] = useState({
+    completed: calculatePercentageDifference(
+      tasksProgress.completed.thisMonth,
+      tasksProgress.completed.lastMonth
+    ),
+    inProgress: calculatePercentageDifference(
+      tasksProgress.inProgress.thisMonth,
+      tasksProgress.inProgress.lastMonth
+    ),
+    points: calculatePercentageDifference(
+      tasksProgress.points.thisMonth,
+      tasksProgress.points.lastMonth
+    ),
+  })
       
   // update the percentages of user progress whenever the numbers of this or last month changes
   useEffect(() => {
@@ -43,12 +39,12 @@ export default function Progess() {
       }))
     }
 
-    updatePercentage(userProgress.completed.thisMonth, userProgress.completed.lastMonth, 'completed')
+    updatePercentage(tasksProgress.completed.thisMonth, tasksProgress.completed.lastMonth, 'completed')
 
-    updatePercentage(userProgress.inProgress.thisMonth, userProgress.inProgress.lastMonth, 'inProgress')
+    updatePercentage(tasksProgress.inProgress.thisMonth, tasksProgress.inProgress.lastMonth, 'inProgress')
 
-    updatePercentage(userProgress.points.thisMonth, userProgress.points.lastMonth, 'points')
-  }, [userProgress])
+    updatePercentage(tasksProgress.points.thisMonth, tasksProgress.points.lastMonth, 'points')
+  }, [tasksProgress])
 
   const percentageStyles = (percentage) => {
     const style = {
@@ -65,7 +61,7 @@ export default function Progess() {
         <div>
           <p className='progress-title'>Completed Tasks</p>
 
-          <p className='progress-number'>{userProgress.completed.overall}</p>
+          <p className='progress-number'>{tasksProgress.completed.overall}</p>
 
           <p className='progress-classification'>Tasks</p>
         </div>
@@ -86,7 +82,7 @@ export default function Progess() {
         <div className='progress-text-container'>
           <p className='progress-title'>In Progress</p>
 
-          <p className='progress-number'>{userProgress.inProgress.overall}</p>
+          <p className='progress-number'>{tasksProgress.inProgress.overall}</p>
 
           <p className='progress-classification'>Tasks</p>
         </div>
@@ -107,7 +103,7 @@ export default function Progess() {
         <div className='progress-text-container'>
           <p className='progress-title'>Total Score</p>
 
-          <p className='progress-number'>{userProgress.points.overall}</p>
+          <p className='progress-number'>{tasksProgress.points.overall}</p>
 
           <p className='progress-classification'>Points</p>
         </div>

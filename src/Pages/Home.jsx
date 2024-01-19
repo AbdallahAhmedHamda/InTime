@@ -12,7 +12,7 @@ export default function Home() {
   // change the current page so the app can rerender and update sidenav active icon
   useEffect(() => {
     dispatch(setCurrentPage(''))
-  }, [])
+  }, [dispatch])
 
   return (
     <div>

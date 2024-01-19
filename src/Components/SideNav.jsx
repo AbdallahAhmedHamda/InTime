@@ -46,6 +46,7 @@ export default function SideNav() {
     if (sideNavActive) {
       setSideNavActive(false)
     }
+    // eslint-disable-next-line
   }, [currentPage])
   
   // activate/disable wide sidenav

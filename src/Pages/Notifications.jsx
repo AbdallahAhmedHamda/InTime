@@ -11,7 +11,7 @@ export default function Notifications() {
   useEffect(() => {
     dispatch(setCurrentPage('notifications'))
     dispatch(removeUnread())
-  }, [])
+  }, [dispatch])
 
   return (
     <div>
