@@ -14,7 +14,7 @@ export default function App() {
 
 			<SideNav />
 			
-			<div className='main-content'>
+			<div className='main-contents'>
 				<Routes>
 					<Route path="/" element={<Home />}/>
 
