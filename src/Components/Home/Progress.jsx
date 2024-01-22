@@ -14,19 +14,21 @@ const calculatePercentageDifference = (thisMonth, lastMonth) => {
 }
 
 export default function Progess() {
-  const tasksProgress = useSelector((state) => state.user.tasksProgress)
+  const tasks = useSelector((state) => state.user.tasks)
+  const totalPoints = useSelector((state) => state.user.totalPoints)
+  
   const [percentages, setPercentages] = useState({
     completed: calculatePercentageDifference(
-      tasksProgress.completed.thisMonth,
-      tasksProgress.completed.lastMonth
+      tasks.completed.thisMonth,
+      tasks.completed.lastMonth
     ),
     inProgress: calculatePercentageDifference(
-      tasksProgress.inProgress.thisMonth,
-      tasksProgress.inProgress.lastMonth
+      tasks.inProgress.thisMonth,
+      tasks.inProgress.lastMonth
     ),
     points: calculatePercentageDifference(
-      tasksProgress.points.thisMonth,
-      tasksProgress.points.lastMonth
+      totalPoints.thisMonth,
+      totalPoints.lastMonth
     ),
   })
       
@@ -39,12 +41,12 @@ export default function Progess() {
       }))
     }
 
-    updatePercentage(tasksProgress.completed.thisMonth, tasksProgress.completed.lastMonth, 'completed')
+    updatePercentage(tasks.completed.thisMonth, tasks.completed.lastMonth, 'completed')
 
-    updatePercentage(tasksProgress.inProgress.thisMonth, tasksProgress.inProgress.lastMonth, 'inProgress')
+    updatePercentage(tasks.inProgress.thisMonth, tasks.inProgress.lastMonth, 'inProgress')
 
-    updatePercentage(tasksProgress.points.thisMonth, tasksProgress.points.lastMonth, 'points')
-  }, [tasksProgress])
+    updatePercentage(totalPoints.thisMonth, totalPoints.lastMonth, 'points')
+  }, [tasks, totalPoints])
 
   const percentageStyles = (percentage) => {
     const style = {
@@ -61,7 +63,7 @@ export default function Progess() {
         <div>
           <p className='progress-title'>Completed Tasks</p>
 
-          <p className='progress-number'>{tasksProgress.completed.overall}</p>
+          <p className='progress-number'>{tasks.completed.overall}</p>
 
           <p className='progress-classification'>Tasks</p>
         </div>
@@ -82,7 +84,7 @@ export default function Progess() {
         <div className='progress-text-container'>
           <p className='progress-title'>In Progress</p>
 
-          <p className='progress-number'>{tasksProgress.inProgress.overall}</p>
+          <p className='progress-number'>{tasks.inProgress.overall}</p>
 
           <p className='progress-classification'>Tasks</p>
         </div>
@@ -103,7 +105,7 @@ export default function Progess() {
         <div className='progress-text-container'>
           <p className='progress-title'>Total Score</p>
 
-          <p className='progress-number'>{tasksProgress.points.overall}</p>
+          <p className='progress-number'>{totalPoints.overall}</p>
 
           <p className='progress-classification'>Points</p>
         </div>

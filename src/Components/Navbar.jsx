@@ -9,17 +9,19 @@ import AddTaskIcon from '../SVG/Navbar/AddTaskIcon'
 import LogoutIcon from '../SVG/Navbar/LogoutIcon'
 
 export default function Navbar() {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [showDropdown, setShowDropdown] = useState(false)
-  const [scrollPosition, setScrollPosition] = useState(window.scrollY)
-  const [hasExceededThreshold, setHasExceededThreshold] = useState(false)
-  const accountDropdownRef = useRef(null)
   const currentPage = useSelector((state) => state.navigation.currentPage)
   const name = useSelector((state) => state.user.name)
   const profilePic = useSelector((state) => state.user.profilePic)
   const level = useSelector((state) => state.user.level)
   const unreadNotifications = useSelector((state) => state.user.unreadNotifications)
   
+  const [searchTerm, setSearchTerm] = useState('')
+  const [showDropdown, setShowDropdown] = useState(false)
+  const [scrollPosition, setScrollPosition] = useState(window.scrollY)
+  const [hasExceededThreshold, setHasExceededThreshold] = useState(false)
+  
+  const accountDropdownRef = useRef(null)
+
   // hide account dropdown when user changes the page
   useEffect(() => {
     if (showDropdown) {

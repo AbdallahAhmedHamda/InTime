@@ -16,10 +16,11 @@ const days = Array.from({ length: 7 }, (_, i) => {
   ).toLocaleString('en-US', { weekday: 'short' })
 })
 
+const intialOverallPoints = 5020
+
 const initialState = {
   name: 'Jessica Lambert',
   profilePic: require('../../Images/profile-pic.jpeg'),
-  level: 3,
   unreadNotifications: 2,
   points: {
     monthly: {
@@ -35,21 +36,23 @@ const initialState = {
       xAxis: days
     }
   },
-  tasksProgress: {
+  totalPoints: {
+    overall: intialOverallPoints,
+    thisMonth: 400,
+    lastMonth: 320
+  },
+  level: Math.floor(intialOverallPoints / 100),
+  tasks: {
+    total: 2,
     completed: {
-      overall: 27,
-      thisMonth: 20,
-      lastMonth: 16
+      overall: 50,
+      thisMonth: 16,
+      lastMonth: 20
     },
     inProgress: {
-      overall: 8,
+      overall: 20,
       thisMonth: 7,
       lastMonth: 7
-    },
-    points: {
-      overall: 270,
-      thisMonth: 27,
-      lastMonth: 30
     }
   }
 }
@@ -64,8 +67,9 @@ const userSlice = createSlice({
     setProfilePic: (state, action) => {
       state.profilePic = action.payload
     },
-    setLevel: (state, action) => {
-      state.level = action.payload
+    setTotalPoints: (state, action) => {
+      state.totalPoints.overall += action.payload
+      state.level = Math.floor(state.totalPoints.overall / 100)
     },
     removeUnread: (state) => {
       state.unreadNotifications = 0
@@ -73,5 +77,11 @@ const userSlice = createSlice({
   }
 })
 
-export const { setName, setProfilePic, setLevel, removeUnread } = userSlice.actions
+export const { 
+  setName,
+  setProfilePic,
+  setLevel,
+  setTotalPoints,
+  removeUnread 
+} = userSlice.actions
 export default userSlice.reducer

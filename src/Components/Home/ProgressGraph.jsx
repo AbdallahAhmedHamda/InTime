@@ -11,10 +11,10 @@ import {
 } from 'd3'
 
 export default function ProgressGraph() {
-  const svgRef = useRef()
-
   const points = useSelector((state) => state.user.points)
+  
   const [currentGraph, setCurrentGraph] = useState('monthly')
+  const svgRef = useRef()
 
   // create the graph
   useEffect (() => {

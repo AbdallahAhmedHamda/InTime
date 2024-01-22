@@ -9,11 +9,12 @@ import SideNotificationsIcon from '../SVG/SideNav/SideNotificationsIcon'
 import SettingsIcon from '../SVG/SideNav/SettingsIcon'
 
 export default function SideNav() {
+  const currentPage = useSelector((state) => state.navigation.currentPage)
+  
   const [scrollPosition, setScrollPosition] = useState(window.scrollY)
   const [hasExceededThreshold, setHasExceededThreshold] = useState(false)
   const [sideNavActive, setSideNavActive] = useState(false)  
   const sideNavParentRef = useRef(null)
-  const currentPage = useSelector((state) => state.navigation.currentPage)
 
   // rerender the app when the navbar is still on screen so sidenav can adjust its height
   useEffect(() => {

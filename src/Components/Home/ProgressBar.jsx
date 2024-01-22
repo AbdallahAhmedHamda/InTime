@@ -1,22 +1,28 @@
 import { useState, useEffect, useRef } from 'react'
+import { useSelector } from 'react-redux'
 import { select } from 'd3'
 
 export default function ProgressBar() {
+  const level = useSelector((state) => state.user.level)
+  const totalPoints = useSelector((state) => state.user.totalPoints.overall)
+
+  const [tooltipVisible, setTooltipVisible] = useState(false)
+
   const svgRef = useRef()
   const firstRender = useRef(true)
-  const [tooltipVisible, setTooltipVisible] = useState(false)
-  const [totalPoints, setTotalPoints] = useState(455)
-  const [levelInfo, setLevelInfo] = useState(((100 - (totalPoints % 100))/100) * (352) + 352)
+  const oldPercentage = useRef(null)
 
-  useEffect (() => {
-    setLevelInfo(((100 - (totalPoints % 100))/100) * (352) + 352)
-  }, [totalPoints])
-
+  // create and update the progress bar
   useEffect(() => {
+    const levelPercentage = (100 - totalPoints % 100) * 3.52 + 352
     const svg = select(svgRef.current)
+
+    // resetting the bar
     svg
-    .selectAll('*')
-    .remove()
+      .selectAll('*')
+      .remove()
+      
+    // creating the default bar and adding tootltip to it
     svg
       .append('circle')
       .attr('cx', 123)
@@ -28,6 +34,7 @@ export default function ProgressBar() {
       .on('mouseenter', () => setTooltipVisible(true))
       .on('mouseleave', () => setTooltipVisible(false))
 
+    // creating the user bar and adding tootltip to it
     const userProgressBar = svg
       .append('circle')
       .attr('class', 'user-progress-bar')
@@ -36,15 +43,19 @@ export default function ProgressBar() {
       .attr('r', 112)
       .attr('stroke-linecap', 'round')
       .attr('stroke', '#5468E7')
-      .attr('stroke-dashoffset', firstRender.current ? '704' : '352')
+      .attr('stroke-dashoffset', firstRender.current ? '704' : oldPercentage.current)
       .on('mouseenter', () => setTooltipVisible(true))
       .on('mouseleave', () => setTooltipVisible(false))
+    // animating the proggression
     userProgressBar
       .transition()
       .duration(500)
-      .attr('stroke-dashoffset', levelInfo)
+      .attr('stroke-dashoffset', levelPercentage)
+
+    // ensuring that first rendered finished and setting old percentage for the next update
     firstRender.current = false
-  }, [levelInfo])
+    oldPercentage.current = levelPercentage
+  }, [totalPoints])
 
   const tooltipStyles = {
     pointerEvents: tooltipVisible ? 'auto' : 'none',
@@ -64,12 +75,11 @@ export default function ProgressBar() {
         <div className="tooltip-arrow"/>
       </div>
 
-      <p className="progress-bar-level">Level 3</p>
+      <p className="progress-bar-level">Level {level}</p>
 
       <p className="progress-bar-text start">0</p>
       
       <p className="progress-bar-text end">100</p>
-      <button onClick={() => setTotalPoints(prevState => prevState + 70)}></button>
     </div>
   )
 }

@@ -133,11 +133,13 @@
 }
 
 .progress-bar-container {
+  width: 246px;
   position: relative;
 }
 
 .progress-bar-level {
   position: absolute;
+  text-wrap: nowrap;
   top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -155,11 +157,13 @@
 }
 
 .progress-bar-text.start {
+  position: absolute;
   left: 11px;
   transform: translateX(-50%);
 }
 
 .progress-bar-text.end {
+  position: absolute;
   right: -11px;
   transform: translateX(-9%);
 }
