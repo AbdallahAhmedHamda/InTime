@@ -5,6 +5,7 @@ import '../CSS/Pages/Home.css'
 import Progress from '../Components/Home/Progress'
 import ProgressGraph from '../Components/Home/ProgressGraph'
 import ProgressBar from '../Components/Home/ProgressBar'
+import Leaderboard from '../Components/Home/Leaderboard'
 
 export default function Home() {
   const dispatch = useDispatch()
@@ -27,6 +28,7 @@ export default function Home() {
 
         <div className="home-right-section">
           <ProgressBar />
+          <Leaderboard />
         </div>
       </div>
 
