@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { useTransition, animated } from 'react-spring';
 import '../CSS/Components/Navbar.css'
 import SearchIcon from '../SVG/Navbar/SearchIcon'
 import NavNotificationsIcon from '../SVG/Navbar/NavNotificationsIcon'
@@ -83,12 +84,12 @@ export default function Navbar() {
 }
 
   // animate account dropdown
-  const dropdownStyles = {
-    pointerEvents: showDropdown ? 'auto' : 'none',
-    visibility: showDropdown ? 'visible' : 'hidden',
-    opacity: showDropdown ? 1 : 0,
-    transition: 'opacity 0.3s ease, visibility 0.3s ease'
-  }
+  const dropdownTransition = useTransition(showDropdown, {
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 0 },
+    config: { duration: 300 }
+  })
 
   // adjust navbar position so it goes out of screnn when user scrolls down
   const navbarStyles = {
@@ -143,17 +144,19 @@ export default function Navbar() {
           <div className='account-dropdown-container no-select' ref={accountDropdownRef}>
             <DownArrowIcon toggle={toggleAccountDropdown} isOpen={showDropdown}/>
 
-            <div className='account-dropdown' style={dropdownStyles}>
-              <p>Switch account</p>
+            {dropdownTransition((style, item) => item && (
+              <animated.div className='account-dropdown' style={style}>
+                <p>Switch account</p>
 
-              <hr />
+                <hr />
 
-              <div className='logout-container'>
-                <LogoutIcon /> 
-                
-                <p>Logout</p>
-              </div>
-            </div>
+                <div className='logout-container'>
+                  <LogoutIcon /> 
+                  
+                  <p>Logout</p>
+                </div>
+              </animated.div>
+            ))}
           </div>
         </div>
       </div>
