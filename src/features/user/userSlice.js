@@ -43,7 +43,7 @@ const initialState = {
   },
   level: Math.floor(intialOverallPoints / 100),
   tasks: {
-    total: 2,
+    id: [],
     completed: {
       overall: 50,
       thisMonth: 16,
@@ -73,6 +73,12 @@ const userSlice = createSlice({
     },
     removeUnread: (state) => {
       state.unreadNotifications = 0
+    },
+    addTaskId: (state, action) => {
+      state.tasks.id = state.tasks.id.push(action.payload)
+    },
+    removeTaskId: (state, action) => {
+      state.tasks.id = state.tasks.id.filter((id) => id !== action.payload)
     }
   }
 })
@@ -82,6 +88,8 @@ export const {
   setProfilePic,
   setLevel,
   setTotalPoints,
-  removeUnread 
+  removeUnread,
+  addTaskId,
+  removeTaskId
 } = userSlice.actions
 export default userSlice.reducer

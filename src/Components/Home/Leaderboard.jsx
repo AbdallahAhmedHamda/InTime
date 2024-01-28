@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import numeral from 'numeral'
 import ShowMoreArrow from'../../SVG/Others/ShowMoreArrow'
 
 export default function Leaderboard() {
@@ -38,7 +39,6 @@ export default function Leaderboard() {
     setPointsWidth('auto')
   }
 
-
   return (
     <div className="leaderboard-container">
       <p>Leaderboard</p>
@@ -71,7 +71,7 @@ export default function Leaderboard() {
               ref={el => (leaderboardRefs.current.tasks[i] = el)}
               style={{width: tasksWidth}}
             >
-              50 Tasks
+              {numeral(50).format('0.[00]a')} Tasks
             </p>
 
             <p
@@ -79,7 +79,7 @@ export default function Leaderboard() {
               ref={el => (leaderboardRefs.current.points[i] = el)}
               style={{width: pointsWidth}}
             >
-              5000 Pts
+              {numeral(5000).format('0.[00]a')} Pts
             </p>
           </div>
         ))}
