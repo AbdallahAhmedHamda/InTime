@@ -17,6 +17,7 @@ export default function Leaderboard() {
     points: [],
   })
 
+  // calculate each leaderboard column width
   useEffect(() => {
     const rankWidthsArray = leaderboardRefs.current.ranks.map(ref => ref.clientWidth)
     setRankWidth(Math.max(...rankWidthsArray))
@@ -31,6 +32,7 @@ export default function Leaderboard() {
     setPointsWidth(Math.max(...pointsWidthsArray))
   }, [data])
 
+  // reset widths and add values when user show more ranks
   const showMore = () => {
     setData(prevState => [...prevState, {}, {}, {}, {}, {}])
     setRankWidth('auto')

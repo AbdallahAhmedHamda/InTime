@@ -13,7 +13,8 @@ export default function SideNav() {
   
   const [scrollPosition, setScrollPosition] = useState(window.scrollY)
   const [hasExceededThreshold, setHasExceededThreshold] = useState(false)
-  const [sideNavActive, setSideNavActive] = useState(false)  
+  const [sideNavActive, setSideNavActive] = useState(false)
+  
   const sideNavParentRef = useRef(null)
 
   // rerender the app when the navbar is still on screen so sidenav can adjust its height
@@ -49,6 +50,21 @@ export default function SideNav() {
     }
     // eslint-disable-next-line
   }, [currentPage])
+  
+  // disable wide sideenav when user clicks outside it
+  useEffect(() => {
+    const handleClickOutsideDropdown = (event) => {
+      if(sideNavActive && !sideNavParentRef.current.contains(event.target)) {
+        setSideNavActive(false)
+      }
+    }
+    
+    document.addEventListener('click', handleClickOutsideDropdown)
+
+    return () => {
+      document.removeEventListener('click', handleClickOutsideDropdown)
+    }
+  }, [sideNavActive])
   
   // activate/disable wide sidenav
   const handleSideNavClick = (event) => {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { useTransition, animated } from 'react-spring';
 import '../CSS/Components/Navbar.css'
 import SearchIcon from '../SVG/Navbar/SearchIcon'
@@ -8,6 +8,7 @@ import NavNotificationsIcon from '../SVG/Navbar/NavNotificationsIcon'
 import DownArrowIcon from '../SVG/Navbar/DownArrowIcon'
 import AddTaskIcon from '../SVG/Navbar/AddTaskIcon'
 import LogoutIcon from '../SVG/Navbar/LogoutIcon'
+import { setCurrentPopup } from '../features/navigation/navigationSlice';
 
 export default function Navbar() {
   const currentPage = useSelector((state) => state.navigation.currentPage)
@@ -15,6 +16,8 @@ export default function Navbar() {
   const profilePic = useSelector((state) => state.user.profilePic)
   const level = useSelector((state) => state.user.level)
   const unreadNotifications = useSelector((state) => state.user.unreadNotifications)
+
+  const dispatch = useDispatch()
   
   const [searchTerm, setSearchTerm] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
@@ -121,7 +124,7 @@ export default function Navbar() {
       </div>
 
       <div className='user-accessibility'>
-        <AddTaskIcon />
+        <AddTaskIcon showPopup={() => dispatch(setCurrentPopup('add'))}/>
 
         <p className='navbar-level'>Level {level}</p>
 
