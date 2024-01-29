@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import '../CSS/Components/SideNav.css'
-import HomeIcon from '../SVG/SideNav/HomeIcon'
-import TasksIcon from '../SVG/SideNav/TasksIcon'
-import CalendarIcon from '../SVG/SideNav/CalendarIcon'
-import SideNotificationsIcon from '../SVG/SideNav/SideNotificationsIcon'
-import SettingsIcon from '../SVG/SideNav/SettingsIcon'
+import '../css/components/SideNav.css'
+import HomeIcon from '../svg/sideNav/HomeIcon'
+import TasksIcon from '../svg/sideNav/TasksIcon'
+import CalendarIcon from '../svg/sideNav/CalendarIcon'
+import SideNotificationsIcon from '../svg/sideNav/SideNotificationsIcon'
+import SettingsIcon from '../svg/sideNav/SettingsIcon'
 
 export default function SideNav() {
   const currentPage = useSelector((state) => state.navigation.currentPage)

@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { setCurrentPage, setCurrentPopup } from '../features/navigation/navigationSlice'
-import '../CSS/Pages/Settings.css'
+import '../css/pages/Settings.css'
 
 export default function Settings() {
   const dispatch = useDispatch()

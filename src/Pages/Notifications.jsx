@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useDispatch, } from 'react-redux'
 import { setCurrentPage, setCurrentPopup } from '../features/navigation/navigationSlice'
 import { removeUnread } from '../features/user/userSlice'
-import '../CSS/Pages/Notifications.css'
+import '../css/pages/Notifications.css'
 
 export default function Notifications() {
   const dispatch = useDispatch()

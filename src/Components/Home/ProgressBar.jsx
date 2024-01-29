@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
-import { useTransition, animated } from 'react-spring';
+import { useTransition, animated } from 'react-spring'
 import { select } from 'd3'
 
 export default function ProgressBar() {

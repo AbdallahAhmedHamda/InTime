@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { setCurrentPage, setCurrentPopup } from '../features/navigation/navigationSlice'
-import '../CSS/Pages/Tasks.css'
+import '../css/pages/Tasks.css'
 
 export default function Tasks() {
   const dispatch = useDispatch()

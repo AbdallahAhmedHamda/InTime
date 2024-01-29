@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { setCurrentPage, setCurrentPopup } from '../features/navigation/navigationSlice'
-import '../CSS/Pages/Calendar.css'
+import '../css/pages/Calendar.css'
 
 export default function Calendar() {
   const dispatch = useDispatch()

@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { setCurrentPage, setCurrentPopup } from '../features/navigation/navigationSlice'
-import '../CSS/Pages/Home.css'
-import Progress from '../Components/Home/Progress'
-import ProgressGraph from '../Components/Home/ProgressGraph'
-import ProgressBar from '../Components/Home/ProgressBar'
-import Leaderboard from '../Components/Home/Leaderboard'
+import '../css/pages/Home.css'
+import Progress from '../components/home/Progress'
+import ProgressGraph from '../components/home/ProgressGraph'
+import ProgressBar from '../components/home/ProgressBar'
+import Leaderboard from '../components/home/Leaderboard'
 
 export default function Home() {
   const dispatch = useDispatch()

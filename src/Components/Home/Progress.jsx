@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import CompletedIcon from '../../SVG/Home/CompletedIcon'
-import InProgressIcon from '../../SVG/Home/InProgressIcon'
-import TotalIcon from '../../SVG/Home/TotalIcon'
+import CompletedIcon from '../../svg/home/CompletedIcon'
+import InProgressIcon from '../../svg/home/InProgressIcon'
+import TotalIcon from '../../svg/home/TotalIcon'
 
 const calculatePercentageDifference = (thisMonth, lastMonth) => {
+  // Handle division by zero
   if (lastMonth === 0) {
-    // Handle division by zero
     return 0
   }
 

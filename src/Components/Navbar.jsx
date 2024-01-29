@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { useTransition, animated } from 'react-spring';
-import '../CSS/Components/Navbar.css'
-import SearchIcon from '../SVG/Navbar/SearchIcon'
-import NavNotificationsIcon from '../SVG/Navbar/NavNotificationsIcon'
-import DownArrowIcon from '../SVG/Navbar/DownArrowIcon'
-import AddTaskIcon from '../SVG/Navbar/AddTaskIcon'
-import LogoutIcon from '../SVG/Navbar/LogoutIcon'
-import { setCurrentPopup } from '../features/navigation/navigationSlice';
+import { useTransition, animated } from 'react-spring'
+import { setCurrentPopup } from '../features/navigation/navigationSlice'
+import '../css/components/Navbar.css'
+import SearchIcon from '../svg/navbar/SearchIcon'
+import NavNotificationsIcon from '../svg/navbar/NavNotificationsIcon'
+import DownArrowIcon from '../svg/navbar/DownArrowIcon'
+import AddTaskIcon from '../svg/navbar/AddTaskIcon'
+import LogoutIcon from '../svg/navbar/LogoutIcon'
 
 export default function Navbar() {
   const currentPage = useSelector((state) => state.navigation.currentPage)
@@ -102,7 +102,7 @@ export default function Navbar() {
   return (
     <header style={navbarStyles}>
       <Link to="/" >
-        <img src={require('../Images/logo.png')} alt='logo' className='app-logo' />
+        <img src={require('../assets/images/logo.png')} alt='logo' className='app-logo' />
         <p className='app-logo-text'>
           In
           <span>Time</span>

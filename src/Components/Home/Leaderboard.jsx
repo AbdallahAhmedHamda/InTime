@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import numeral from 'numeral'
-import ShowMoreArrow from'../../SVG/Others/ShowMoreArrow'
+import ShowMoreArrow from'../../svg/others/ShowMoreArrow'
 
 export default function Leaderboard() {
   const [data, setData] = useState([{}, {}, {}, {}, {}])
@@ -57,7 +57,7 @@ export default function Leaderboard() {
 
             <img 
               className="leaderboard-pic"
-              src={require('../../Images/profile-pic.jpeg')} alt='profile-pic'
+              src={require('../../assets/images/profile-pic.jpeg')} alt='profile-pic'
             />
 
             <p

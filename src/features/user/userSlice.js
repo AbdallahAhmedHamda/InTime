@@ -20,7 +20,7 @@ const intialOverallPoints = 5020
 
 const initialState = {
   name: 'Jessica Lambert',
-  profilePic: require('../../Images/profile-pic.jpeg'),
+  profilePic: require('../../assets/images/profile-pic.jpeg'),
   unreadNotifications: 2,
   points: {
     monthly: {
