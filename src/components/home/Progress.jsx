@@ -7,10 +7,16 @@ import TotalIcon from '../../svg/home/TotalIcon'
 const calculatePercentageDifference = (thisMonth, lastMonth) => {
   // Handle division by zero
   if (lastMonth === 0) {
-    return 0
+    return thisMonth * 100
+  } else if (thisMonth === 0) {
+    return lastMonth * -100
   }
 
-  return parseFloat(((thisMonth / lastMonth) * 100 - 100).toFixed(2))
+  return (
+    lastMonth === 0 ? thisMonth * 100 :
+    thisMonth === 0 ? lastMonth * -100 :
+    parseFloat(((thisMonth - lastMonth / lastMonth) * 100).toFixed(2))
+  )
 }
 
 export default function Progess() {
@@ -34,10 +40,14 @@ export default function Progess() {
       
   // update the percentages of user progress whenever the numbers of this or last month changes
   useEffect(() => {
-    const updatePercentage = (thisMonth, lastMonth,  percentageName) => {
+    const updatePercentage = (thisMonth, lastMonth, percentageName) => {
       setPercentages(prevState => ({
         ...prevState,
-        [percentageName]: parseFloat((thisMonth / lastMonth * 100 - 100).toFixed(2))
+        [percentageName]: (
+          lastMonth === 0 ? thisMonth * 100 :
+          thisMonth === 0 ? lastMonth * -100 :
+          parseFloat(((thisMonth - lastMonth) / lastMonth * 100).toFixed(2))
+        )
       }))
     }
 
