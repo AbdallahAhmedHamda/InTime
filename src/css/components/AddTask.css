@@ -1,0 +1,211 @@
+.add-popup {
+  overflow: auto;
+  min-height: fit-content;
+  min-width: fit-content;
+  background-color: #EFEFEF;
+}
+
+.popup-blue-heading {
+  background-color: #5468E7;
+  height: 18px;
+}
+
+.add-content {
+  padding: 15px 20px 25px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+}
+
+.add-heading {
+  color: #5468E7;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.input-block {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.input-block > p {
+  font-size: 20px;
+}
+
+.input-block > input, .input-block > textarea {
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  outline: none;
+  border: none;
+  padding: 6px 10px;
+  box-sizing: border-box;
+  border-radius: 6px;
+  font-family: 'Poppins';
+  font-weight: 300;
+}
+
+.input-block > input:focus, .input-block > textarea:focus {
+  outline: 2px #1976d2 solid;
+}
+
+.task-title-input {
+  width: 572px;
+  height: 36px;
+}
+
+.disc-input {
+  min-height: 120px;
+  resize: none;
+}
+
+.third-line-wrapper {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.task-cover-select {
+  height: 96.7px;
+  width: 182px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed rgba(0, 0, 0, 0.60);
+  box-sizing: border-box;
+}
+
+.task-cover-select > span {
+  border-radius: 5px;
+  background: #5468E7;
+  color: white;
+  padding: 4px 10px;
+  color: #FFF;
+  font-family: 'Roboto';
+  font-weight: 300;
+  cursor: pointer;
+}
+
+.task-cover-container {
+  position: relative;
+  height: 96.7px;
+}
+
+.task-cover-container:hover::before{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.24) 100%);
+}
+
+.camera-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+
+.task-cover-remove {
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.task-cover-remove:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.task-cover-input {
+  height: 96.7px;
+  width: 182px;
+  object-fit: cover;
+}
+
+.tag-input {
+  width: 149px;
+  height: 36px;
+}
+
+.css-13cymwt-control {
+  border-color: white !important;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  min-height: 36px !important;
+}
+
+.css-t3ipsp-control {
+  min-height: 36px !important;
+
+}
+
+.css-1dimb5e-singleValue {
+  display: flex;
+
+}
+
+.css-1u9des2-indicatorSeparator {
+  display: none;
+
+}
+
+.css-tj5bde-Svg {
+  cursor: pointer;
+
+}
+
+.fourth-line-wrapper {
+  display: flex;
+  gap: 20px;
+}
+
+.date-time-container {
+  position: relative;
+  display: inline-block;
+  cursor: pointer !important;
+}
+
+.date-time-icon {
+  width: 26px;
+  position: absolute;
+  top: 50%;
+  right:10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  user-select: none;
+}
+
+.MuiFormControl-root {
+  width: 240px;
+  border-radius: 6px;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  background-color: white !important;
+}
+
+.MuiInputBase-input {
+  color: rgba(0, 0, 0, 0.70) !important;
+  font-family: 'poppins' !important;
+  font-weight: 300 !important;
+  padding: 6px 10px !important;
+}
+
+.MuiInputBase-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: white !important;
+}
+
+.MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #1976d2 !important;
+}
+
+.MuiOutlinedInput-notchedOutline {
+  border-color: white !important;
+  border-radius: 6px !important;
+}

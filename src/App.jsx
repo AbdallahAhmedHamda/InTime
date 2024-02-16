@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { useTransition, animated } from 'react-spring'
 import { useSelector } from 'react-redux'
 import Navbar from './components/Navbar'
 import SideNav from './components/SideNav'
@@ -12,17 +13,21 @@ import AddTask from './components/AddTask'
 export default function App() {
 	const currentPopup = useSelector((state) => state.navigation.currentPopup)
 
-	const popupBackgroundStyles = {
-		backgroundColor: 'rgba(0, 0, 0, 0.3)',
-		position: 'fixed',
-		top: 0,
-		left: 0,
-		width: '100%',
-		height: '100%',
-		zIndex: 500,
-		userSelect: 'none',
-		PointerEvents: 'none'
-	}
+	  // animate popup appearance
+		const popupTransition = useTransition(currentPopup, {
+			from: { opacity: 0, top: '40%' },
+			enter: { opacity: 1, top: '50%' },
+			leave: { opacity: 0, top: '40%' },
+			config: { duration: 300 }
+		})
+
+		// animate dimming
+		const dimTransition = useTransition(currentPopup, {
+			from: { backgroundColor: 'rgba(0, 0, 0, 0)' },
+			enter: { backgroundColor: 'rgba(0, 0, 0, 0.3)' },
+			leave: { backgroundColor: 'rgba(0, 0, 0, 0)' },
+			config: { duration: 300 }
+		})
 
 	return (
 		<Router>
@@ -30,7 +35,7 @@ export default function App() {
 
 			<SideNav />
 		
-			<div className='main-content'>
+			<div className='main-content' style={{position: 'relative'}}>
 				<Routes>
 					<Route path="/" element={<Home />}/>
 
@@ -42,13 +47,19 @@ export default function App() {
 
 					<Route path="/settings" element={<Settings />}/>
 				</Routes>
+
 			</div>
 
-			{currentPopup && <div style={popupBackgroundStyles} />}
+			{dimTransition((style, item) => item && (
+				<animated.div className='dim-background no-select' style={style}/>
+			))}
 
-			{currentPopup === 'add' ?							
-				<AddTask /> : ''
-			}
+			{popupTransition((style, item) => item && (
+				<animated.div className='popup' style={style}>
+					{item === 'add' ? <	AddTask /> : ''}
+				</animated.div>
+			))}
 		</Router>
+
 	)
 }

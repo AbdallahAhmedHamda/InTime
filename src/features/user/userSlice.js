@@ -19,6 +19,7 @@ const days = Array.from({ length: 7 }, (_, i) => {
 const intialOverallPoints = 5020
 
 const initialState = {
+  id: 1,
   name: 'Jessica Lambert',
   profilePic: require('../../assets/images/profile-pic.jpeg'),
   unreadNotifications: 2,

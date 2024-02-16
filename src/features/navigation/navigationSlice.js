@@ -14,7 +14,7 @@ currentPopup: ''
 }
 
 const navigationSlice = createSlice({
-	name: 'currentPage',
+	name: 'currentObject',
 	initialState,
 	reducers: {
 		setCurrentPage: (state, action) => {
