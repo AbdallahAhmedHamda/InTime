@@ -59,9 +59,9 @@ export default function ProgressBar() {
   }, [totalPoints])
 
   const tooltipTransition = useTransition(tooltipVisible, {
-    from: { opacity: 0, top: -30 },
-    enter: { opacity: 1, top: -35 },
-    leave: { opacity: 0, top: -30 },
+    from: { opacity: 0, top: -30, pointerEvents: 'none' },
+    enter: { opacity: 1, top: -35, pointerEvents: 'auto' },
+    leave: { opacity: 0, top: -30, pointerEvents: 'none' },
     config: { duration: 300 }
   })
 

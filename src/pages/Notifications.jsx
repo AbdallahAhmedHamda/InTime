@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useDispatch, } from 'react-redux'
-import { setCurrentPage, setCurrentPopup } from '../features/navigation/navigationSlice'
+import { setCurrentPage, removeAllPopups } from '../features/navigation/navigationSlice'
 import { removeUnread } from '../features/user/userSlice'
 import '../css/pages/Notifications.css'
 
@@ -10,7 +10,7 @@ export default function Notifications() {
   // change the current page so the app can rerender and update sidenav active icon and reset the unread count to 0
   useEffect(() => {
     dispatch(setCurrentPage('notifications'))
-    dispatch(setCurrentPopup(''))
+    dispatch(removeAllPopups())
     dispatch(removeUnread())
   }, [dispatch])
 

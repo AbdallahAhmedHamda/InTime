@@ -3,14 +3,14 @@ import { useSelector, useDispatch } from 'react-redux'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker'
+import { addPopup, removePopup, setUncroppedImage, setCroppedImage } from '../../features/navigation/navigationSlice'
 import dayjs from 'dayjs'
 import Select from 'react-select'
-import { setCurrentPopup } from '../features/navigation/navigationSlice'
-import '../css/components/AddTask.css'
-import calendarIcon from '../assets/images/calendar-icon.png'
-import CameraIcon from '../svg/others/CameraIcon'
-import FlagIcon from '../svg/others/FlagIcon'
-import CoverRemove from '../svg/others/CoverRemove'
+import '../../css/components/AddTask.css'
+import calendarIcon from '../../assets/images/calendar-icon.png'
+import CameraIcon from '../../svg/others/CameraIcon'
+import FlagIcon from '../../svg/others/FlagIcon'
+import CloseIcon from '../../svg/others/CloseIcon'
 
 const options = [
   {
@@ -32,7 +32,8 @@ const options = [
 ]
 
 export default function AddTask() {
-  const showPopup = useSelector((state) => state.navigation.currentPopup)
+  const showPopup = useSelector((state) => state.navigation.popups)
+  const croppedImage = useSelector((state) => state.navigation.croppedImage)
 
   const dispatch = useDispatch()
 
@@ -46,10 +47,18 @@ export default function AddTask() {
     endDate: dayjs().add(90 - dayjs().minute() % 30, 'minutes'),
     steps: []
   })
-
   const [coverHovered, setCoverHovered] = useState(false)
 
   const imageInputRef = useRef()
+
+  // set task cover when its cropped
+  useEffect(() => {
+    if (croppedImage) {
+      setValues(prevState => ({...prevState, image: croppedImage}))
+    }
+    dispatch(setCroppedImage(''))
+    // eslint-disable-next-line
+  }, [croppedImage])  
 
   // disable page scrollbars when popup is active
   useEffect(() => {
@@ -73,25 +82,42 @@ export default function AddTask() {
   // handle image selection
   const onImageSelection = (event) => {
     const file = event.target.files[0]
-
+    const sizeInMB = file.size / 1024 / 1024
+    event.target.value = null
     if (!file?.type.startsWith('image/')) {
-      console.log('please Choose an Image!')
+      dispatch(addPopup('not image'))
     } else {
       const reader = new FileReader()
 
-      reader.onloadend = () => {
-        setValues({...values, image: reader.result})
+      reader.onload = () => {
+        const img = new Image()
+        img.src = reader.result
+
+        img.onload = (event) => {
+          const { naturalWidth, naturalHeight, size } = event.currentTarget
+          if (naturalWidth < 227 || naturalHeight < 121) {
+            dispatch(addPopup('small task cover'))
+          } else if (sizeInMB > 3) {
+            dispatch(addPopup('big size image'))
+
+          } else {
+            dispatch(addPopup('crop task cover'))
+            dispatch(setUncroppedImage(reader.result))
+          }
+        }
       }
 
       reader.readAsDataURL(file)
     }
   }
 
+  // handle form submit
   const handleSubmit = (event) => {
     event.preventDefault()
-    dispatch(setCurrentPopup(''))
+    dispatch(removePopup('add'))
   }
 
+  // select image when user clicks on a specific onject
   const selectImage = () => {
     imageInputRef.current.click()
   }
@@ -100,9 +126,16 @@ export default function AddTask() {
     <form className='add-popup'>
       <div className='popup-blue-heading' />
 
-      <div  className="add-content">
-        <p className='add-heading'>Add new task</p>
+      <div  className='add-heading'>
+        <p>Add new task</p>
 
+        <CloseIcon
+          className='close-add'
+          onClick={() => dispatch(removePopup('add'))}
+        />
+      </div>
+      
+      <div  className="add-content">
         <div className='input-block'>
           <p>Title</p>
 
@@ -161,9 +194,9 @@ export default function AddTask() {
               {coverHovered
               ?
               <div>
-                <CoverRemove
+                <CloseIcon
                   className='task-cover-remove'
-                  removeCover={() =>{
+                  onClick={() => {
                     setValues({
                       ...values,
                       image: ''
@@ -198,7 +231,7 @@ export default function AddTask() {
             <Select
               isSearchable={false}
               options={options}
-              styles={{ menuPortal: (base) => ({ ...base, zIndex: 210}), option: (base) => ({ ...base, display: 'flex', cursor: 'pointer' }) }}
+              styles={{ menuPortal: (base) => ({ ...base, zIndex: 160}), option: (base) => ({ ...base, display: 'flex', cursor: 'pointer' }) }}
               menuPortalTarget={document.body}
               menuShouldScrollIntoView={false}
               menuPosition='fixed'
@@ -266,7 +299,6 @@ export default function AddTask() {
 
         <button onClick={handleSubmit}></button>
       </div>
-
     </form>
   )
 }

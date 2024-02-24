@@ -1,0 +1,68 @@
+.task-cover-crop-popup {
+  position: relative;
+  overflow: auto;
+  background-color: white;
+  padding: 20px 25px;
+  width: max-content;
+  height: max-content;
+}
+
+.task-cover-crop-heading {
+  color: #5468E7;
+  font-size: 24px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  min-width: 100%;
+  justify-content: space-between;
+  text-wrap: nowrap;
+  gap: 100px;
+}
+
+.close-task-cover-crop {
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.close-task-cover-crop:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.ReactCrop {
+  cursor: auto !important;
+}
+
+.ReactCrop__drag-handle {
+  width: 5px !important;
+  height: 5px !important;
+}
+
+.ReactCrop__crop-selection {
+  -webkit-animation: none !important;
+  animation: none !important;
+}
+
+.task-cover-crop-container {
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.crop-image-button {
+  background-color: #5468E7;
+  border: none;
+  outline: none;
+  position: relative;
+  left: 50%;
+  transform: translate(-50%);
+  margin-top: 20px;
+  color: white;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-family: 'poppins';
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}

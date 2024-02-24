@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTransition, animated } from 'react-spring'
-import { setCurrentPopup } from '../features/navigation/navigationSlice'
+import { addPopup } from '../features/navigation/navigationSlice'
 import '../css/components/Navbar.css'
 import SearchIcon from '../svg/navbar/SearchIcon'
 import NavNotificationsIcon from '../svg/navbar/NavNotificationsIcon'
@@ -88,9 +88,9 @@ export default function Navbar() {
 
   // animate account dropdown
   const dropdownTransition = useTransition(showDropdown, {
-    from: { opacity: 0 },
-    enter: { opacity: 1 },
-    leave: { opacity: 0 },
+    from: { opacity: 0, pointerEvents: 'none' },
+    enter: { opacity: 1, pointerEvents: 'auto' },
+    leave: { opacity: 0, pointerEvents: 'none' },
     config: { duration: 300 }
   })
 
@@ -124,7 +124,7 @@ export default function Navbar() {
       </div>
 
       <div className='user-accessibility'>
-        <AddTaskIcon showPopup={() => dispatch(setCurrentPopup('add'))}/>
+        <AddTaskIcon showPopup={() => dispatch(addPopup('add'))}/>
 
         <p className='navbar-level'>Level {level}</p>
 
