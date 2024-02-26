@@ -19,17 +19,19 @@ export default function Leaderboard() {
 
   // calculate each leaderboard column width
   useEffect(() => {
-    const rankWidthsArray = leaderboardRefs.current.ranks.map(ref => ref.clientWidth)
-    setRankWidth(Math.max(...rankWidthsArray))
+    document.fonts.ready.then(() => {
+      const rankWidthsArray = leaderboardRefs.current.ranks.map(ref => ref.clientWidth)
+      setRankWidth(Math.max(...rankWidthsArray))
 
-    const nameWidthsArray = leaderboardRefs.current.names.map(ref => ref.clientWidth)
-    setNameWidth(Math.max(...nameWidthsArray))
+      const nameWidthsArray = leaderboardRefs.current.names.map(ref => ref.clientWidth)
+      setNameWidth(Math.max(...nameWidthsArray))
 
-    const tasksWidthsArray = leaderboardRefs.current.tasks.map(ref => ref.clientWidth)
-    setTasksWidth(Math.max(...tasksWidthsArray))
+      const tasksWidthsArray = leaderboardRefs.current.tasks.map(ref => ref.clientWidth)
+      setTasksWidth(Math.max(...tasksWidthsArray))
 
-    const pointsWidthsArray = leaderboardRefs.current.points.map(ref => ref.clientWidth)
-    setPointsWidth(Math.max(...pointsWidthsArray))
+      const pointsWidthsArray = leaderboardRefs.current.points.map(ref => ref.clientWidth)
+      setPointsWidth(Math.max(...pointsWidthsArray))
+    })
   }, [data])
 
   // reset widths and add values when user show more ranks

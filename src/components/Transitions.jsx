@@ -1,7 +1,7 @@
 import { useTransition, animated } from 'react-spring'
 import { useSelector } from 'react-redux'
 import AddTask from './popups/AddTask'
-import ImageError from './popups/ImageError'
+import Message from './popups/Message'
 import TaskCoverCrop from './popups/TaskCoverCrop'
 
 export default function Transitions() {
@@ -60,25 +60,31 @@ export default function Transitions() {
 			{secondPopupTransition((style, item) => item && (
 				<animated.div className='popup' style={{...style, zIndex: 250}}>
 					{item === 'not image' ? 
-          <ImageError 
+          <Message 
             popup="not image"
             heading="Can't Read The File"
             content="Your image should be saved as JPG, PNG, GIF, TIFF, HEIF or WebP"
           /> 
           : item === 'small task cover' ? 
-          <ImageError 
+          <Message 
             popup="small task cover"
             heading="Please Choose Another Image"
             content="This image is too small please upload a larger one"
           /> 
           : item === "big size image" ? 
-          <ImageError 
+          <Message 
             popup="big size image"
             heading="Please Choose Another Image"
             content="Your image should be less than 3 MB"
           /> 
           : item === "crop task cover" ?
           <TaskCoverCrop />
+          : item === "only one step" ?
+          <Message 
+            popup="only one step"
+            heading="Change the amount of steps"
+            content="There can't be only one step, Please remove it or add another one"
+          /> 
           : ''}
 				</animated.div>
 			))}

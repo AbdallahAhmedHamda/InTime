@@ -4,6 +4,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker'
 import { addPopup, removePopup, setUncroppedImage, setCroppedImage } from '../../features/navigation/navigationSlice'
+import { addTask } from '../../features/tasks/tasksSlice'
 import dayjs from 'dayjs'
 import Select from 'react-select'
 import '../../css/components/AddTask.css'
@@ -11,6 +12,8 @@ import calendarIcon from '../../assets/images/calendar-icon.png'
 import CameraIcon from '../../svg/others/CameraIcon'
 import FlagIcon from '../../svg/others/FlagIcon'
 import CloseIcon from '../../svg/others/CloseIcon'
+import { nanoid } from '@reduxjs/toolkit'
+import ordinal from 'ordinal'
 
 const options = [
   {
@@ -58,7 +61,7 @@ export default function AddTask() {
     }
     dispatch(setCroppedImage(''))
     // eslint-disable-next-line
-  }, [croppedImage])  
+  }, [croppedImage])
 
   // disable page scrollbars when popup is active
   useEffect(() => {
@@ -75,7 +78,7 @@ export default function AddTask() {
   }
 
   // handle inputs change
-  const onInputChange = (event) => {
+  const onTextInputChange = (event) => {
     setValues({...values, [event.target.name]: event.target.value})
   }
 
@@ -94,12 +97,11 @@ export default function AddTask() {
         img.src = reader.result
 
         img.onload = (event) => {
-          const { naturalWidth, naturalHeight, size } = event.currentTarget
+          const { naturalWidth, naturalHeight } = event.currentTarget
           if (naturalWidth < 227 || naturalHeight < 121) {
             dispatch(addPopup('small task cover'))
           } else if (sizeInMB > 3) {
             dispatch(addPopup('big size image'))
-
           } else {
             dispatch(addPopup('crop task cover'))
             dispatch(setUncroppedImage(reader.result))
@@ -110,20 +112,69 @@ export default function AddTask() {
       reader.readAsDataURL(file)
     }
   }
-
-  // handle form submit
-  const handleSubmit = (event) => {
-    event.preventDefault()
-    dispatch(removePopup('add'))
+ 
+  // add step
+  const addStep = (e) => {
+    e.preventDefault()
+    if (values.steps.length === 0) {
+      setValues({
+        ...values,
+        steps: [
+          {
+            id: nanoid(),
+            content: '',
+            isCompleted: false
+          },
+          {
+            id: nanoid(),
+            content: '',
+            isCompleted: false
+          }
+        ]
+      })
+    } else {
+      setValues({
+        ...values,
+        steps: [...values.steps, {
+          id: nanoid(),
+          content: '',
+          isCompleted: false
+        }]
+      })
+    }
   }
 
+  // remove step
+  const removeStep = (id) => {
+    setValues({
+      ...values,
+      steps: values.steps.filter(step => step.id !== id)
+    })
+  }
+  
   // select image when user clicks on a specific onject
   const selectImage = () => {
     imageInputRef.current.click()
   }
+
+  // handle form submit
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    if (values.steps.length === 1) {
+      dispatch(addPopup('only one step'))
+    } else {
+      dispatch(addTask({
+        ...values,
+        flag: values.flag.value,
+        startDate: values.startDate.toISOString(),
+        endDate: values.endDate.toISOString()
+      }))
+      dispatch(removePopup('add'))
+    }
+  }
     
   return (
-    <form className='add-popup'>
+    <form className='add-popup' onSubmit={handleSubmit}>
       <div className='popup-blue-heading' />
 
       <div  className='add-heading'>
@@ -140,30 +191,38 @@ export default function AddTask() {
           <p>Title</p>
 
           <input
+            required={true}
             className='task-title-input'
             type='text'
             name='title'
             value={values.title}
-            onChange={onInputChange}
+            onChange={onTextInputChange}
             placeholder='Enter a title....'
           />
         </div>
-
         <div className='input-block'>
-          <p>Description</p>
+          <div className='optional-input-wrapper'>
+            <p>Description</p>
+            
+            <p className='optional-input'>(optional)</p>
+          </div>
 
           <textarea
             className='disc-input'
             name='disc'
             value={values.disc}
-            onChange={onInputChange}
+            onChange={onTextInputChange}
             placeholder='Add description....'
           />
         </div>
 
         <div className='third-line-wrapper'>
           <div className='input-block'>
-            <p>Cover photo</p>
+            <div className='optional-input-wrapper'>
+              <p>Cover photo</p>
+              
+              <p className='optional-input'>(optional)</p>
+            </div>
 
             <input
               type="file"
@@ -220,7 +279,7 @@ export default function AddTask() {
               type='text'
               name='tag'
               value={values.tag}
-              onChange={onInputChange}
+              onChange={onTextInputChange}
               placeholder='Add tag...'
             />
           </div>
@@ -297,7 +356,54 @@ export default function AddTask() {
           </div>
         </div>
 
-        <button onClick={handleSubmit}></button>
+        {values.steps.map((step, i) => (
+          <div key={step.id} className='input-block'>
+            <p>step {i + 1}</p>
+
+            <div className='step-wrapper'>
+              <input
+                required={true}
+                className='step-input'
+                type='text'
+                name='title'
+                value={values.steps[i].content}
+                onChange={(event) => {
+                  const steps = values.steps
+                  steps[i].content = event.target.value
+                  setValues({ ...values, steps: steps })
+                }}
+                placeholder={`My ${ordinal(i + 1)} step is...`}
+              />
+
+              <CloseIcon
+                className='remove-step'
+                onClick={() => removeStep(step.id)}
+              />
+            </div>
+          </div>
+        ))}
+
+        <div className='input-block'>
+          {values.steps.length === 0 ? <p>Steps</p> : ''}
+
+          <button className='add-step-button' onClick={addStep}>
+            Add step <span>+</span>
+          </button>
+        </div>
+
+        <div className='popup-button-wrapper'>
+          <button className='add-task-button'>Add</button>
+          
+          <button 
+            onClick={(e) => {
+              e.preventDefault()
+              dispatch(removePopup('add'))}
+            }
+            className='cancel-add-task-button'
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </form>
   )

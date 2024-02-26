@@ -12,7 +12,7 @@ import CloseIcon from '../../svg/others/CloseIcon'
 
 
 
-export default function ImageCrop() {
+export default function TaskCoverCrop() {
   const uncroppedImage = useSelector((state) => state.navigation.uncroppedImage)
 
   const dispatch = useDispatch()

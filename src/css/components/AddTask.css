@@ -1,3 +1,7 @@
+button {
+  width: fit-content ;
+}
+
 .add-popup {
   position: relative;
   overflow: auto;
@@ -33,7 +37,7 @@
 }
 
 .add-content {
-  padding: 5px 20px 25px 20px;
+  padding: 5px 20px 60px 20px;
   display: flex;
   flex-direction: column;
   gap: 35px;
@@ -49,7 +53,7 @@
   font-size: 20px;
 }
 
-.input-block > input, .input-block > textarea {
+.input-block > input, .input-block > textarea, .step-wrapper > input {
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   outline: none;
   border: none;
@@ -60,9 +64,24 @@
   font-weight: 300;
 }
 
-.input-block > input:focus, .input-block > textarea:focus {
-  outline: 2px #1976d2 solid;
+.input-block > input:focus, .input-block > textarea:focus, .step-wrapper > input:focus {
+  outline: 
+  2px #1976d2 solid;
 }
+
+.optional-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.optional-input-wrapper > .optional-input {
+  color: rgba(0, 0, 0, 0.60);
+  font-family: 'Roboto';
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;}
 
 .task-title-input {
   width: 572px;
@@ -227,4 +246,82 @@
 .MuiOutlinedInput-notchedOutline {
   border-color: white !important;
   border-radius: 6px !important;
+}
+
+.add-step-button {
+  padding: 5px 10px;
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  border-radius: 6px;
+  background: #FFF;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  outline: none;
+  border: none;
+  color: rgba(0, 0, 0, 0.70);
+  font-size: 20px;
+  font-weight: 300;
+  font-family: 'poppins';
+  cursor: pointer;
+}
+
+.add-step-button:hover {
+  color: #1976d2
+}
+
+.step-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.step-input {
+  height: 36px;
+  width: 75%;
+}
+
+.remove-step {
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  border-radius: 50%;
+  fill: red
+}
+
+.remove-step > path {
+  fill : rgba(18, 18, 18, 0.60)
+}
+
+.remove-step:hover > path {
+  fill: #D20000;
+}
+
+.popup-button-wrapper {
+  display: flex;
+  gap: 22px;
+  justify-content: end;
+  align-items: start;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+}
+
+.add-task-button, .cancel-add-task-button {
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  width: 120px;
+  height: 40px;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  border-radius: 6px;
+  font-family: 'Poppins';
+}
+
+.add-task-button {
+  background-color: #5468E7;
+  color: white;
+}
+
+.cancel-add-task-button {
+  background-color: white;
 }
