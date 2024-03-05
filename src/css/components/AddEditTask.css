@@ -299,8 +299,6 @@ button {
 .popup-button-wrapper {
   display: flex;
   gap: 22px;
-  justify-content: end;
-  align-items: start;
   position: absolute;
   bottom: 20px;
   right: 20px;

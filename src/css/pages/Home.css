@@ -276,6 +276,154 @@
   gap: 5px;
 }
 
+.home-container > div > p {
+  color: #232360;
+  font-size: 24px;
+  font-weight: 500;
+  margin-top: 35px;
+}v
+
 .leaderboard-more:hover {
+  color: #5468E7;
+}
+
+.home-bottom-section {
+  margin-top: 20px;
+  display: flex;
+  justify-content:space-between;
+}
+
+.home-recent-tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.home-task-container {
+  display: flex;
+  position: relative;
+  align-items: center;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  width: fit-content;
+  border-radius: 10px;
+}
+
+.home-task-left {
+  background-color: #FBFAFF;
+  display: inline-flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 10px 15px 25px;
+  align-self: stretch;
+  border-radius: 10px 0 0 10px;
+}
+
+.home-complete-task {
+  cursor: pointer;
+}
+
+.home-complete-task:hover > path {
+  fill: #00FF29;
+}
+
+.home-task-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.home-task-title {
+  width: 150px;
+  max-width: 150px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+}
+
+.home-task-date-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #778399;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.home-task-right {
+  background-color: white;
+  align-self: stretch;
+  border-radius: 0 10px 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  padding: 15px 25px 15px 10px;
+}
+
+.home-task-percentage-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 13px;
+}
+
+.home-task-percentage {
+  color: #23235F;
+  font-weight: 500;
+}
+
+.home-task-bar-container {
+  height: 5px;
+  width: 150px;
+  background-color: #E3E8EE;
+  border-radius: 2.5px;
+}
+
+.home-task-percentage-bar {
+  height: 100%;
+  border-radius: inherit;
+  transition: width 0.3s ease;
+}
+
+.home-task-steps {
+  position: absolute;
+  right: 10px;
+  bottom: 5px;
+  color: #768396;
+  font-family: "DM Sans";
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.home-button-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.home-add-project-button, .home-add-task-button {
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  width: 180px;
+  height: 65px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background-color: white;
+  font-family: 'poppins';
+  font-size: 20px;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+.home-add-project-button {
+  color: #F48C06;
+}
+
+.home-add-task-button {
   color: #5468E7;
 }

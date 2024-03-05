@@ -76,7 +76,7 @@ const userSlice = createSlice({
       state.unreadNotifications = 0
     },
     addTaskId: (state, action) => {
-      state.tasks.id = state.tasks.id.push(action.payload)
+      state.tasks.id.push(action.payload)
     },
     removeTaskId: (state, action) => {
       state.tasks.id = state.tasks.id.filter((id) => id !== action.payload)

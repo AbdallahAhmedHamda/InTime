@@ -2,6 +2,7 @@ import { useTransition, animated } from 'react-spring'
 import { useSelector } from 'react-redux'
 import AddTask from './popups/AddTask'
 import Message from './popups/Message'
+import VerifyCompletionMessage from './popups/VerifyCompletionMessage'
 import TaskCoverCrop from './popups/TaskCoverCrop'
 
 export default function Transitions() {
@@ -48,7 +49,11 @@ export default function Transitions() {
 
 			{firstPopupTransition((style, item) => item && (
 				<animated.div className='popup' style={{...style, zIndex: 150}}>
-					{item === 'add' ? <AddTask /> : ''}
+					{item === 'add' ?
+          <AddTask /> 
+          : item === "verify task completion" ?
+          <VerifyCompletionMessage />
+          : ''}
 				</animated.div>
 			))}
 

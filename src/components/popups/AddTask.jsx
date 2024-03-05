@@ -5,9 +5,10 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker'
 import { addPopup, removePopup, setUncroppedImage, setCroppedImage } from '../../features/navigation/navigationSlice'
 import { addTask } from '../../features/tasks/tasksSlice'
+import { addTaskId } from '../../features/user/userSlice'
 import dayjs from 'dayjs'
 import Select from 'react-select'
-import '../../css/components/AddTask.css'
+import '../../css/components/AddEditTask.css'
 import calendarIcon from '../../assets/images/calendar-icon.png'
 import CameraIcon from '../../svg/others/CameraIcon'
 import FlagIcon from '../../svg/others/FlagIcon'
@@ -17,19 +18,19 @@ import ordinal from 'ordinal'
 
 const options = [
   {
-    value: "1",
+    value: 1,
     label: <FlagIcon priority={1} />
   },
   {
-    value: "2",
+    value: 2,
     label: <FlagIcon priority={2} />
   },
   {
-    value: "3",
+    value: 3,
     label: <FlagIcon priority={3} />
   },
   {
-    value: "4",
+    value: 4,
     label: <FlagIcon priority={4} />
   }
 ]
@@ -46,8 +47,8 @@ export default function AddTask() {
     tag: '',
     flag: options[0],
     image: '',
-    startDate: dayjs().add(30 - dayjs().minute() % 30, 'minutes'),
-    endDate: dayjs().add(90 - dayjs().minute() % 30, 'minutes'),
+    startDate: dayjs().startOf('minute').add(30 - dayjs().minute() % 30, 'minutes'),
+    endDate: dayjs().startOf('minute').add(90 - dayjs().minute() % 30, 'minutes'),
     steps: []
   })
   const [coverHovered, setCoverHovered] = useState(false)
@@ -58,8 +59,8 @@ export default function AddTask() {
   useEffect(() => {
     if (croppedImage) {
       setValues(prevState => ({...prevState, image: croppedImage}))
+      dispatch(setCroppedImage(''))
     }
-    dispatch(setCroppedImage(''))
     // eslint-disable-next-line
   }, [croppedImage])
 
@@ -163,11 +164,16 @@ export default function AddTask() {
     if (values.steps.length === 1) {
       dispatch(addPopup('only one step'))
     } else {
+      const taskId = nanoid()
+      dispatch(addTaskId(taskId))
       dispatch(addTask({
+        id: taskId,
+        createdAt: dayjs().toISOString(),
         ...values,
         flag: values.flag.value,
         startDate: values.startDate.toISOString(),
-        endDate: values.endDate.toISOString()
+        endDate: values.endDate.toISOString(),
+        isCompleted: false
       }))
       dispatch(removePopup('add'))
     }
@@ -275,6 +281,7 @@ export default function AddTask() {
             <p>Tag</p>
 
             <input
+              required={true}
               className='tag-input'
               type='text'
               name='tag'
@@ -320,10 +327,11 @@ export default function AddTask() {
                   slotProps={{ field: { shouldRespectLeadingZeros: true } }}
                   onChange={(newStartDate) =>
                     setValues({
-                    ...values,
-                    startDate: newStartDate,
-                    endDate: newStartDate > values.endDate ? newStartDate.add(60, 'minutes') : values.endDate
-                  })}
+                      ...values,
+                      startDate: newStartDate,
+                      endDate: newStartDate > values.endDate ? newStartDate.add(60, 'minutes') : values.endDate
+                    }
+                  )}
                 />
               </LocalizationProvider>
           
