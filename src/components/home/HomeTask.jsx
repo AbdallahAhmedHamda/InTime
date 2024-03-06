@@ -12,13 +12,29 @@ export default function HomeTask({ task }) {
     dispatch(setVerifyData(task.id))
   }
 
-  const endDate = new Date(task.endDate).toLocaleString('en-US', { month: "short",  day: "numeric", hour: 'numeric', minute: '2-digit', hour12: true })
+  const endDate = new Date(task.endDate).toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  })
 
-  const taskPercentage = parseFloat((task.steps.filter((task) => task.isCompleted).length / task.steps.length * 100).toFixed(2))
+  const taskPercentage = parseFloat(
+    (task.steps.filter((task) => task.isCompleted).length / task.steps.length * 100)
+    .toFixed(2)
+  )
 
   const percentageBarStyles = {
     width: `${task.steps.length !== 0 ? taskPercentage : 0}%`,
-    backgroundColor: taskPercentage <= 25 ? '#D20000' : taskPercentage <= 50 ? '#DE700B' : taskPercentage <= 75 ? '#E8FC00' : '#00FF29'
+    backgroundColor: 
+      taskPercentage <= 25 
+        ? '#D20000'
+        : taskPercentage <= 50
+          ? '#DE700B'
+          : taskPercentage <= 75
+            ? '#E8FC00'
+            : '#00FF29'
   }
   
   return (
@@ -33,7 +49,9 @@ export default function HomeTask({ task }) {
             <HomeTaskTimeIcon />
             
             <p className='home-task-date'>
-              {endDate.charAt(0) + endDate.slice(1).toLowerCase()}
+              {
+                endDate.charAt(0) + endDate.slice(1).toLowerCase()
+              }
             </p>
           </div>
         </div>
@@ -42,7 +60,10 @@ export default function HomeTask({ task }) {
       <div className='home-task-right'>
         <div className='home-task-percentage-container'>
           <p className='home-task-percentage'>
-            {task.steps.length !== 0 ? taskPercentage : 0}% completed
+            {
+              task.steps.length !== 0 ? taskPercentage : 0
+            }
+            % completed
           </p>
 
           <div className='home-task-bar-container'>
@@ -51,14 +72,17 @@ export default function HomeTask({ task }) {
         </div>
 
         <FlagIcon priority={task.flag}/>
-
       </div>
 
-      {task.steps.length !== 0 ? 
-      <p className='home-task-steps'>
-        {task.steps.filter((task) => task.isCompleted).length + '/' + task.steps.length}
-      </p>
-      : ''}
+      {
+        task.steps.length !== 0 ? 
+        <p className='home-task-steps'>
+          {
+            task.steps.filter((task) => task.isCompleted).length + '/' + task.steps.length
+          }
+        </p> :
+        ''
+      }
     </div>
   )
 }

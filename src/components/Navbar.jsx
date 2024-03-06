@@ -1,14 +1,14 @@
+import { useSelector, useDispatch } from 'react-redux'
+import { addPopup } from '../features/navigation/navigationSlice'
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
 import { useTransition, animated } from 'react-spring'
-import { addPopup } from '../features/navigation/navigationSlice'
-import '../css/components/Navbar.css'
-import SearchIcon from '../svg/navbar/SearchIcon'
 import NavNotificationsIcon from '../svg/navbar/NavNotificationsIcon'
 import DownArrowIcon from '../svg/navbar/DownArrowIcon'
 import AddTaskIcon from '../svg/navbar/AddTaskIcon'
 import LogoutIcon from '../svg/navbar/LogoutIcon'
+import SearchIcon from '../svg/navbar/SearchIcon'
+import '../css/components/Navbar.css'
 
 export default function Navbar() {
   const currentPage = useSelector((state) => state.navigation.currentPage)
@@ -36,8 +36,8 @@ export default function Navbar() {
 
   // hide account dropdown when user clicks outside it
   useEffect(() => {
-    const handleClickOutsideDropdown = (event) => {
-      if(showDropdown && !accountDropdownRef.current.contains(event.target)) {
+    const handleClickOutsideDropdown = (e) => {
+      if(showDropdown && !accountDropdownRef.current.contains(e.target)) {
         setShowDropdown(false)
       }
     }
@@ -53,6 +53,7 @@ export default function Navbar() {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollPosition = window.scrollY
+
       if(!hasExceededThreshold) {
         if (currentScrollPosition < 79) {
           setScrollPosition(currentScrollPosition)
@@ -76,17 +77,14 @@ export default function Navbar() {
     }
   }, [hasExceededThreshold])
 
-  // test
+  const toggleAccountDropdown = () => {
+    setShowDropdown(!showDropdown)
+  }
+
   const handleSearch = () => {
     console.log('Searching for:', searchTerm)
   }
 
-  // show/hide account dropdown
-  const toggleAccountDropdown = () => {
-    setShowDropdown(!showDropdown)
-}
-
-  // animate account dropdown
   const dropdownTransition = useTransition(showDropdown, {
     from: { opacity: 0, pointerEvents: 'none' },
     enter: { opacity: 1, pointerEvents: 'auto' },
@@ -94,25 +92,28 @@ export default function Navbar() {
     config: { duration: 300 }
   })
 
-  // adjust navbar position so it goes out of screnn when user scrolls down
   const navbarStyles = {
     top: scrollPosition < 79 ? 0 -scrollPosition : -79,
   }
   
   return (
     <header style={navbarStyles}>
-      <Link to="/" >
-        <img src={require('../assets/images/logo.png')} alt='logo' className='app-logo' />
+      <Link to='/' >
+        <img
+          src={require('../assets/images/logo.png')}
+          alt='logo'
+          className='app-logo'
+        />
+
         <p className='app-logo-text'>
-          In
-          <span>Time</span>
+          In <span>Time</span>
         </p>
       </Link>
 
       <div className='search-bar'>
         <input
-          type="text"
-          placeholder="Search anything..."
+          type='text'
+          placeholder='Search anything...'
           name='searchTerm'
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -128,18 +129,25 @@ export default function Navbar() {
 
         <p className='navbar-level'>Level {level}</p>
 
-        <Link to="/notifications" >
+        <Link to='/notifications' >
           <div className='navbar-notifications'>
             <NavNotificationsIcon />
-            {unreadNotifications > 0 && (
-              <div className='notification-number'>{unreadNotifications}</div>
-            )}
+
+            {
+              unreadNotifications > 0 && (
+                <div className='notification-number'>{unreadNotifications}</div>
+              )
+            }
           </div>
         </Link>
 
         <div className='navbar-user-info'>
-          <Link to="/settings" >
-            <img src={profilePic} alt='profile-pic' className='navbar-profile-pic'/>
+          <Link to='/settings' >
+            <img
+              src={profilePic}
+              alt='profile-pic'
+              className='navbar-profile-pic'
+            />
           </Link>
 
           <p className='navbar-username'>{name}</p>
@@ -147,19 +155,21 @@ export default function Navbar() {
           <div className='account-dropdown-container no-select' ref={accountDropdownRef}>
             <DownArrowIcon toggle={toggleAccountDropdown} isOpen={showDropdown}/>
 
-            {dropdownTransition((style, item) => item && (
-              <animated.div className='account-dropdown' style={style}>
-                <p>Switch account</p>
+            {
+              dropdownTransition((style, item) => item && (
+                <animated.div className='account-dropdown' style={style}>
+                  <p>Switch account</p>
 
-                <hr />
+                  <hr />
 
-                <div className='logout-container'>
-                  <LogoutIcon /> 
-                  
-                  <p>Logout</p>
-                </div>
-              </animated.div>
-            ))}
+                  <div className='logout-container'>
+                    <LogoutIcon /> 
+                    
+                    <p>Logout</p>
+                  </div>
+                </animated.div>
+              ))
+            }
           </div>
         </div>
       </div>

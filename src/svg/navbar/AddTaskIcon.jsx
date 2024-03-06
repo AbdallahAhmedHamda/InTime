@@ -1,4 +1,4 @@
-export default function NavAdd({ showPopup }) {
+export default function AddTaskIcon({ showPopup }) {
   return (
     <svg width="43" height="44" cursor="pointer" viewBox="0 0 43 44" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={showPopup}>
       <circle cx="21.5" cy="22.2593" r="21.5" fill="#5468E7"/>

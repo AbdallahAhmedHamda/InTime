@@ -48,6 +48,7 @@ a:visited {
   margin-top: 79px;
   min-width: fit-content;
   max-width: 1500px;
+  position: 'relative'
 }
 
 .page-name {

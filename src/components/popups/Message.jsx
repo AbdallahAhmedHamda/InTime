@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux'
 import { removePopup } from '../../features/navigation/navigationSlice'
-import '../../css/components/Messages.css'
 import CloseIcon from '../../svg/others/CloseIcon'
+import '../../css/components/Messages.css'
 
 export default function Message({ popup, heading, content }) {
   const dispatch = useDispatch()

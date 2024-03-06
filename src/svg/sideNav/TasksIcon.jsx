@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux'
 
-export default function SideTasks() {
+export default function TasksIcon() {
   const currentPage = useSelector((state) => state.navigation.currentPage)
   const color = (currentPage === 'tasks') ? "#5468E7" : "black"
 

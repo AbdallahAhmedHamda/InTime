@@ -44,49 +44,51 @@ export default function Leaderboard() {
   }
 
   return (
-    <div className="leaderboard-container">
+    <div className='leaderboard-container'>
       <p>Leaderboard</p>
 
-      <div className="leaderboard">
-        {data.map((_, i) => (
-          <div className="leaderboard-row" key={i}>
-            <p 
-              className='leaderboard-rank' 
-              ref={el => (leaderboardRefs.current.ranks[i] = el)} style={{width: rankWidth}}
-            >
-              {i + 1}
-            </p>
+      <div className='leaderboard'>
+        {
+          data.map((_, i) => (
+            <div className='leaderboard-row' key={i}>
+              <p 
+                className='leaderboard-rank' 
+                ref={el => (leaderboardRefs.current.ranks[i] = el)} style={{width: rankWidth}}
+              >
+                {i + 1}
+              </p>
 
-            <img 
-              className="leaderboard-pic"
-              src={require('../../assets/images/profile-pic.jpeg')} alt='profile-pic'
-            />
+              <img 
+                className='leaderboard-pic'
+                src={require('../../assets/images/profile-pic.jpeg')} alt='profile-pic'
+              />
 
-            <p
-              className="leaderboard-name"
-              ref={el => (leaderboardRefs.current.names[i] = el)}
-              style={{width: nameWidth}}
-            >
-              Jessica
-            </p>
+              <p
+                className='leaderboard-name'
+                ref={el => (leaderboardRefs.current.names[i] = el)}
+                style={{width: nameWidth}}
+              >
+                Jessica
+              </p>
 
-            <p 
-              className="leaderboard-tasks" 
-              ref={el => (leaderboardRefs.current.tasks[i] = el)}
-              style={{width: tasksWidth}}
-            >
-              {numeral(50).format('0.[00]a')} Tasks
-            </p>
+              <p 
+                className='leaderboard-tasks' 
+                ref={el => (leaderboardRefs.current.tasks[i] = el)}
+                style={{width: tasksWidth}}
+              >
+                {numeral(50).format('0.[00]a')} Tasks
+              </p>
 
-            <p
-              className="leaderboard-points"
-              ref={el => (leaderboardRefs.current.points[i] = el)}
-              style={{width: pointsWidth}}
-            >
-              {numeral(5000).format('0.[00]a')} Pts
-            </p>
-          </div>
-        ))}
+              <p
+                className='leaderboard-points'
+                ref={el => (leaderboardRefs.current.points[i] = el)}
+                style={{width: pointsWidth}}
+              >
+                {numeral(5000).format('0.[00]a')} Pts
+              </p>
+            </div>
+          ))
+        }
       </div>
 
       <div 

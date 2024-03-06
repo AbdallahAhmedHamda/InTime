@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
+import { useState, useEffect, useRef } from 'react'
 import { useTransition, animated } from 'react-spring'
 import { select } from 'd3'
 
@@ -47,6 +47,7 @@ export default function ProgressBar() {
       .attr('stroke-dashoffset', firstRender.current ? '704' : oldPercentage.current)
       .on('mouseenter', () => setTooltipVisible(true))
       .on('mouseleave', () => setTooltipVisible(false))
+
     // animating the proggression
     userProgressBar
       .transition()
@@ -66,22 +67,24 @@ export default function ProgressBar() {
   })
 
   return (
-    <div className="progress-bar-container">
-      <svg className='default-progress-bar' width="246px" height="246px" ref={svgRef} />
+    <div className='progress-bar-container'>
+      <svg className='default-progress-bar' width='246px' height='246px' ref={svgRef} />
 
-      {tooltipTransition((style, item) => item && (
-        <animated.div className="tooltip" style={style}>
-          <div className="tooltip-text no-select">{totalPoints % 100}%</div>
+      {
+        tooltipTransition((style, item) => item && (
+          <animated.div className='tooltip' style={style}>
+            <div className='tooltip-text no-select'>{totalPoints % 100}%</div>
 
-          <div className="tooltip-arrow"/>
-        </animated.div>
-      ))}
+            <div className='tooltip-arrow'/>
+          </animated.div>
+        ))
+      }
 
-      <p className="progress-bar-level">Level {level}</p>
+      <p className='progress-bar-level'>Level {level}</p>
 
-      <p className="progress-bar-text start">0</p>
+      <p className='progress-bar-text start'>0</p>
       
-      <p className="progress-bar-text end">100</p>
+      <p className='progress-bar-text end'>100</p>
     </div>
   )
 }

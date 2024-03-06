@@ -1,14 +1,14 @@
-import { useRef, useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { removePopup, setCroppedImage } from '../../features/navigation/navigationSlice'
+import { useRef, useState, useEffect } from 'react'
 import ReactCrop, {
   centerCrop,
   convertToPixelCrop,
   makeAspectCrop,
-} from "react-image-crop"
-import '../../css/components/ImageCrop.css'
-import "react-image-crop/dist/ReactCrop.css"
+} from 'react-image-crop'
 import CloseIcon from '../../svg/others/CloseIcon'
+import 'react-image-crop/dist/ReactCrop.css'
+import '../../css/components/ImageCrop.css'
 
 
 
@@ -39,14 +39,14 @@ export default function TaskCoverCrop() {
   }, [])
 
   // set crop tool when image loads
-  const onImageLoad = (event) => {
-    const { width, height, naturalWidth, naturalHeight } = event.currentTarget
+  const onImageLoad = (e) => {
+    const { width, height, naturalWidth, naturalHeight } = e.currentTarget
     const cropWidthInPercent = (227 / width) * 100
     const cropHeightInPercent = (121 / height) * 100
 
     const crop = makeAspectCrop(
       {
-        unit: "%",
+        unit: '%',
         width: cropWidthInPercent,
         height: cropHeightInPercent
       },
@@ -65,7 +65,7 @@ export default function TaskCoverCrop() {
     canvas,
     crop
   ) => {
-    const ctx = canvas.getContext("2d")
+    const ctx = canvas.getContext('2d')
     const pixelRatio = window.devicePixelRatio
     const scaleX = image.naturalWidth / image.width
     const scaleY = image.naturalHeight / image.height
@@ -74,7 +74,7 @@ export default function TaskCoverCrop() {
     canvas.height = Math.floor(crop.height * scaleY * pixelRatio)
   
     ctx.scale(pixelRatio, pixelRatio)
-    ctx.imageSmoothingQuality = "high"
+    ctx.imageSmoothingQuality = 'high'
     ctx.save()
   
     const cropX = crop.x * scaleX
@@ -120,15 +120,15 @@ export default function TaskCoverCrop() {
           <img
             src={uncroppedImage}
             ref={imgRef}
-            alt="Upload"
+            alt='Upload'
             onLoad={onImageLoad}
-            style={{maxHeight: 'calc(80vh - 50px)', maxWidth: 'calc(80vw - 50px)'}}
+            style={{ maxHeight: 'calc(80vh - 50px)', maxWidth: 'calc(80vw - 50px)' }}
           />
         </ReactCrop>
       </div>
 
       <button
-        className="crop-image-button"
+        className='crop-image-button'
         onClick={() => {
           setCanvasPreview(
             imgRef.current,
@@ -148,7 +148,7 @@ export default function TaskCoverCrop() {
 
       <canvas
         ref={previewCanvasRef}
-        style={{ display: "none" }}
+        style={{ display: 'none' }}
       />
     </div>
   )

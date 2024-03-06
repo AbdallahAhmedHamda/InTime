@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux'
 
-export default function SideSettings() {
+export default function SettingsIcon() {
   const currentPage = useSelector((state) => state.navigation.currentPage)
   const color = (currentPage === 'settings') ? "#5468E7" : "black"
   

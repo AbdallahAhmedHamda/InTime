@@ -1,12 +1,12 @@
+import { useSelector } from 'react-redux'
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import '../css/components/SideNav.css'
-import HomeIcon from '../svg/sideNav/HomeIcon'
-import TasksIcon from '../svg/sideNav/TasksIcon'
-import CalendarIcon from '../svg/sideNav/CalendarIcon'
 import SideNotificationsIcon from '../svg/sideNav/SideNotificationsIcon'
 import SettingsIcon from '../svg/sideNav/SettingsIcon'
+import CalendarIcon from '../svg/sideNav/CalendarIcon'
+import TasksIcon from '../svg/sideNav/TasksIcon'
+import HomeIcon from '../svg/sideNav/HomeIcon'
+import '../css/components/SideNav.css'
 
 export default function SideNav() {
   const currentPage = useSelector((state) => state.navigation.currentPage)
@@ -21,6 +21,7 @@ export default function SideNav() {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollPosition = window.scrollY
+
       if(!hasExceededThreshold) {
         if (currentScrollPosition < 79) {
           setScrollPosition(currentScrollPosition)
@@ -51,10 +52,10 @@ export default function SideNav() {
     // eslint-disable-next-line
   }, [currentPage])
   
-  // disable wide sideenav when user clicks outside it
+  // disable wide sidenav when user clicks outside it
   useEffect(() => {
-    const handleClickOutsideDropdown = (event) => {
-      if(sideNavActive && !sideNavParentRef.current.contains(event.target)) {
+    const handleClickOutsideDropdown = (e) => {
+      if(sideNavActive && !sideNavParentRef.current.contains(e.target)) {
         setSideNavActive(false)
       }
     }
@@ -67,21 +68,19 @@ export default function SideNav() {
   }, [sideNavActive])
   
   // activate/disable wide sidenav
-  const handleSideNavClick = (event) => {
-    if(event.target === sideNavParentRef.current ||
-       event.target.parentElement === sideNavParentRef.current) {
+  const handleSideNavClick = (e) => {
+    if(e.target === sideNavParentRef.current ||
+       e.target.parentElement === sideNavParentRef.current) {
       setSideNavActive(!sideNavActive)
     }
   }
   
-  // adjust sidenav height according to scrollbar and its width according to the sidenav state
   const sideNavContainerStyles = {
     top: scrollPosition < 79 ? 79 - scrollPosition : 0,
     height: scrollPosition < 79 ? `calc(100% - 79px + ${scrollPosition}px)` : '100%',
     width: sideNavActive ? 180 : 78,
   }
 
-  // adjust sidenav icons according to sidenav state
   const sideNavStyles = {
     alignItems: sideNavActive ? 'flex-end' : 'center',
     marginLeft: sideNavActive ? 25 : 0
@@ -96,18 +95,32 @@ export default function SideNav() {
   ]
 
   return (
-    <div className='side-nav-container no-select' style={sideNavContainerStyles} ref={sideNavParentRef} onClick={handleSideNavClick}>
+    <div
+      className='side-nav-container no-select'
+      style={sideNavContainerStyles}
+      ref={sideNavParentRef}
+      onClick={handleSideNavClick}
+    >
       <div className='side-nav' style={sideNavStyles}>
-        {navigationPages.map(({ path, label, icon }) => (
-          <Link to={path} key={path}>
-            {sideNavActive && (
-              <p className='side-nav-page' style={{ color: currentPage === path.slice(1) ? '#5468E7' : 'black' }}>
-                {label}
-              </p>
-            )}
-            {icon}
-          </Link>
-        ))}
+        {
+          navigationPages.map(({ path, label, icon }) => (
+            <Link to={path} key={path}>
+              {
+                sideNavActive && (
+                  <p
+                    className='side-nav-page'
+                    style={{
+                      color: currentPage === path.slice(1) ? '#5468E7' : 'black'
+                    }}
+                  >
+                    {label}
+                  </p>
+                )
+              }
+              {icon}
+            </Link>
+          ))
+        }
       </div>
     </div>
   )

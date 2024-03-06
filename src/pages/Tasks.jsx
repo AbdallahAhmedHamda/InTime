@@ -1,6 +1,6 @@
-import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { setCurrentPage, removeAllPopups } from '../features/navigation/navigationSlice'
+import { useEffect } from 'react'
 import '../css/pages/Tasks.css'
 
 export default function Tasks() {

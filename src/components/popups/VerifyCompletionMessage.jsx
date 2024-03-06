@@ -1,15 +1,16 @@
-import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { removePopup, setVerifyData } from '../../features/navigation/navigationSlice'
 import { finishTask } from '../../features/tasks/tasksSlice'
-import '../../css/components/Messages.css'
+import { useEffect } from 'react'
 import CloseIcon from '../../svg/others/CloseIcon'
+import '../../css/components/Messages.css'
 
 export default function VerifyCompletionMessage() {
   const taskId = useSelector((state) => state.navigation.verifyData)
 
   const dispatch = useDispatch()
 
+  // remove saved data from redux when popup unmounts
   useEffect(() => {
     return () => {
       dispatch(setVerifyData(''))
@@ -40,7 +41,10 @@ export default function VerifyCompletionMessage() {
           YES
         </button>
 
-        <button className='message-cancel-button' onClick={() => dispatch(removePopup('verify task completion'))}>
+        <button 
+          className='message-cancel-button'
+          onClick={() => dispatch(removePopup('verify task completion'))}
+        >
           No
         </button>
       </div>

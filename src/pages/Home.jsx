@@ -1,13 +1,13 @@
-import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setCurrentPage, removeAllPopups, addPopup } from '../features/navigation/navigationSlice'
-import '../css/pages/Home.css'
-import Progress from '../components/home/Progress'
+import { useEffect } from 'react'
 import ProgressGraph from '../components/home/ProgressGraph'
-import ProgressBar from '../components/home/ProgressBar'
 import Leaderboard from '../components/home/Leaderboard'
+import ProgressBar from '../components/home/ProgressBar'
+import Progress from '../components/home/Progress'
 import HomeTask from '../components/home/HomeTask'
 import PlusIcon from '../svg/home/PlusIcon'
+import '../css/pages/Home.css'
 
 export default function Home() {
   const tasks = useSelector((state) => state.tasks.tasks)
@@ -20,16 +20,19 @@ export default function Home() {
     dispatch(removeAllPopups())
   }, [dispatch])
 
-  // order tasks by its creating times
-  const orderedTasks = [...tasks].filter((task) => !task.isCompleted).sort((a, b) => {
-    const aCreatedAt = new Date(a.createdAt)
-    const bCreatedAt = new Date(b.createdAt)
+  const orderedTasks = 
+    [...tasks]
+      .filter((task) => !task.isCompleted)
+      .sort((a, b) => {
+        const aCreatedAt = new Date(a.createdAt)
+        const bCreatedAt = new Date(b.createdAt)
 
-    if (aCreatedAt > bCreatedAt) return -1
-    if (aCreatedAt < bCreatedAt) return 1
+        if (aCreatedAt > bCreatedAt) return -1
+        if (aCreatedAt < bCreatedAt) return 1
 
-    return 0
-  }).slice(0, 2)
+        return 0
+      })
+      .slice(0, 2)
 
   return (
     <div>
@@ -45,14 +48,18 @@ export default function Home() {
 
           <div className='home-bottom-section'>
             <div className='home-recent-tasks'>
-            
-              {orderedTasks.map((task, i) => (
-                <HomeTask task={task} key={task.id}/>
-              ))}
+              {
+                orderedTasks.map((task, i) => (
+                  <HomeTask task={task} key={task.id}/>
+                ))
+              }
             </div>
 
             <div className='home-button-wrapper'>
-              <button className='home-add-task-button' onClick={() => dispatch(addPopup('add'))}>
+              <button
+                className='home-add-task-button'
+                onClick={() => dispatch(addPopup('add'))}
+              >
                 <PlusIcon color="#5468E7"/>
 
                 Task
@@ -69,6 +76,7 @@ export default function Home() {
 
         <div className="home-right-section">
           <ProgressBar />
+
           <Leaderboard />
         </div>
       </div>

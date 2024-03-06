@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
+import { useState, useEffect, useRef } from 'react'
 import {
   select,
   area,
@@ -132,8 +132,8 @@ export default function ProgressGraph() {
             .attr('stroke', 'white')
             .attr('stroke-width', '2')
             .attr('cursor', 'pointer')
-            .on('mouseenter', (event, d) => {
-              const i = svg.selectAll('circle').nodes().indexOf(event.target)
+            .on('mouseenter', (e, d) => {
+              const i = svg.selectAll('circle').nodes().indexOf(e.target)
               const backgroundSize = calculateBackgroundSize(d)
 
               // remove tooltip if user is fast enough to go from one circle to another in the transition duration
@@ -206,19 +206,22 @@ export default function ProgressGraph() {
           svg
             .transition()
             .duration(300)
-            .attr("opacity", 1)
+            .attr('opacity', 1)
         })
+
       const calculateBackgroundSize = (text) => {
         const dummyText = svg.append('text').text(text)
         const textWidth = dummyText.node().getBBox().width
         const textHeight = dummyText.node().getBBox().height
         dummyText.remove()
+
         return {
           width: textWidth + 5,
           height: textHeight
         }
       }
     }
+    
     createGraph(currentGraph)
   }, [points, currentGraph])
 

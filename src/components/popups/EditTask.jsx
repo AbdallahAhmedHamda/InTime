@@ -1,40 +1,41 @@
-import { useEffect, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { addPopup, removePopup, setUncroppedImage, setCroppedImage } from '../../features/navigation/navigationSlice'
+import { addTaskId } from '../../features/user/userSlice'
+import { addTask } from '../../features/tasks/tasksSlice'
+import { useEffect, useState, useRef } from 'react'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker'
-import { addPopup, removePopup, setUncroppedImage, setCroppedImage } from '../../features/navigation/navigationSlice'
-import { addTask } from '../../features/tasks/tasksSlice'
-import dayjs from 'dayjs'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { nanoid } from '@reduxjs/toolkit'
 import Select from 'react-select'
-import '../../css/components/AddEditTask.css'
+import ordinal from 'ordinal'
+import dayjs from 'dayjs'
 import calendarIcon from '../../assets/images/calendar-icon.png'
 import CameraIcon from '../../svg/others/CameraIcon'
-import FlagIcon from '../../svg/others/FlagIcon'
 import CloseIcon from '../../svg/others/CloseIcon'
-import { nanoid } from '@reduxjs/toolkit'
-import ordinal from 'ordinal'
+import FlagIcon from '../../svg/others/FlagIcon'
+import '../../css/components/AddEditTask.css'
 
 const options = [
   {
-    value: "1",
+    value: 1,
     label: <FlagIcon priority={1} />
   },
   {
-    value: "2",
+    value: 2,
     label: <FlagIcon priority={2} />
   },
   {
-    value: "3",
+    value: 3,
     label: <FlagIcon priority={3} />
   },
   {
-    value: "4",
+    value: 4,
     label: <FlagIcon priority={4} />
   }
 ]
 
-export default function AddTask() {
+export default function EditTask() {
   const showPopup = useSelector((state) => state.navigation.popups)
   const croppedImage = useSelector((state) => state.navigation.croppedImage)
 
@@ -46,22 +47,26 @@ export default function AddTask() {
     tag: '',
     flag: options[0],
     image: '',
-    startDate: dayjs().add(30 - dayjs().minute() % 30, 'minutes'),
-    endDate: dayjs().add(90 - dayjs().minute() % 30, 'minutes'),
+    startDate: dayjs()
+      .startOf('minute')
+      .add(30 - dayjs().minute() % 30, 'minutes'),
+    endDate: dayjs()
+      .startOf('minute')
+      .add(90 - dayjs().minute() % 30, 'minutes'),
     steps: []
   })
   const [coverHovered, setCoverHovered] = useState(false)
 
   const imageInputRef = useRef()
 
-  // set task cover when its cropped
+  // remove saved images from redux when popup unmounts
   useEffect(() => {
-    if (croppedImage) {
-      setValues(prevState => ({...prevState, image: croppedImage}))
+    return () => {
+      dispatch(setUncroppedImage(''))
+      dispatch(setCroppedImage(''))
     }
-    dispatch(setCroppedImage(''))
     // eslint-disable-next-line
-  }, [croppedImage])
+  }, [])
 
   // disable page scrollbars when popup is active
   useEffect(() => {
@@ -70,23 +75,21 @@ export default function AddTask() {
     return () => {
       document.body.style.overflow = 'auto'
     }
-  }, [showPopup])  
-
-  // handle clicking on date and time icons so each can open it corresponding picker
-  const handleIconClick = (position) => {
-    document.querySelector(`.${position}-date .MuiInputBase-root`).click()
-  }
-
-  // handle inputs change
-  const onTextInputChange = (event) => {
-    setValues({...values, [event.target.name]: event.target.value})
-  }
+  }, [showPopup])
+  
+  // set task cover when its cropped
+  useEffect(() => {
+    if (croppedImage) {
+      setValues(prevState => ({ ...prevState, image: croppedImage }))
+    }
+  }, [croppedImage])
 
   // handle image selection
-  const onImageSelection = (event) => {
-    const file = event.target.files[0]
+  const onImageSelection = (e) => {
+    const file = e.target.files[0]
     const sizeInMB = file.size / 1024 / 1024
-    event.target.value = null
+    e.target.value = null
+
     if (!file?.type.startsWith('image/')) {
       dispatch(addPopup('not image'))
     } else {
@@ -96,8 +99,9 @@ export default function AddTask() {
         const img = new Image()
         img.src = reader.result
 
-        img.onload = (event) => {
-          const { naturalWidth, naturalHeight } = event.currentTarget
+        img.onload = (e) => {
+          const { naturalWidth, naturalHeight } = e.currentTarget
+
           if (naturalWidth < 227 || naturalHeight < 121) {
             dispatch(addPopup('small task cover'))
           } else if (sizeInMB > 3) {
@@ -112,10 +116,15 @@ export default function AddTask() {
       reader.readAsDataURL(file)
     }
   }
+
+  // handle clicking on date and time icons so each can open it corresponding picker
+  const handleIconClick = (position) => {
+    document.querySelector(`.${position}-date .MuiInputBase-root`).click()
+  }
  
-  // add step
   const addStep = (e) => {
     e.preventDefault()
+
     if (values.steps.length === 0) {
       setValues({
         ...values,
@@ -135,39 +144,51 @@ export default function AddTask() {
     } else {
       setValues({
         ...values,
-        steps: [...values.steps, {
-          id: nanoid(),
-          content: '',
-          isCompleted: false
-        }]
+        steps: [
+          ...values.steps,
+          {
+            id: nanoid(),
+            content: '',
+            isCompleted: false
+
+          }
+        ]
       })
     }
   }
 
-  // remove step
   const removeStep = (id) => {
     setValues({
       ...values,
-      steps: values.steps.filter(step => step.id !== id)
+      steps: values.steps.filter((step) => step.id !== id)
     })
   }
   
-  // select image when user clicks on a specific onject
   const selectImage = () => {
     imageInputRef.current.click()
   }
 
-  // handle form submit
-  const handleSubmit = (event) => {
-    event.preventDefault()
+  const onTextInputChange = (e) => {
+    setValues({ ...values, [e.target.name]: e.target.value })
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+
     if (values.steps.length === 1) {
       dispatch(addPopup('only one step'))
     } else {
+      const taskId = nanoid()
+
+      dispatch(addTaskId(taskId))
       dispatch(addTask({
+        id: taskId,
+        createdAt: dayjs().toISOString(),
         ...values,
         flag: values.flag.value,
         startDate: values.startDate.toISOString(),
-        endDate: values.endDate.toISOString()
+        endDate: values.endDate.toISOString(),
+        isCompleted: false
       }))
       dispatch(removePopup('add'))
     }
@@ -186,7 +207,7 @@ export default function AddTask() {
         />
       </div>
       
-      <div  className="add-content">
+      <div  className='add-content'>
         <div className='input-block'>
           <p>Title</p>
 
@@ -225,49 +246,49 @@ export default function AddTask() {
             </div>
 
             <input
-              type="file"
-              accept="image/png, image/jpeg"
+              type='file'
+              accept='image/png, image/jpeg'
               onChange={onImageSelection}
               hidden={true}
               ref={imageInputRef}
             />
 
-            {!values.image
-            ?
-            <div className='task-cover-select' >
-              <span onClick={selectImage}>
-                Select Image
-              </span>
-            </div>
-            :
-            <div 
-              className='task-cover-container'
-              onMouseEnter={() => setCoverHovered(true)}
-              onMouseLeave={() => setCoverHovered(false)}
-            >
-              <img 
-                alt='cover' 
-                src={values.image}
-                className='task-cover-input'
-              />
-              {coverHovered
-              ?
-              <div>
-                <CloseIcon
-                  className='task-cover-remove'
-                  onClick={() => {
-                    setValues({
-                      ...values,
-                      image: ''
-                    })
-                  }}
+            {
+              !values.image ?
+              <div className='task-cover-select' >
+                <span onClick={selectImage}>
+                  Select Image
+                </span>
+              </div> :
+              <div 
+                className='task-cover-container'
+                onMouseEnter={() => setCoverHovered(true)}
+                onMouseLeave={() => setCoverHovered(false)}
+              >
+                <img 
+                  alt='cover' 
+                  src={values.image}
+                  className='task-cover-input'
                 />
-                <CameraIcon selectImage={selectImage}/>
+                {
+                  coverHovered ?
+                  <div>
+                    <CloseIcon
+                      className='task-cover-remove'
+                      onClick={() => {
+                        dispatch(setUncroppedImage(''))
+                        setValues({
+                          ...values,
+                          image: ''
+                        })
+                      }}
+                    />
+
+                    <CameraIcon selectImage={selectImage}/>
+                  </div> :
+                  ''
+                }
               </div>
-              :
-              ''
-              }
-            </div>
             }
           </div>
 
@@ -275,6 +296,7 @@ export default function AddTask() {
             <p>Tag</p>
 
             <input
+              required={true}
               className='tag-input'
               type='text'
               name='tag'
@@ -290,7 +312,10 @@ export default function AddTask() {
             <Select
               isSearchable={false}
               options={options}
-              styles={{ menuPortal: (base) => ({ ...base, zIndex: 160}), option: (base) => ({ ...base, display: 'flex', cursor: 'pointer' }) }}
+              styles={{
+                menuPortal: (base) => ({ ...base, zIndex: 160}),
+                option: (base) => ({ ...base, display: 'flex', cursor: 'pointer' })
+              }}
               menuPortalTarget={document.body}
               menuShouldScrollIntoView={false}
               menuPosition='fixed'
@@ -313,21 +338,30 @@ export default function AddTask() {
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <MobileDateTimePicker
                   className='start-date'
-                  format="MM/D/YYYY [at] h:mm a"
+                  format='MM/D/YYYY [at] h:mm a'
                   value={values.startDate}
                   disableHighlightToday={true}
                   showDaysOutsideCurrentMonth={true}
                   slotProps={{ field: { shouldRespectLeadingZeros: true } }}
                   onChange={(newStartDate) =>
                     setValues({
-                    ...values,
-                    startDate: newStartDate,
-                    endDate: newStartDate > values.endDate ? newStartDate.add(60, 'minutes') : values.endDate
-                  })}
+                      ...values,
+                      startDate: newStartDate,
+                      endDate:
+                        newStartDate > values.endDate
+                          ? newStartDate.add(60, 'minutes')
+                          : values.endDate
+                    }
+                  )}
                 />
               </LocalizationProvider>
           
-              <img src={calendarIcon} alt="Date picker opening icon" className='date-time-icon' onClick={() => handleIconClick('start')}/>
+              <img
+                src={calendarIcon}
+                alt='Date picker opening icon'
+                className='date-time-icon'
+                onClick={() => handleIconClick('start')}
+              />
             </div>
           </div>
           
@@ -338,7 +372,7 @@ export default function AddTask() {
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <MobileDateTimePicker
                   className='end-date'
-                  format="MM/D/YYYY [at] h:mm a"
+                  format='MM/D/YYYY [at] h:mm a'
                   value={values.endDate}
                   disableHighlightToday={true}
                   showDaysOutsideCurrentMonth={true}
@@ -351,37 +385,44 @@ export default function AddTask() {
                 />
               </LocalizationProvider>
           
-              <img src={calendarIcon} alt="Date picker opening icon" className='date-time-icon' onClick={() => handleIconClick('end')}/>
+              <img
+                src={calendarIcon}
+                alt='Date picker opening icon'
+                className='date-time-icon'
+                onClick={() => handleIconClick('end')}
+              />
             </div>
           </div>
         </div>
 
-        {values.steps.map((step, i) => (
-          <div key={step.id} className='input-block'>
-            <p>step {i + 1}</p>
+        {
+          values.steps.map((step, i) => (
+            <div key={step.id} className='input-block'>
+              <p>step {i + 1}</p>
 
-            <div className='step-wrapper'>
-              <input
-                required={true}
-                className='step-input'
-                type='text'
-                name='title'
-                value={values.steps[i].content}
-                onChange={(event) => {
-                  const steps = values.steps
-                  steps[i].content = event.target.value
-                  setValues({ ...values, steps: steps })
-                }}
-                placeholder={`My ${ordinal(i + 1)} step is...`}
-              />
+              <div className='step-wrapper'>
+                <input
+                  required={true}
+                  className='step-input'
+                  type='text'
+                  name='title'
+                  value={values.steps[i].content}
+                  onChange={(e) => {
+                    const steps = values.steps
+                    steps[i].content = e.target.value
+                    setValues({ ...values, steps: steps })
+                  }}
+                  placeholder={`My ${ordinal(i + 1)} step is...`}
+                />
 
-              <CloseIcon
-                className='remove-step'
-                onClick={() => removeStep(step.id)}
-              />
+                <CloseIcon
+                  className='remove-step'
+                  onClick={() => removeStep(step.id)}
+                />
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        }
 
         <div className='input-block'>
           {values.steps.length === 0 ? <p>Steps</p> : ''}

@@ -4,7 +4,11 @@ import { createSlice } from'@reduxjs/toolkit'
 const trimPath = (pathname) => {
 	const firstSlashIndex = pathname.indexOf('/')
 	const secondSlashIndex = pathname.indexOf('/', firstSlashIndex + 1)
-	const trimmedString = (secondSlashIndex !== -1) ? pathname.substring(firstSlashIndex + 1, secondSlashIndex) : pathname.substring(firstSlashIndex + 1)
+	const trimmedString =
+		(secondSlashIndex !== -1)
+			? pathname.substring(firstSlashIndex + 1, secondSlashIndex)
+			: pathname.substring(firstSlashIndex + 1)
+			
 	return(trimmedString)
 }
 

@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux'
 
-export default function SideNotification() {
+export default function SideNotificationsIcon() {
   const currentPage = useSelector((state) => state.navigation.currentPage)
   const color = (currentPage === 'notifications') ? "#5468E7" : "black"
 

@@ -1,6 +1,6 @@
-import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { setCurrentPage, removeAllPopups } from '../features/navigation/navigationSlice'
+import { useEffect } from 'react'
 import '../css/pages/Settings.css'
 
 export default function Settings() {

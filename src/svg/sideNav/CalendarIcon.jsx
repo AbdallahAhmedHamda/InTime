@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux'
 
-export default function SideCalendar() {
+export default function CalendarIcon() {
   const currentPage = useSelector((state) => state.navigation.currentPage)
   const color = (currentPage === 'calendar') ? "#5468E7" : "black"
   

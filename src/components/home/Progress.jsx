@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import CompletedIcon from '../../svg/home/CompletedIcon'
+import { useState, useEffect } from 'react'
 import InProgressIcon from '../../svg/home/InProgressIcon'
+import CompletedIcon from '../../svg/home/CompletedIcon'
 import TotalIcon from '../../svg/home/TotalIcon'
 
 const calculatePercentageDifference = (thisMonth, lastMonth) => {
-  // Handle division by zero
+  // handle division by zero
   if (lastMonth === 0) {
     return thisMonth * 100
   } else if (thisMonth === 0) {
@@ -15,7 +15,10 @@ const calculatePercentageDifference = (thisMonth, lastMonth) => {
   return (
     lastMonth === 0 ? thisMonth * 100 :
     thisMonth === 0 ? lastMonth * -100 :
-    parseFloat(((thisMonth - lastMonth / lastMonth) * 100).toFixed(2))
+    parseFloat(
+      ((thisMonth - lastMonth / lastMonth) * 100)
+      .toFixed(2)
+    )
   )
 }
 
@@ -43,24 +46,44 @@ export default function Progess() {
     const updatePercentage = (thisMonth, lastMonth, percentageName) => {
       setPercentages(prevState => ({
         ...prevState,
-        [percentageName]: (
-          lastMonth === 0 ? thisMonth * 100 :
-          thisMonth === 0 ? lastMonth * -100 :
-          parseFloat(((thisMonth - lastMonth) / lastMonth * 100).toFixed(2))
-        )
+        [percentageName]:
+          lastMonth === 0
+            ? thisMonth * 100
+            : thisMonth === 0 
+              ? lastMonth * -100 
+              : parseFloat(
+                  ((thisMonth - lastMonth) / lastMonth * 100)
+                  .toFixed(2)
+                )
       }))
     }
 
-    updatePercentage(tasks.completed.thisMonth, tasks.completed.lastMonth, 'completed')
+    updatePercentage(
+      tasks.completed.thisMonth,
+      tasks.completed.lastMonth,
+      'completed'
+    )
 
-    updatePercentage(tasks.inProgress.thisMonth, tasks.inProgress.lastMonth, 'inProgress')
+    updatePercentage(
+      tasks.inProgress.thisMonth,
+      tasks.inProgress.lastMonth,
+      'inProgress'
+    )
 
-    updatePercentage(totalPoints.thisMonth, totalPoints.lastMonth, 'points')
+    updatePercentage(
+      totalPoints.thisMonth,
+      totalPoints.lastMonth,
+      'points'
+    )
   }, [tasks, totalPoints])
 
   const percentageStyles = (percentage) => {
     const style = {
-      color: percentage > 0 ? '#41D23F' : percentage < 0 ? '#BE1622' : '#F48C06'
+      color: percentage > 0
+        ? '#41D23F'
+        : percentage < 0
+          ? '#BE1622'
+          : '#F48C06'
     }
     return style
   }
@@ -80,10 +103,12 @@ export default function Progess() {
 
         <p className='user-monthly-percentage'>
           <span className='percentage' style={percentageStyles(percentages.completed)}>
-            {(percentages.completed > 0) && '+'}
-            {percentages.completed}%
+            {
+              percentages.completed > 0 && '+'
+            }
+            {percentages.completed}
+            %
           </span>
-
           This Month
         </p>
       </div>
@@ -101,10 +126,12 @@ export default function Progess() {
 
         <p className='user-monthly-percentage'>
           <span className='percentage' style={percentageStyles(percentages.inProgress)}>
-            {(percentages.inProgress > 0) && '+'}
-            {percentages.inProgress}%
+            {
+              percentages.inProgress > 0 && '+'
+            }
+            {percentages.inProgress}
+            %
           </span>
-
           This Month
         </p>
       </div>
@@ -122,10 +149,12 @@ export default function Progess() {
 
         <p className='user-monthly-percentage'>
           <span className='percentage' style={percentageStyles(percentages.points)}>
-            {(percentages.points > 0) && '+'}
-            {percentages.points}%
+            {
+              percentages.points > 0 && '+'
+            }
+            {percentages.points}
+            %
           </span>
-          
           This Month
         </p>
       </div>
