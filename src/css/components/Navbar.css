@@ -6,7 +6,7 @@ header {
   justify-content: space-between;
   align-items: center;
   gap: 15px;
-  width: 100%;
+  width: 100vw;
   min-width: fit-content;
   position: fixed;
   z-index: 10;
@@ -25,6 +25,7 @@ header {
   font-size: 25px;
   font-weight: 700;
   left: -8px;
+  text-wrap: nowrap;
 }
 
 .app-logo-text > span {

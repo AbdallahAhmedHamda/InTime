@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useTransition, animated } from 'react-spring'
 import VerifyCompletionMessage from './popups/VerifyCompletionMessage'
@@ -7,6 +8,17 @@ import Message from './popups/Message'
 
 export default function Transitions() {
   const popups = useSelector((state) => state.navigation.popups)
+
+  // disable page scrollbars when popus are active
+  useEffect(() => {
+    if (popups.length !== 0) {
+      document.body.style.overflow = 'hidden'
+    }
+    
+    return () => {
+      document.body.style.overflow = 'auto'
+    }
+  }, [popups])
 
   const firstDimTransition = useTransition(popups[0], {
     from: { backgroundColor: 'rgba(0, 0, 0, 0)', pointerEvents: 'none' },

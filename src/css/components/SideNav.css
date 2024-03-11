@@ -9,6 +9,7 @@
   z-index: 10;
   direction: rtl;
   transition: width 0.3s ease;
+  padding: 8px 0;
 }
 
 .side-nav-container::-webkit-scrollbar {

@@ -1,7 +1,8 @@
 import { createSlice } from'@reduxjs/toolkit'
 
 const initialState = {
-  tasks: []
+  tasks: [],
+  tags: []
 }
 
 const tasksSlice = createSlice({
@@ -11,34 +12,50 @@ const tasksSlice = createSlice({
     addTask: (state, action) => {
       state.tasks.push(action.payload)
     },
+    addTag: (state, action) => {
+      const tag = action.payload.toLowerCase()
+      if (!state.tags.includes(tag)) {
+        state.tags.push(tag)
+      }
+    },
     editTask: (state, action) => {
       const { taskId, updatedTask } = action.payload
-      const taskIndex = state.tasks.findIndex(task => task.id === taskId)
-      state.tasks[taskIndex] = {...state.tasks[taskIndex], ...updatedTask}
+      const taskIndex = state.tasks.findIndex((task) => task.id === taskId)
+      state.tasks[taskIndex] = {
+        ...state.tasks[taskIndex],
+        ...updatedTask
+      }
     },
     finishTask: (state, action) => {
-      const taskIndex = state.tasks.findIndex(task => task.id === action.payload)
-      state.tasks[taskIndex] = {...state.tasks[taskIndex], isCompleted: true}
+      const taskIndex = state.tasks.findIndex((task) => task.id === action.payload)
+      state.tasks[taskIndex] = {
+        ...state.tasks[taskIndex],
+        isCompleted: true
+      }
     },
     finishStep: (state, action) => {
       const { taskId, stepId } = action.payload
-      const taskIndex = state.tasks.findIndex(task => task.id === taskId)
-      const stepIndex = state.tasks[taskIndex].steps.findIndex(step => step.id === stepId)
-      state.tasks[taskIndex].steps[stepIndex] = {...state.tasks[taskIndex].steps[stepIndex], isCompleted: true}
+      const taskIndex = state.tasks.findIndex((task) => task.id === taskId)
+      const stepIndex = state.tasks[taskIndex].steps.findIndex((step) => step.id === stepId)
+      state.tasks[taskIndex].steps[stepIndex] = {
+        ...state.tasks[taskIndex].steps[stepIndex],
+        isCompleted: true
+      }
     },
     removeTask: (state, action) => {
-      state.tasks = state.tasks.filter(task => task.id !== action.payload)
+      state.tasks = state.tasks.filter((task) => task.id !== action.payload)
     },
     removeStep: (state, action) => {
       const { taskId, stepId } = action.payload
-      const taskIndex = state.tasks.findIndex(task => task.id === taskId)
-      state.tasks[taskIndex].steps = state.tasks[taskIndex].steps.filter(step => step.id !== stepId)
+      const taskIndex = state.tasks.findIndex((task) => task.id === taskId)
+      state.tasks[taskIndex].steps = state.tasks[taskIndex].steps.filter((step) => step.id !== stepId)
     }
   }
 })
 
 export const {
   addTask,
+  addTag,
   editTask,
   finishTask,
   finishStep,

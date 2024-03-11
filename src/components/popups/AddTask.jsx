@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { addPopup, removePopup, setUncroppedImage, setCroppedImage } from '../../features/navigation/navigationSlice'
 import { addTaskId } from '../../features/user/userSlice'
 import { addTask } from '../../features/tasks/tasksSlice'
+import { addTag } from '../../features/tasks/tasksSlice'
 import { useEffect, useState, useRef } from 'react'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker'
@@ -10,6 +11,7 @@ import { nanoid } from '@reduxjs/toolkit'
 import Select from 'react-select'
 import ordinal from 'ordinal'
 import dayjs from 'dayjs'
+import colors from '../../data/colors'
 import calendarIcon from '../../assets/images/calendar-icon.png'
 import CameraIcon from '../../svg/others/CameraIcon'
 import CloseIcon from '../../svg/others/CloseIcon'
@@ -36,7 +38,7 @@ const options = [
 ]
 
 export default function AddTask() {
-  const showPopup = useSelector((state) => state.navigation.popups)
+  const allTags = useSelector((state) => state.tasks.tags)
   const croppedImage = useSelector((state) => state.navigation.croppedImage)
 
   const dispatch = useDispatch()
@@ -44,7 +46,7 @@ export default function AddTask() {
   const [values, setValues] = useState({
     title: '',
     disc: '',
-    tag: '',
+    tag: { name: '', color: ''},
     flag: options[0],
     image: '',
     startDate: dayjs()
@@ -68,15 +70,6 @@ export default function AddTask() {
     // eslint-disable-next-line
   }, [])
 
-  // disable page scrollbars when popup is active
-  useEffect(() => {
-    document.body.style.overflow = 'hidden'
-    
-    return () => {
-      document.body.style.overflow = 'auto'
-    }
-  }, [showPopup])
-  
   // set task cover when its cropped
   useEffect(() => {
     if (croppedImage) {
@@ -172,6 +165,23 @@ export default function AddTask() {
     setValues({ ...values, [e.target.name]: e.target.value })
   }
 
+  const setTagColor = () => {
+    const tag = values.tag
+    const tagName = values.tag.name.toLowerCase()
+
+    if (allTags.includes(tagName)) {
+      const tagIndex = allTags.indexOf(tagName)
+      tag.color = colors[tagIndex % 50]
+
+      setValues({ ...values, tag: tag })
+    } else {
+      const tag = values.tag
+      tag.color = colors[allTags.length]
+      
+      setValues({ ...values, tag: tag })
+    }
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
 
@@ -180,7 +190,10 @@ export default function AddTask() {
     } else {
       const taskId = nanoid()
 
+      setTagColor()
+
       dispatch(addTaskId(taskId))
+      dispatch(addTag(values.tag.name))
       dispatch(addTask({
         id: taskId,
         createdAt: dayjs().toISOString(),
@@ -300,8 +313,12 @@ export default function AddTask() {
               className='tag-input'
               type='text'
               name='tag'
-              value={values.tag}
-              onChange={onTextInputChange}
+              value={values.tag.name}
+              onChange={(e) => {
+                const tag = values.tag
+                tag.name = e.target.value
+                setValues({ ...values, tag: tag })
+              }}
               placeholder='Add tag...'
             />
           </div>
