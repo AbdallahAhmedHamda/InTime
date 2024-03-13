@@ -1,8 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { addPopup, removePopup, setUncroppedImage, setCroppedImage } from '../../features/navigation/navigationSlice'
+import { addTask, addTag } from '../../features/tasks/tasksSlice'
 import { addTaskId } from '../../features/user/userSlice'
-import { addTask } from '../../features/tasks/tasksSlice'
-import { addTag } from '../../features/tasks/tasksSlice'
 import { useEffect, useState, useRef } from 'react'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker'
@@ -166,7 +165,7 @@ export default function AddTask() {
   }
 
   const setTagColor = () => {
-    const tag = values.tag
+    const tag = { ...values.tag }
     const tagName = values.tag.name.toLowerCase()
 
     if (allTags.includes(tagName)) {
@@ -175,7 +174,6 @@ export default function AddTask() {
 
       setValues({ ...values, tag: tag })
     } else {
-      const tag = values.tag
       tag.color = colors[allTags.length]
       
       setValues({ ...values, tag: tag })
@@ -206,6 +204,11 @@ export default function AddTask() {
       dispatch(removePopup('add'))
     }
   }
+
+  const today = dayjs()
+    .startOf('minute')
+    .add(30 - dayjs().minute() % 30, 'minutes')
+  const minEndDateTime = today.isAfter(values.startDate) ? today : values.startDate
     
   return (
     <form className='add-popup' onSubmit={handleSubmit}>
@@ -315,9 +318,8 @@ export default function AddTask() {
               name='tag'
               value={values.tag.name}
               onChange={(e) => {
-                const tag = values.tag
-                tag.name = e.target.value
-                setValues({ ...values, tag: tag })
+                const updatedTag = { ...values.tag, name: e.target.value }
+                setValues({ ...values, tag: updatedTag })
               }}
               placeholder='Add tag...'
             />
@@ -393,7 +395,7 @@ export default function AddTask() {
                   value={values.endDate}
                   disableHighlightToday={true}
                   showDaysOutsideCurrentMonth={true}
-                  minDateTime={values.startDate}
+                  minDateTime={minEndDateTime}
                   slotProps={{ field: { shouldRespectLeadingZeros: true } }}
                   onChange={(newEndDate) => setValues({
                     ...values,
@@ -425,9 +427,9 @@ export default function AddTask() {
                   name='title'
                   value={values.steps[i].content}
                   onChange={(e) => {
-                    const steps = values.steps
-                    steps[i].content = e.target.value
-                    setValues({ ...values, steps: steps })
+                    const updatedSteps = [...values.steps]
+                    updatedSteps[i] = { ...updatedSteps[i], content: e.target.value }
+                    setValues({ ...values, steps: updatedSteps })
                   }}
                   placeholder={`My ${ordinal(i + 1)} step is...`}
                 />

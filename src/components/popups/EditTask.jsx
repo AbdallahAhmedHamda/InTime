@@ -1,8 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { addPopup, removePopup, setUncroppedImage, setCroppedImage } from '../../features/navigation/navigationSlice'
-import { addTaskId } from '../../features/user/userSlice'
-import { addTask } from '../../features/tasks/tasksSlice'
-import { addTag } from '../../features/tasks/tasksSlice'
+import { editTask, addTag } from '../../features/tasks/tasksSlice'
 import { useEffect, useState, useRef } from 'react'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker'
@@ -37,25 +35,17 @@ const options = [
   }
 ]
 
-export default function EditTask() {
+export default function EditTask({ currentTask }) {
   const allTags = useSelector((state) => state.tasks.tags)
   const croppedImage = useSelector((state) => state.navigation.croppedImage)
 
   const dispatch = useDispatch()
 
   const [values, setValues] = useState({
-    title: '',
-    disc: '',
-    tag: { name: '', color: ''},
-    flag: options[0],
-    image: '',
-    startDate: dayjs()
-      .startOf('minute')
-      .add(30 - dayjs().minute() % 30, 'minutes'),
-    endDate: dayjs()
-      .startOf('minute')
-      .add(90 - dayjs().minute() % 30, 'minutes'),
-    steps: []
+    ...currentTask,
+    flag: options[currentTask.flag - 1],
+    startDate: dayjs(currentTask.startDate),
+    endDate: dayjs(currentTask.endDate),
   })
   const [coverHovered, setCoverHovered] = useState(false)
 
@@ -166,7 +156,7 @@ export default function EditTask() {
   }
 
   const setTagColor = () => {
-    const tag = values.tag
+    const tag = { ...values.tag }
     const tagName = values.tag.name.toLowerCase()
 
     if (allTags.includes(tagName)) {
@@ -175,7 +165,6 @@ export default function EditTask() {
 
       setValues({ ...values, tag: tag })
     } else {
-      const tag = values.tag
       tag.color = colors[allTags.length]
       
       setValues({ ...values, tag: tag })
@@ -188,39 +177,46 @@ export default function EditTask() {
     if (values.steps.length === 1) {
       dispatch(addPopup('only one step'))
     } else {
-      const taskId = nanoid()
+      const taskId = currentTask.id
 
       setTagColor()
 
-      dispatch(addTaskId(taskId))
       dispatch(addTag(values.tag.name))
-      dispatch(addTask({
-        id: taskId,
-        createdAt: dayjs().toISOString(),
-        ...values,
-        flag: values.flag.value,
-        startDate: values.startDate.toISOString(),
-        endDate: values.endDate.toISOString(),
-        isCompleted: false
-      }))
-      dispatch(removePopup('add'))
+      dispatch(editTask(
+        {
+          taskId,
+          updatedTask: {
+            ...values,
+            flag: values.flag.value,
+            startDate: values.startDate.toISOString(),
+            endDate: values.endDate.toISOString(),
+          }
+        }
+      ))
+      dispatch(removePopup('edit'))
     }
+
   }
+  
+  const today = dayjs()
+    .startOf('minute')
+    .add(30 - dayjs().minute() % 30, 'minutes')
+  const minEndDateTime = today.isAfter(values.startDate) ? today : values.startDate
     
   return (
-    <form className='add-popup' onSubmit={handleSubmit}>
+    <form className='edit-popup' onSubmit={handleSubmit}>
       <div className='popup-blue-heading' />
 
-      <div  className='add-heading'>
-        <p>Add new task</p>
+      <div  className='edit-heading'>
+        <p>Edit task</p>
 
         <CloseIcon
-          className='close-add'
-          onClick={() => dispatch(removePopup('add'))}
+          className='close-edit'
+          onClick={() => dispatch(removePopup('edit'))}
         />
       </div>
       
-      <div  className='add-content'>
+      <div  className='edit-content'>
         <div className='input-block'>
           <p>Title</p>
 
@@ -315,9 +311,8 @@ export default function EditTask() {
               name='tag'
               value={values.tag.name}
               onChange={(e) => {
-                const tag = values.tag
-                tag.name = e.target.value
-                setValues({ ...values, tag: tag })
+                const updatedTag = { ...values.tag, name: e.target.value }
+                setValues({ ...values, tag: updatedTag })
               }}
               placeholder='Add tag...'
             />
@@ -393,7 +388,7 @@ export default function EditTask() {
                   value={values.endDate}
                   disableHighlightToday={true}
                   showDaysOutsideCurrentMonth={true}
-                  minDateTime={values.startDate}
+                  minDateTime={minEndDateTime}
                   slotProps={{ field: { shouldRespectLeadingZeros: true } }}
                   onChange={(newEndDate) => setValues({
                     ...values,
@@ -425,9 +420,9 @@ export default function EditTask() {
                   name='title'
                   value={values.steps[i].content}
                   onChange={(e) => {
-                    const steps = values.steps
-                    steps[i].content = e.target.value
-                    setValues({ ...values, steps: steps })
+                    const updatedSteps = [...values.steps]
+                    updatedSteps[i] = { ...updatedSteps[i], content: e.target.value }
+                    setValues({ ...values, steps: updatedSteps })
                   }}
                   placeholder={`My ${ordinal(i + 1)} step is...`}
                 />
@@ -450,14 +445,14 @@ export default function EditTask() {
         </div>
 
         <div className='popup-button-wrapper'>
-          <button className='add-task-button'>Add</button>
+          <button className='edit-task-button'>Edit</button>
           
           <button 
             onClick={(e) => {
               e.preventDefault()
-              dispatch(removePopup('add'))}
+              dispatch(removePopup('edit'))}
             }
-            className='cancel-add-task-button'
+            className='cancel-edit-task-button'
           >
             Cancel
           </button>

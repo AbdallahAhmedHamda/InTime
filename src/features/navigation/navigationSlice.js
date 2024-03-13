@@ -15,9 +15,9 @@ const trimPath = (pathname) => {
 const initialState = {
 	currentPage: trimPath(window.location.pathname),
 	popups: [],
+	currentTask: '',
 	uncroppedImage: '',
 	croppedImage: '',
-	verifyData: ''
 }
 
 const navigationSlice = createSlice({
@@ -34,16 +34,18 @@ const navigationSlice = createSlice({
 			state.popups = state.popups.filter(popup => popup !== action.payload)
 		},
 		removeAllPopups: (state) => {
-			state.popups = []
+			if (state.popups.length !== 0) {
+				state.popups = []
+			}
+		},
+		setCurrentTask: (state, action) => {
+			state.currentTask = action.payload
 		},
 		setUncroppedImage: (state, action) => {
 			state.uncroppedImage = action.payload
 		},
 		setCroppedImage: (state, action) => {
 			state.croppedImage = action.payload
-		},
-		setVerifyData: (state, action) => {
-			state.verifyData = action.payload
 		}
 	}
 })
@@ -53,8 +55,8 @@ export const {
 	addPopup,
 	removePopup,
 	removeAllPopups,
+	setCurrentTask,
 	setUncroppedImage,
-	setCroppedImage,
-	setVerifyData
+	setCroppedImage
 } = navigationSlice.actions
 export default navigationSlice.reducer

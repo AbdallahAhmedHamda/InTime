@@ -1,0 +1,68 @@
+.error-message-popup {
+  position: relative;
+  overflow: auto;
+  min-height: fit-content;
+  min-width: fit-content;
+  background-color: white;
+  padding: 20px 25px;
+}
+
+.error-message-heading {
+  color: #5468E7;
+  font-size: 24px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  min-width: 100%;
+  justify-content: space-between;
+  text-wrap: nowrap;
+  gap: 100px;
+}
+
+.close-error-message{
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.close-error-message:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.error-message-content {
+  margin-top: 20px;
+}
+
+.message-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  margin-top: 25px;
+}
+
+.message-verify-button, .message-cancel-button {
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  width: 120px;
+  height: 40px;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  border-radius: 6px;
+  font-family: 'Poppins';
+  color: white;
+}
+
+.message-verify-button.blue {
+  background-color: #5468E7;
+}
+
+.message-verify-button.red {
+  background-color: #D20000;
+}
+
+.message-cancel-button {
+  background-color: white;
+  color: black;
+}

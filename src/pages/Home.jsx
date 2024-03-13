@@ -14,11 +14,12 @@ export default function Home() {
   
   const dispatch = useDispatch()
 
-  // change the current page so the app can rerender and update sidenav active icon
+  // change the current page so the app can rerender and update sidenav active icon and remove all popups
   useEffect(() => {
     dispatch(setCurrentPage(''))
     dispatch(removeAllPopups())
-  }, [dispatch])
+    // eslint-disable-next-line
+  }, [])
 
   const orderedTasks = 
     [...tasks]
@@ -49,7 +50,7 @@ export default function Home() {
           <div className='home-bottom-section'>
             <div className='home-recent-tasks'>
               {
-                orderedTasks.map((task, i) => (
+                orderedTasks.map((task) => (
                   <HomeTask task={task} key={task.id}/>
                 ))
               }

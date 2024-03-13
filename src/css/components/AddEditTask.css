@@ -2,12 +2,19 @@ button {
   width: fit-content ;
 }
 
-.add-popup {
+.add-popup, .edit-popup {
   position: relative;
   overflow: auto;
   min-height: fit-content;
   min-width: fit-content;
+}
+
+.add-popup {
   background-color: #EFEFEF;
+}
+
+.edit-popup {
+  background-color: #F3F4F8;
 }
 
 .popup-blue-heading {
@@ -15,7 +22,7 @@ button {
   height: 18px;
 }
 
-.add-heading {
+.add-heading, .edit-heading {
   color: #5468E7;
   font-size: 24px;
   font-weight: 600;
@@ -25,7 +32,7 @@ button {
   padding: 5px 20px 15px 20px;
 }
 
-.close-add {
+.close-add, .close-edit {
   width: 25px;
   height: 25px;
   cursor: pointer;
@@ -36,7 +43,7 @@ button {
   background-color: rgba(0, 0, 0, 0.3);
 }
 
-.add-content {
+.add-content, .edit-content {
   padding: 5px 20px 60px 20px;
   display: flex;
   flex-direction: column;
@@ -265,6 +272,8 @@ button {
   cursor: pointer;
 }
 
+
+
 .add-step-button:hover {
   color: #1976d2
 }
@@ -304,7 +313,10 @@ button {
   right: 20px;
 }
 
-.add-task-button, .cancel-add-task-button {
+.edit-task-button,
+.add-task-button,
+.cancel-edit-task-button,
+.cancel-add-task-button {
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   width: 120px;
   height: 40px;
@@ -315,11 +327,11 @@ button {
   font-family: 'Poppins';
 }
 
-.add-task-button {
+.edit-task-button, .add-task-button {
   background-color: #5468E7;
   color: white;
 }
 
-.cancel-add-task-button {
+.cancel-edit-task-button, .cancel-add-task-button {
   background-color: white;
 }

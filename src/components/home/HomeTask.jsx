@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux'
-import { addPopup, setVerifyData } from '../../features/navigation/navigationSlice'
+import { addPopup, setCurrentTask } from '../../features/navigation/navigationSlice'
 import HomeCompleteTaskIcon from '../../svg/home/HomeCompleteTaskIcon'
 import HomeTaskTimeIcon from '../../svg/home/HomeTaskTimeIcon'
 import FlagIcon from '../../svg/others/FlagIcon'
@@ -7,9 +7,15 @@ import FlagIcon from '../../svg/others/FlagIcon'
 export default function HomeTask({ task }) {
   const dispatch = useDispatch()
 
-  const verifyCompletion = () => {
+  const verifyCompletion = (e) => {
+    e.stopPropagation()
     dispatch(addPopup('verify task completion'))
-    dispatch(setVerifyData(task.id))
+    dispatch(setCurrentTask(task))
+  }
+
+  const openTaskPreview = () => {
+    dispatch(addPopup('task preview'))
+    dispatch(setCurrentTask(task))
   }
 
   const endDate = new Date(task.endDate).toLocaleString('en-US', {
@@ -38,7 +44,7 @@ export default function HomeTask({ task }) {
   }
   
   return (
-    <div className='home-task-container'>
+    <div className='home-task-container' onClick={openTaskPreview}>
       <div className='home-task-left'>
         <HomeCompleteTaskIcon verifyCompletion={verifyCompletion}/>
 

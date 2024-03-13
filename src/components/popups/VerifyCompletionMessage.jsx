@@ -1,25 +1,14 @@
-import { useDispatch, useSelector } from 'react-redux'
-import { removePopup, setVerifyData } from '../../features/navigation/navigationSlice'
+import { useDispatch } from 'react-redux'
+import { removePopup } from '../../features/navigation/navigationSlice'
 import { finishTask } from '../../features/tasks/tasksSlice'
-import { useEffect } from 'react'
 import CloseIcon from '../../svg/others/CloseIcon'
 import '../../css/components/Messages.css'
 
-export default function VerifyCompletionMessage() {
-  const taskId = useSelector((state) => state.navigation.verifyData)
-
+export default function VerifyCompletionMessage({ task }) {
   const dispatch = useDispatch()
 
-  // remove saved data from redux when popup unmounts
-  useEffect(() => {
-    return () => {
-      dispatch(setVerifyData(''))
-    }
-    // eslint-disable-next-line
-  }, [])
-
   const completeTask = () => {
-    dispatch(finishTask(taskId))
+    dispatch(finishTask(task.id))
     dispatch(removePopup('verify task completion'))    
   }
     
