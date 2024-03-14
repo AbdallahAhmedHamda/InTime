@@ -7,17 +7,17 @@ export default function Message({ popup, heading, content }) {
   const dispatch = useDispatch()
     
   return (
-    <div className='error-message-popup'>
-      <div  className='error-message-heading'>
+    <div className='message-popup'>
+      <div  className='message-heading'>
         <p>{heading}</p>
         
         <CloseIcon
-          className='close-error-message'
+          className='close-message'
           onClick={() => dispatch(removePopup(popup))}
         />
       </div>
 
-      <p className='error-message-content'>{content}</p>
+      <p className='message-content'>{content}</p>
     </div>
   )
 }

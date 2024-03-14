@@ -3,6 +3,7 @@ import { setCurrentTask } from '../features/navigation/navigationSlice'
 import { useEffect } from 'react'
 import { useTransition, animated } from 'react-spring'
 import VerifyCompletionMessage from './popups/VerifyCompletionMessage'
+import VerifyDeletionMessage from './popups/VerifyDeletionMessage'
 import TaskCoverCrop from './popups/TaskCoverCrop'
 import TaskPreview from './popups/TaskPreview'
 import EditTask from './popups/EditTask'
@@ -17,14 +18,19 @@ export default function Transitions() {
 
   // disable page scrollbars when popus are active
   useEffect(() => {
+    let clearReduxTimeout
+
     if (popups.length !== 0) {
       document.body.style.overflow = 'hidden'
     } else if (currentTask) {
-      dispatch(setCurrentTask(''))
+      clearReduxTimeout = setTimeout(() => {
+        dispatch(setCurrentTask(''))
+      }, 300)
     }
     
     return () => {
       document.body.style.overflow = 'auto'
+      clearTimeout(clearReduxTimeout)
     }
     // eslint-disable-next-line
   }, [popups])
@@ -130,6 +136,14 @@ export default function Transitions() {
               item === 'edit' ?
               <EditTask 
                 currentTask={currentTask}
+              /> :
+              item === 'verify task completion' ?
+              <VerifyCompletionMessage 
+                task={currentTask}
+              /> :
+              item === 'verify task deletion' ?
+              <VerifyDeletionMessage 
+                task={currentTask}
               /> :
               item === 'not image' ?
               <Message 

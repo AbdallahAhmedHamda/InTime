@@ -171,13 +171,11 @@ export default function AddTask() {
     if (allTags.includes(tagName)) {
       const tagIndex = allTags.indexOf(tagName)
       tag.color = colors[tagIndex % 50]
-
-      setValues({ ...values, tag: tag })
     } else {
       tag.color = colors[allTags.length]
-      
-      setValues({ ...values, tag: tag })
     }
+
+      return tag 
   }
 
   const handleSubmit = (e) => {
@@ -188,14 +186,13 @@ export default function AddTask() {
     } else {
       const taskId = nanoid()
 
-      setTagColor()
-
       dispatch(addTaskId(taskId))
       dispatch(addTag(values.tag.name))
       dispatch(addTask({
         id: taskId,
         createdAt: dayjs().toISOString(),
         ...values,
+        tag: setTagColor(),
         flag: values.flag.value,
         startDate: values.startDate.toISOString(),
         endDate: values.endDate.toISOString(),

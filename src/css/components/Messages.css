@@ -1,4 +1,4 @@
-.error-message-popup {
+.message-popup {
   position: relative;
   overflow: auto;
   min-height: fit-content;
@@ -7,7 +7,7 @@
   padding: 20px 25px;
 }
 
-.error-message-heading {
+.message-heading {
   color: #5468E7;
   font-size: 24px;
   font-weight: 600;
@@ -19,18 +19,18 @@
   gap: 100px;
 }
 
-.close-error-message{
+.close-message{
   width: 25px;
   height: 25px;
   cursor: pointer;
   border-radius: 50%;
 }
 
-.close-error-message:hover {
+.close-message:hover {
   background-color: rgba(0, 0, 0, 0.3);
 }
 
-.error-message-content {
+.message-content {
   margin-top: 20px;
 }
 

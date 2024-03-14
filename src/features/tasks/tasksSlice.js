@@ -33,13 +33,13 @@ const tasksSlice = createSlice({
         isCompleted: true
       }
     },
-    finishStep: (state, action) => {
+    toggleStep: (state, action) => {
       const { taskId, stepId } = action.payload
       const taskIndex = state.tasks.findIndex((task) => task.id === taskId)
       const stepIndex = state.tasks[taskIndex].steps.findIndex((step) => step.id === stepId)
       state.tasks[taskIndex].steps[stepIndex] = {
         ...state.tasks[taskIndex].steps[stepIndex],
-        isCompleted: true
+        isCompleted: !state.tasks[taskIndex].steps[stepIndex].isCompleted
       }
     },
     removeTask: (state, action) => {
@@ -58,7 +58,7 @@ export const {
   addTag,
   editTask,
   finishTask,
-  finishStep,
+  toggleStep,
   removeTask,
   removeStep
 } =  tasksSlice.actions

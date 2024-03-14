@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { addPopup, removePopup, setUncroppedImage, setCroppedImage } from '../../features/navigation/navigationSlice'
+import { addPopup, removePopup, setUncroppedImage, setCroppedImage, setCurrentTask } from '../../features/navigation/navigationSlice'
 import { editTask, addTag } from '../../features/tasks/tasksSlice'
 import { useEffect, useState, useRef } from 'react'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
@@ -162,13 +162,11 @@ export default function EditTask({ currentTask }) {
     if (allTags.includes(tagName)) {
       const tagIndex = allTags.indexOf(tagName)
       tag.color = colors[tagIndex % 50]
-
-      setValues({ ...values, tag: tag })
     } else {
       tag.color = colors[allTags.length]
-      
-      setValues({ ...values, tag: tag })
     }
+
+    return tag
   }
 
   const handleSubmit = (e) => {
@@ -178,24 +176,19 @@ export default function EditTask({ currentTask }) {
       dispatch(addPopup('only one step'))
     } else {
       const taskId = currentTask.id
-
-      setTagColor()
+      const updatedTask = {
+        ...values,
+        tag: setTagColor(),
+        flag: values.flag.value,
+        startDate: values.startDate.toISOString(),
+        endDate: values.endDate.toISOString()
+      }
 
       dispatch(addTag(values.tag.name))
-      dispatch(editTask(
-        {
-          taskId,
-          updatedTask: {
-            ...values,
-            flag: values.flag.value,
-            startDate: values.startDate.toISOString(),
-            endDate: values.endDate.toISOString(),
-          }
-        }
-      ))
+      dispatch(editTask({ taskId, updatedTask }))
+      dispatch(setCurrentTask(updatedTask))
       dispatch(removePopup('edit'))
     }
-
   }
   
   const today = dayjs()

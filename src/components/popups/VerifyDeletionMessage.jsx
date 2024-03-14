@@ -1,21 +1,23 @@
 import { useDispatch } from 'react-redux'
 import { removeAllPopups, removePopup } from '../../features/navigation/navigationSlice'
-import { finishTask } from '../../features/tasks/tasksSlice'
+import { removeTask } from '../../features/tasks/tasksSlice'
+import { removeTaskId } from '../../features/user/userSlice'
 import CloseIcon from '../../svg/others/CloseIcon'
 import '../../css/components/Messages.css'
 
-export default function VerifyCompletionMessage({ task }) {
+export default function VerifyDeletionMessage({ task }) {
   const dispatch = useDispatch()
 
-  const completeTask = () => {
-    dispatch(finishTask(task.id))
+  const deleteTask = () => {
+    dispatch(removeTask(task.id))
+    dispatch(removeTaskId(task.id))
     dispatch(removeAllPopups())  
   }
     
   return (
     <div className='message-popup'>
       <div  className='message-heading'>
-        <p>Complete Task</p>
+        <p>Delete Task</p>
         
         <CloseIcon
           className='close-message'
@@ -23,16 +25,16 @@ export default function VerifyCompletionMessage({ task }) {
         />
       </div>
 
-      <p className='message-content'>Are you sure you want to mark this task as completed?</p>
+      <p className='message-content'>Are you sure you want to Delete this task?</p>
 
       <div className='message-button-container'>
-        <button className='message-verify-button blue' onClick={completeTask}>
+        <button className='message-verify-button red' onClick={deleteTask}>
           YES
         </button>
 
         <button 
           className='message-cancel-button'
-          onClick={() => dispatch(removePopup('verify task completion'))}
+          onClick={() => dispatch(removePopup('verify task deletion'))}
         >
           NO
         </button>
