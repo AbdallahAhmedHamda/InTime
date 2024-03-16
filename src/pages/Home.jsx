@@ -36,11 +36,11 @@ export default function Home() {
       .slice(0, 2)
 
   return (
-    <div>
+    <div className='main-content'>
       <p className='page-name'>Home</p>
 
       <div className='home-container'>
-        <div>
+        <div className='home-left-section'>
           <Progress />
           
           <ProgressGraph />
@@ -61,13 +61,13 @@ export default function Home() {
                 className='home-add-task-button'
                 onClick={() => dispatch(addPopup('add'))}
               >
-                <PlusIcon color="#5468E7"/>
+                <PlusIcon color='#5468E7'/>
 
                 Task
               </button>
 
               <button className='home-add-project-button'>
-                <PlusIcon color="#F48C06"/>
+                <PlusIcon color='#F48C06'/>
 
                 Project
               </button>
@@ -75,7 +75,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="home-right-section">
+        <div className='home-right-section'>
           <ProgressBar />
 
           <Leaderboard />

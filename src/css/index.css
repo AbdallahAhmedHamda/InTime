@@ -22,6 +22,10 @@ a:visited {
   color: black;
 }
 
+button {
+  user-select: none;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -36,6 +40,10 @@ a:visited {
 ::-webkit-scrollbar-track {
   background-color: #D9D9D9;
   border-radius: 5px;
+}
+
+::-webkit-scrollbar-corner {
+  background-color: transparent;
 }
 
 .no-select {
@@ -67,11 +75,15 @@ a:visited {
 .popup {
   max-width: 85%;
   max-height: 85%;
-  position: fixed;
   overflow: auto;
+  position: fixed;
   left: 50%;
   transform: translate(-50%, -50%);
   user-select: text;
   box-shadow: 0px 5px 4px 0px rgba(0, 0, 0, 0.30);
   border-radius: 16px;
+}
+
+.has-overflow.popup {
+  box-shadow: none
 }

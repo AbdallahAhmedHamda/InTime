@@ -16,7 +16,7 @@
   min-width: 100%;
   justify-content: space-between;
   text-wrap: nowrap;
-  gap: 100px;
+  gap: 500px;
 }
 
 .close-task-preview {
@@ -30,15 +30,100 @@
   background-color: rgba(0, 0, 0, 0.3);
 }
 
-/* .message-button-container {
+.task-preview-upper-section {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 22px;
-  margin-top: 25px;
+  align-items: flex-start;
+  min-width: 100%;
+  justify-content: space-between;
+  text-wrap: nowrap;
+  gap: 100px;
+  margin-top: 22px;
 }
 
-.message-verify-button, .message-cancel-button {
+.task-preview-upper-left-section {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.task-preview-tag {
+  border-radius: 4px;
+  padding: 4px 11px;
+  color: #FFF;
+  font-family: "DM Sans";
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.task-preview-date-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.task-preview-date-container  > p {
+  color: rgba(0, 0, 0, 0.80);
+  font-size: 10px;
+  font-weight: 400;
+}
+
+.task-preview-cover-image {
+  height: 96.7px;
+  width: 182px;
+  object-fit: cover;
+  float: right;
+}
+
+.task-preview-disc {
+  white-space: pre-line;
+  margin-top: 22px;
+  color: rgba(0, 0, 0, 0.80);
+  font-weight: 300;
+  min-width: fit-content;
+}
+
+.task-preview-steps-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 22px;
+  gap: 22px;
+  width: fit-content;
+}
+
+.task-preview-step {
+  min-width: fit-content;
+  border-radius: 8px;
+  padding: 20px 84px 20px 20px;
+  border-style: solid;
+  border-width: 1px;
+  font-family: 'Inter';
+  position: relative;
+}
+
+.complete-step {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  user-select: none;
+}
+
+.task-preview-button-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 50px;
+  margin-top: 22px;
+}
+
+.task-preview-left-button-wrapper-section {
+  display: flex;
+  gap: 22px;
+  align-items: center;
+  justify-content: center;
+}
+
+.task-preview-button {
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   width: 120px;
   height: 40px;
@@ -50,15 +135,14 @@
   color: white;
 }
 
-.message-verify-button.blue {
+.task-preview-button.blue {
   background-color: #5468E7;
 }
 
-.message-verify-button.red {
-  background-color: #D20000;
+.task-preview-button.white {
+  color: black;
 }
 
-.message-cancel-button {
-  background-color: white;
-  color: black;
-} */
+.task-preview-button.red {
+  background-color: #D20000;
+}

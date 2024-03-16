@@ -14,7 +14,7 @@ export default function Calendar() {
   }, [])
 
   return (
-    <div>
+    <div className='main-content'>
       <p className='page-name'>Calendar</p>
     </div>
   )

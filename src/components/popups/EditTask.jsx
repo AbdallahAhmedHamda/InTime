@@ -35,7 +35,7 @@ const options = [
   }
 ]
 
-export default function EditTask({ currentTask }) {
+export default function EditTask({ currentTask, selectZIndex }) {
   const allTags = useSelector((state) => state.tasks.tags)
   const croppedImage = useSelector((state) => state.navigation.croppedImage)
 
@@ -105,8 +105,7 @@ export default function EditTask({ currentTask }) {
     document.querySelector(`.${position}-date .MuiInputBase-root`).click()
   }
  
-  const addStep = (e) => {
-    e.preventDefault()
+  const addStep = () => {
 
     if (values.steps.length === 0) {
       setValues({
@@ -155,6 +154,15 @@ export default function EditTask({ currentTask }) {
     setValues({ ...values, [e.target.name]: e.target.value })
   }
 
+  const onKeyDownHandler = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      if (e.target.classList.contains('disc-input') && values.disc.length < 300) {
+        setValues({ ...values, [e.target.name]: e.target.value + '\n' })
+      }
+    }
+  }
+
   const setTagColor = () => {
     const tag = { ...values.tag }
     const tagName = values.tag.name.toLowerCase()
@@ -197,7 +205,11 @@ export default function EditTask({ currentTask }) {
   const minEndDateTime = today.isAfter(values.startDate) ? today : values.startDate
     
   return (
-    <form className='edit-popup' onSubmit={handleSubmit}>
+    <form
+      className='edit-popup'
+      onSubmit={handleSubmit}
+      onKeyDown={onKeyDownHandler}
+    >
       <div className='popup-blue-heading' />
 
       <div  className='edit-heading'>
@@ -223,7 +235,8 @@ export default function EditTask({ currentTask }) {
             placeholder='Enter a title....'
           />
         </div>
-        <div className='input-block'>
+
+        <div className='input-block disc-input-block'>
           <div className='optional-input-wrapper'>
             <p>Description</p>
             
@@ -236,7 +249,19 @@ export default function EditTask({ currentTask }) {
             value={values.disc}
             onChange={onTextInputChange}
             placeholder='Add description....'
+            maxLength='300'
+            autoComplete='off'
+            autoCorrect='off'
+            autoCapitalize='off'
+            spellCheck='false'
+            data-gramm='false'
+            data-gramm_editor='false'
+            data-enable-grammarly='false'
           />
+
+          <p className='disc-max-letters'>
+            {values.disc.length}/300
+          </p>
         </div>
 
         <div className='third-line-wrapper'>
@@ -258,9 +283,9 @@ export default function EditTask({ currentTask }) {
             {
               !values.image ?
               <div className='task-cover-select' >
-                <span onClick={selectImage}>
+                <button type='button' onClick={selectImage}>
                   Select Image
-                </span>
+                </button>
               </div> :
               <div 
                 className='task-cover-container'
@@ -318,7 +343,7 @@ export default function EditTask({ currentTask }) {
               isSearchable={false}
               options={options}
               styles={{
-                menuPortal: (base) => ({ ...base, zIndex: 160}),
+                menuPortal: (base) => ({ ...base, zIndex: selectZIndex}),
                 option: (base) => ({ ...base, display: 'flex', cursor: 'pointer' })
               }}
               menuPortalTarget={document.body}
@@ -432,20 +457,22 @@ export default function EditTask({ currentTask }) {
         <div className='input-block'>
           {values.steps.length === 0 ? <p>Steps</p> : ''}
 
-          <button className='add-step-button' onClick={addStep}>
+          <button
+            type='button'
+            className='add-step-button'
+            onClick={addStep}
+          >
             Add step <span>+</span>
           </button>
         </div>
 
         <div className='popup-button-wrapper'>
-          <button className='edit-task-button'>Edit</button>
+          <button type='submit' className='edit-task-button'>Edit</button>
           
-          <button 
-            onClick={(e) => {
-              e.preventDefault()
-              dispatch(removePopup('edit'))}
-            }
+          <button
+            type='button'
             className='cancel-edit-task-button'
+            onClick={() => dispatch(removePopup('edit'))}
           >
             Cancel
           </button>

@@ -66,9 +66,12 @@ button {
   border: none;
   padding: 6px 10px;
   box-sizing: border-box;
-  border-radius: 6px;
   font-family: 'Poppins';
   font-weight: 300;
+}
+
+.input-block > input, .step-wrapper > input {
+  border-radius: 6px;
 }
 
 .input-block > input:focus, .input-block > textarea:focus, .step-wrapper > input:focus {
@@ -95,9 +98,23 @@ button {
   height: 36px;
 }
 
+.disc-input-block {
+  position: relative;
+}
+
 .disc-input {
   min-height: 120px;
   resize: none;
+}
+
+.disc-max-letters {
+  position: absolute;
+  right: 5px;
+  bottom: -25px;
+  color: #768396;
+  font-family: 'DM Sans';
+  font-size: 12px !important;
+  font-weight: 400;
 }
 
 .third-line-wrapper {
@@ -116,7 +133,7 @@ button {
   box-sizing: border-box;
 }
 
-.task-cover-select > span {
+.task-cover-select > button {
   border-radius: 5px;
   background: #5468E7;
   color: white;
@@ -125,6 +142,8 @@ button {
   font-family: 'Roboto';
   font-weight: 300;
   cursor: pointer;
+  outline: none;
+  border: none;
 }
 
 .task-cover-container {

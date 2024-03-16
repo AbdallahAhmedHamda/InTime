@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux'
 import { addPopup, removePopup, setCurrentTask } from '../../features/navigation/navigationSlice'
 import { toggleStep } from '../../features/tasks/tasksSlice'
-import { format } from "date-fns"
+import { format } from 'date-fns'
 import CompleteStepIcon from '../../svg/others/CompleteStepIcon'
 import CloseIcon from '../../svg/others/CloseIcon'
 import FlagIcon from '../../svg/others/FlagIcon'
@@ -27,6 +27,14 @@ export default function TaskPreview({ currentTask }) {
     }
   }
 
+  const stepStyles = (step) => {
+    return {
+      textDecoration: step.isCompleted ? 'line-through 1px' : 'none',
+      color: step.isCompleted ? '#00FF29' : 'rgba(18, 18, 18, 0.65)',
+      borderColor: step.isCompleted ? '#00FF29' : 'rgba(18, 18, 18, 0.65)'
+    }
+  }
+
   return (
     <div className='task-preview-popup'>
       <div  className='task-preview-heading'>
@@ -38,7 +46,7 @@ export default function TaskPreview({ currentTask }) {
         />
       </div>
 
-      <div className='task-previw-upper-section'>
+      <div className='task-preview-upper-section'>
         <div className='task-preview-upper-left-section'>
           <div
             className='task-preview-tag'
@@ -51,11 +59,11 @@ export default function TaskPreview({ currentTask }) {
 
           <div className='task-preview-date-container'>
             <p>
-              {format(new Date(currentTask.startDate), "d MMM 'at' h:mm aaa")}
+              Start date: {format(new Date(currentTask.startDate), "d MMM 'at' h:mm aaa")}
             </p>
 
             <p>
-              {format(new Date(currentTask.endDate), "d MMM 'at' h:mm aaa")}
+              End date: {format(new Date(currentTask.endDate), "d MMM 'at' h:mm aaa")}
               </p>
           </div>
         </div>
@@ -63,7 +71,7 @@ export default function TaskPreview({ currentTask }) {
         {
           currentTask.image && (
             <img
-              className='task-preview-upper-right-section'
+              className='task-preview-cover-image'
               src={currentTask.image}
               alt='cover' 
             />
@@ -72,8 +80,9 @@ export default function TaskPreview({ currentTask }) {
       </div>
 
       {
-        currentTask.disc && (
-          <p className='current-task-disc'>{currentTask.disc}</p>
+        (currentTask.disc ||
+        currentTask.disc !== '') && (
+          <p className='task-preview-disc'>{currentTask.disc}</p>
         )
       }
 
@@ -82,15 +91,18 @@ export default function TaskPreview({ currentTask }) {
           <div className='task-preview-steps-container'>
             {
               currentTask.steps.map((step, i) => (
-                <div key={step.id} className='task-preview-step'>
-                  <p className='task-preview-step-content'>
-                    {step.content}
-                  </p>
-
+                <div 
+                  key={step.id}
+                  className='task-preview-step'
+                  style={stepStyles(step)}
+                >
+                  <p>{step.content}</p>
+                
                   <CompleteStepIcon
                     toggleStep={() => toggleTaskStep(step, i)}
+                    isCompleted={step.isCompleted}
                   />
-                </div>
+                  </div>
               ))
             }
           </div>
@@ -98,30 +110,28 @@ export default function TaskPreview({ currentTask }) {
       }
 
       <div className='task-preview-button-wrapper'>
-        <div className='task-preview-right-button-section'>
+        <div className='task-preview-left-button-wrapper-section'>
           <button
-            className='task-preview-finish-button'
+            className='task-preview-button blue'
             onClick={() => dispatch(addPopup('verify task completion'))}
           >
             Finish
           </button>
 
           <button
-            className='task-preview-edit-button'
+            className='task-preview-button white'
             onClick={() => dispatch(addPopup('edit'))}
           >
             Edit
           </button>
         </div>
 
-        <div>
-          <button
-            className='task-preview-delete-button'
-            onClick={() => dispatch(addPopup('verify task deletion'))}
-          >
-            Delete
-          </button>
-        </div>
+        <button
+          className='task-preview-button red'
+          onClick={() => dispatch(addPopup('verify task deletion'))}
+        >
+          Delete
+        </button>
       </div>
     </div>
   )

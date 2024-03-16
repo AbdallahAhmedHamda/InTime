@@ -42,21 +42,35 @@ export default function AddTask() {
 
   const dispatch = useDispatch()
 
-  const [values, setValues] = useState({
-    title: '',
-    disc: '',
-    tag: { name: '', color: ''},
-    flag: options[0],
-    image: '',
-    startDate: dayjs()
-      .startOf('minute')
-      .add(30 - dayjs().minute() % 30, 'minutes'),
-    endDate: dayjs()
-      .startOf('minute')
-      .add(90 - dayjs().minute() % 30, 'minutes'),
-    steps: []
-  })
+  const rawTask = JSON.parse(sessionStorage.getItem('task'))
+  const task =
+    rawTask
+      ? {
+          ...rawTask,
+          flag: options[rawTask.flag.value - 1],
+          startDate: dayjs(rawTask.startDate),
+          endDate: dayjs(rawTask.endDate),
+        }
+      : null
+
+  const [values, setValues] = useState(
+    task || {
+      title: '',
+      disc: '',
+      tag: { name: '', color: ''},
+      flag: options[0],
+      image: '',
+      startDate: dayjs()
+        .startOf('minute')
+        .add(30 - dayjs().minute() % 30, 'minutes'),
+      endDate: dayjs()
+        .startOf('minute')
+        .add(90 - dayjs().minute() % 30, 'minutes'),
+      steps: []
+    }
+  )
   const [coverHovered, setCoverHovered] = useState(false)
+  const [formSubmitted, setFormSubmitted] = useState(null)
 
   const imageInputRef = useRef()
 
@@ -68,6 +82,15 @@ export default function AddTask() {
     }
     // eslint-disable-next-line
   }, [])
+
+  useEffect(() => {
+    if (!formSubmitted) {
+      sessionStorage.setItem('task',JSON.stringify(values))
+    } else {
+      console.log()
+      sessionStorage.removeItem('task')
+    }
+  }, [values, formSubmitted])
 
   // set task cover when its cropped
   useEffect(() => {
@@ -114,9 +137,7 @@ export default function AddTask() {
     document.querySelector(`.${position}-date .MuiInputBase-root`).click()
   }
  
-  const addStep = (e) => {
-    e.preventDefault()
-
+  const addStep = () => {
     if (values.steps.length === 0) {
       setValues({
         ...values,
@@ -164,6 +185,15 @@ export default function AddTask() {
     setValues({ ...values, [e.target.name]: e.target.value })
   }
 
+  const onKeyDownHandler = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      if (e.target.classList.contains('disc-input') && values.disc.length < 300) {
+        setValues({ ...values, [e.target.name]: e.target.value + '\n' })
+      }
+    }
+  }
+
   const setTagColor = () => {
     const tag = { ...values.tag }
     const tagName = values.tag.name.toLowerCase()
@@ -185,6 +215,8 @@ export default function AddTask() {
       dispatch(addPopup('only one step'))
     } else {
       const taskId = nanoid()
+      
+      setFormSubmitted(true)
 
       dispatch(addTaskId(taskId))
       dispatch(addTag(values.tag.name))
@@ -208,7 +240,11 @@ export default function AddTask() {
   const minEndDateTime = today.isAfter(values.startDate) ? today : values.startDate
     
   return (
-    <form className='add-popup' onSubmit={handleSubmit}>
+    <form
+      className='add-popup'
+      onSubmit={handleSubmit}
+      onKeyDown={onKeyDownHandler}
+    >
       <div className='popup-blue-heading' />
 
       <div  className='add-heading'>
@@ -234,7 +270,8 @@ export default function AddTask() {
             placeholder='Enter a title....'
           />
         </div>
-        <div className='input-block'>
+        
+        <div className='input-block disc-input-block'>
           <div className='optional-input-wrapper'>
             <p>Description</p>
             
@@ -247,7 +284,19 @@ export default function AddTask() {
             value={values.disc}
             onChange={onTextInputChange}
             placeholder='Add description....'
+            maxLength='300'
+            autoComplete='off'
+            autoCorrect='off'
+            autoCapitalize='off'
+            spellCheck='false'
+            data-gramm='false'
+            data-gramm_editor='false'
+            data-enable-grammarly='false'
           />
+
+          <p className='disc-max-letters'>
+            {values.disc.length}/300
+          </p>
         </div>
 
         <div className='third-line-wrapper'>
@@ -269,9 +318,9 @@ export default function AddTask() {
             {
               !values.image ?
               <div className='task-cover-select' >
-                <span onClick={selectImage}>
+                <button type='button' onClick={selectImage}>
                   Select Image
-                </span>
+                </button>
               </div> :
               <div 
                 className='task-cover-container'
@@ -443,20 +492,22 @@ export default function AddTask() {
         <div className='input-block'>
           {values.steps.length === 0 ? <p>Steps</p> : ''}
 
-          <button className='add-step-button' onClick={addStep}>
+          <button
+            type='button'
+            className='add-step-button'
+            onClick={addStep}
+          >
             Add step <span>+</span>
           </button>
         </div>
 
         <div className='popup-button-wrapper'>
-          <button className='add-task-button'>Add</button>
+          <button type='submit'className='add-task-button'>Add</button>
           
-          <button 
-            onClick={(e) => {
-              e.preventDefault()
-              dispatch(removePopup('add'))}
-            }
+          <button
+            type='button'
             className='cancel-add-task-button'
+            onClick={() => {dispatch(removePopup('add'))}}
           >
             Cancel
           </button>

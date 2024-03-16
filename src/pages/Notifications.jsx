@@ -16,7 +16,7 @@ export default function Notifications() {
   }, [])
 
   return (
-    <div>
+    <div className='main-content'>
       <p className='page-name'>Notifications</p>
     </div>
   )

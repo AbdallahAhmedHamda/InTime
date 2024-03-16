@@ -14,7 +14,7 @@ export default function Tasks() {
   }, [])
 
   return (
-    <div>
+    <div className='main-content'>
       <p className='page-name'>Tasks</p>
     </div>
   )

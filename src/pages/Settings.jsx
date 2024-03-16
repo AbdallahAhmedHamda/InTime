@@ -14,7 +14,7 @@ export default function Settings() {
   }, [])
 
   return (
-    <div>
+    <div className='main-content'>
       <p className='page-name'>Settings</p>
     </div>
   )

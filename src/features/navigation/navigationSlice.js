@@ -28,7 +28,10 @@ const navigationSlice = createSlice({
 			state.currentPage = action.payload
 		},
 		addPopup: (state, action) => {
-			state.popups.push(action.payload)
+			console.log()
+			if (state.popups[state.popups.length - 1] !== action.payload) {
+				state.popups.push(action.payload)
+			}
 		},
 		removePopup: (state, action) => {
 			state.popups = state.popups.filter(popup => popup !== action.payload)

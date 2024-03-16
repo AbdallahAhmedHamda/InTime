@@ -82,7 +82,15 @@ export default function Navbar() {
   }
 
   const handleSearch = () => {
-    console.log('Searching for:', searchTerm)
+    if (searchTerm) {
+      console.log('Searching for:', searchTerm)
+    }
+  }
+
+  const onKeyDownHandler = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
   }
 
   const dropdownTransition = useTransition(showDropdown, {
@@ -117,6 +125,7 @@ export default function Navbar() {
           name='searchTerm'
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyDown={onKeyDownHandler}
         />
 
         <button onClick={handleSearch}>

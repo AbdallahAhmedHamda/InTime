@@ -122,7 +122,11 @@ export default function TaskCoverCrop() {
             ref={imgRef}
             alt='Upload'
             onLoad={onImageLoad}
-            style={{ maxHeight: 'calc(80vh - 50px)', maxWidth: 'calc(80vw - 50px)' }}
+            className='no-select'
+            style={{
+              maxHeight: 'calc(80vh - 50px)',
+              maxWidth: 'calc(80vw - 50px)',
+            }}
           />
         </ReactCrop>
       </div>

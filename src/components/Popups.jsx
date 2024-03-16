@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { setCurrentTask } from '../features/navigation/navigationSlice'
-import { useEffect } from 'react'
+import { removePopup, setCurrentTask } from '../features/navigation/navigationSlice'
+import { useRef, useEffect } from 'react'
 import { useTransition, animated } from 'react-spring'
 import VerifyCompletionMessage from './popups/VerifyCompletionMessage'
 import VerifyDeletionMessage from './popups/VerifyDeletionMessage'
@@ -10,11 +10,13 @@ import EditTask from './popups/EditTask'
 import AddTask from './popups/AddTask'
 import Message from './popups/Message'
 
-export default function Transitions() {
+export default function Popups() {
   const popups = useSelector((state) => state.navigation.popups)
   const currentTask = useSelector((state) => state.navigation.currentTask)
   
   const dispatch = useDispatch()
+
+  const popupsRef = useRef([])
 
   // disable page scrollbars when popus are active
   useEffect(() => {
@@ -31,6 +33,44 @@ export default function Transitions() {
     return () => {
       document.body.style.overflow = 'auto'
       clearTimeout(clearReduxTimeout)
+    }
+    // eslint-disable-next-line
+  }, [popups])
+
+  // remove box shadow when there is x-overflow
+  useEffect(() => {
+    const checkOverflow = () => {
+      popupsRef.current.forEach((popup) => {
+        if (popup) {
+          if (popup.scrollWidth > popup.clientWidth) {
+            popup.classList.add('has-overflow')
+          } else {
+            popup.classList.remove('has-overflow')
+          }
+        }
+      })
+    }
+
+    checkOverflow()
+
+    window.addEventListener('resize', checkOverflow)
+
+    return () => {
+      window.removeEventListener('resize', checkOverflow)
+    }
+  }, [popups])
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && popups.length !== 0) {
+        dispatch(removePopup(popups[popups.length-1]))
+      }
+    }
+
+    document.body.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.body.removeEventListener('keydown', handleKeyDown)
     }
     // eslint-disable-next-line
   }, [popups])
@@ -92,8 +132,9 @@ export default function Transitions() {
 			{
         firstPopupTransition((style, item) => item && (
           <animated.div
-            className='popup'
+            ref={(el) => (popupsRef.current[0] = el)}
             style={{ ...style, zIndex: 150 }}
+            className='popup'
           >
             {
               item === 'add' ?
@@ -101,6 +142,7 @@ export default function Transitions() {
               item === 'edit' ?
               <EditTask 
                 currentTask={currentTask}
+                selectZIndex={160}
               /> :
               item === 'task preview' ?
               <TaskPreview
@@ -129,6 +171,7 @@ export default function Transitions() {
 			{
         secondPopupTransition((style, item) => item && (
           <animated.div
+            ref={(el) => (popupsRef.current[1] = el)}
             className='popup'
             style={{ ...style, zIndex: 250 }}
           >
@@ -136,6 +179,7 @@ export default function Transitions() {
               item === 'edit' ?
               <EditTask 
                 currentTask={currentTask}
+                selectZIndex={260}
               /> :
               item === 'verify task completion' ?
               <VerifyCompletionMessage 
@@ -191,6 +235,7 @@ export default function Transitions() {
 			{
         thirdPopupTransition((style, item) => item && (
           <animated.div
+            ref={(el) => (popupsRef.current[2] = el)}
             className='popup'
             style={{ ...style, zIndex: 350 }}
           >
