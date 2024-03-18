@@ -23,7 +23,7 @@ export default function Home() {
 
   const orderedTasks = 
     [...tasks]
-      .filter((task) => !task.isCompleted)
+      .filter((task) => !task.isCompleted && !task.backlog)
       .sort((a, b) => {
         const aCreatedAt = new Date(a.createdAt)
         const bCreatedAt = new Date(b.createdAt)

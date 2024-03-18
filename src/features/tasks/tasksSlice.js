@@ -30,13 +30,25 @@ const tasksSlice = createSlice({
       const taskIndex = state.tasks.findIndex((task) => task.id === action.payload)
       state.tasks[taskIndex] = {
         ...state.tasks[taskIndex],
+        steps: [...state.tasks[taskIndex].steps.map(step => ({
+          ...step,
+          isCompleted: true
+        }))],
         isCompleted: true
+      }
+    },
+    unfinishTask: (state, action) => {
+      const taskIndex = state.tasks.findIndex((task) => task.id === action.payload)
+      state.tasks[taskIndex] = {
+        ...state.tasks[taskIndex],
+        isCompleted: false
       }
     },
     toggleStep: (state, action) => {
       const { taskId, stepId } = action.payload
       const taskIndex = state.tasks.findIndex((task) => task.id === taskId)
       const stepIndex = state.tasks[taskIndex].steps.findIndex((step) => step.id === stepId)
+      
       state.tasks[taskIndex].steps[stepIndex] = {
         ...state.tasks[taskIndex].steps[stepIndex],
         isCompleted: !state.tasks[taskIndex].steps[stepIndex].isCompleted
@@ -58,6 +70,7 @@ export const {
   addTag,
   editTask,
   finishTask,
+  unfinishTask,
   toggleStep,
   removeTask,
   removeStep

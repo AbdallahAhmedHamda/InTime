@@ -114,6 +114,7 @@
   justify-content: space-between;
   gap: 50px;
   margin-top: 22px;
+  direction: rtl;
 }
 
 .task-preview-left-button-wrapper-section {
@@ -145,4 +146,5 @@
 
 .task-preview-button.red {
   background-color: #D20000;
+  float: right;
 }

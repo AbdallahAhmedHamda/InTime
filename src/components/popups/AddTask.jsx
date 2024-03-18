@@ -228,7 +228,8 @@ export default function AddTask() {
         flag: values.flag.value,
         startDate: values.startDate.toISOString(),
         endDate: values.endDate.toISOString(),
-        isCompleted: false
+        isCompleted: false,
+        backlog: false
       }))
       dispatch(removePopup('add'))
     }

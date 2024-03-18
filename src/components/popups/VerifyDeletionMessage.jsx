@@ -10,8 +10,12 @@ export default function VerifyDeletionMessage({ task }) {
 
   const deleteTask = () => {
     dispatch(removeTask(task.id))
-    dispatch(removeTaskId(task.id))
     dispatch(removeAllPopups())  
+    dispatch(removeTaskId({
+      taskId: task.id,
+      isCompleted: task.isCompleted,
+      backlog: task.backlog
+    }))
   }
     
   return (

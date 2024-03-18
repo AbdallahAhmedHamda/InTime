@@ -1,19 +1,20 @@
 import { useDispatch } from 'react-redux'
 import { addPopup, removePopup, setCurrentTask } from '../../features/navigation/navigationSlice'
-import { toggleStep } from '../../features/tasks/tasksSlice'
+import { toggleStep, unfinishTask } from '../../features/tasks/tasksSlice'
 import { format } from 'date-fns'
 import CompleteStepIcon from '../../svg/others/CompleteStepIcon'
 import CloseIcon from '../../svg/others/CloseIcon'
 import FlagIcon from '../../svg/others/FlagIcon'
 import '../../css/components/TaskPreview.css'
+import { deductPoints } from '../../features/user/userSlice'
 
 export default function TaskPreview({ currentTask }) {
   const dispatch = useDispatch()
 
   const toggleTaskStep = (step, i) => {
-    const completedSteps = currentTask.steps.filter(task => task.isCompleted).length
+    const completedSteps = currentTask.steps.filter(step => step.isCompleted).length
 
-    if (!step.isCompleted && completedSteps === currentTask.steps.length - 1) {
+    if (!step.isCompleted && completedSteps === currentTask.steps.length - 1 && !currentTask.backlog) {
       dispatch(addPopup('verify task completion'))
     } else {
       const updatedSteps = [...currentTask.steps]
@@ -21,9 +22,19 @@ export default function TaskPreview({ currentTask }) {
         ...updatedSteps[i],
         isCompleted: !updatedSteps[i].isCompleted
       }
-  
-      dispatch(setCurrentTask({ ...currentTask, steps: updatedSteps}))
-      dispatch(toggleStep({ taskId: currentTask.id, stepId: step.id }))
+      if (completedSteps === currentTask.steps.length && !currentTask.backlog) {
+        dispatch(toggleStep({ taskId: currentTask.id, stepId: step.id }))
+        dispatch(unfinishTask(currentTask.id))
+        dispatch(deductPoints(20))
+        dispatch(setCurrentTask({
+          ...currentTask,
+          steps: updatedSteps,
+          isCompleted: false
+        }))
+      } else {
+        dispatch(setCurrentTask({ ...currentTask, steps: updatedSteps}))
+        dispatch(toggleStep({ taskId: currentTask.id, stepId: step.id }))
+      }
     }
   }
 
@@ -110,28 +121,32 @@ export default function TaskPreview({ currentTask }) {
       }
 
       <div className='task-preview-button-wrapper'>
-        <div className='task-preview-left-button-wrapper-section'>
-          <button
-            className='task-preview-button blue'
-            onClick={() => dispatch(addPopup('verify task completion'))}
-          >
-            Finish
-          </button>
-
-          <button
-            className='task-preview-button white'
-            onClick={() => dispatch(addPopup('edit'))}
-          >
-            Edit
-          </button>
-        </div>
-
         <button
           className='task-preview-button red'
           onClick={() => dispatch(addPopup('verify task deletion'))}
         >
           Delete
         </button>
+
+        {
+          !currentTask.backlog && (
+            <div className='task-preview-left-button-wrapper-section'>
+              <button
+                className='task-preview-button white'
+                onClick={() => dispatch(addPopup('edit'))}
+              >
+                Edit
+              </button>
+
+              <button
+                className='task-preview-button blue'
+                onClick={() => dispatch(addPopup('verify task completion'))}
+              >
+                Finish
+              </button>
+            </div>
+          )
+        }
       </div>
     </div>
   )

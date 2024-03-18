@@ -3,12 +3,14 @@ import { removeAllPopups, removePopup } from '../../features/navigation/navigati
 import { finishTask } from '../../features/tasks/tasksSlice'
 import CloseIcon from '../../svg/others/CloseIcon'
 import '../../css/components/Messages.css'
+import { addPoints } from '../../features/user/userSlice'
 
 export default function VerifyCompletionMessage({ task }) {
   const dispatch = useDispatch()
 
   const completeTask = () => {
     dispatch(finishTask(task.id))
+    dispatch(addPoints(20))
     dispatch(removeAllPopups())  
   }
     

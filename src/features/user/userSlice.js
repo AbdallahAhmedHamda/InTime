@@ -24,17 +24,17 @@ const initialState = {
   profilePic: require('../../assets/images/profile-pic.jpeg'),
   unreadNotifications: 2,
   points: {
-    monthly: {
-      points: [300, 400, 310, 190, 230, 155, 155, 90, 200, 0, 450, 300],
-      xAxis: months
+    daily: {
+      points: [10, 50, 20, 190, 100, 70, 50],
+      xAxis: days
     },
     weekly: {
       points: [320, 80, 600, 400],
       xAxis:['week1', 'week2', 'week3', 'week4']
     },
-    daily: {
-      points: [10, 50, 20, 190, 100, 70, 50],
-      xAxis: days
+    monthly: {
+      points: [300, 400, 310, 190, 230, 155, 155, 90, 200, 0, 450, 300],
+      xAxis: months
     }
   },
   totalPoints: {
@@ -50,11 +50,7 @@ const initialState = {
       thisMonth: 16,
       lastMonth: 20
     },
-    inProgress: {
-      overall: 20,
-      thisMonth: 7,
-      lastMonth: 7
-    }
+    inProgress: 20
   }
 }
 
@@ -68,18 +64,80 @@ const userSlice = createSlice({
     setProfilePic: (state, action) => {
       state.profilePic = action.payload
     },
-    setTotalPoints: (state, action) => {
+    addPoints: (state, action) => {
+      const dailyLastIndex = state.points.daily.points.length - 1
+      state.points.daily.points = [
+        ...state.points.daily.points.slice(0, dailyLastIndex),
+        state.points.daily.points[dailyLastIndex] + action.payload
+      ]
+
+      const weeklyLastIndex = state.points.weekly.points.length - 1
+      state.points.weekly.points = [
+        ...state.points.weekly.points.slice(0, weeklyLastIndex),
+        state.points.weekly.points[weeklyLastIndex] + action.payload
+      ]
+
+      const monthlyLastIndex = state.points.monthly.points.length - 1
+      state.points.monthly.points = [
+        ...state.points.monthly.points.slice(0, monthlyLastIndex),
+        state.points.monthly.points[monthlyLastIndex] + action.payload
+      ]
+
+      state.tasks.completed = {
+        ...state.tasks.completed,
+        overall: state.tasks.completed.overall + 1,
+        thisMonth: state.tasks.completed.thisMonth + 1
+      }
+
+      state.tasks.inProgress -= 1
       state.totalPoints.overall += action.payload
+      state.level = Math.floor(state.totalPoints.overall / 100)
+    },
+    deductPoints: (state, action) => {
+      const dailyLastIndex = state.points.daily.points.length - 1
+      state.points.daily.points = [
+        ...state.points.daily.points.slice(0, dailyLastIndex),
+        state.points.daily.points[dailyLastIndex] - action.payload
+      ]
+
+      const weeklyLastIndex = state.points.weekly.points.length - 1
+      state.points.weekly.points = [
+        ...state.points.weekly.points.slice(0, weeklyLastIndex),
+        state.points.weekly.points[weeklyLastIndex] - action.payload
+      ]
+
+      const monthlyLastIndex = state.points.monthly.points.length - 1
+      state.points.monthly.points = [
+        ...state.points.monthly.points.slice(0, monthlyLastIndex),
+        state.points.monthly.points[monthlyLastIndex] - action.payload
+      ]
+
+      state.tasks.completed = {
+        ...state.tasks.completed,
+        overall: state.tasks.completed.overall - 1,
+        thisMonth: state.tasks.completed.thisMonth - 1
+      }
+
+      state.tasks.inProgress += 1
+      state.totalPoints.overall -= action.payload
       state.level = Math.floor(state.totalPoints.overall / 100)
     },
     removeUnread: (state) => {
       state.unreadNotifications = 0
+
     },
     addTaskId: (state, action) => {
+      state.tasks.inProgress += 1
       state.tasks.id.push(action.payload)
     },
     removeTaskId: (state, action) => {
-      state.tasks.id = state.tasks.id.filter((id) => id !== action.payload)
+      const { taskId, isCompleted, backlog } = action.payload
+
+       if (!isCompleted && !backlog) {
+        state.tasks.inProgress -= 1
+       }
+
+      state.tasks.id = state.tasks.id.filter((id) => id !== taskId)
     }
   }
 })
@@ -88,7 +146,8 @@ export const {
   setName,
   setProfilePic,
   setLevel,
-  setTotalPoints,
+  addPoints,
+  deductPoints,
   removeUnread,
   addTaskId,
   removeTaskId

@@ -31,14 +31,10 @@ export default function Progess() {
       tasks.completed.thisMonth,
       tasks.completed.lastMonth
     ),
-    inProgress: calculatePercentageDifference(
-      tasks.inProgress.thisMonth,
-      tasks.inProgress.lastMonth
-    ),
     points: calculatePercentageDifference(
       totalPoints.thisMonth,
       totalPoints.lastMonth
-    ),
+    )
   })
       
   // update the percentages of user progress whenever the numbers of this or last month changes
@@ -62,12 +58,6 @@ export default function Progess() {
       tasks.completed.thisMonth,
       tasks.completed.lastMonth,
       'completed'
-    )
-
-    updatePercentage(
-      tasks.inProgress.thisMonth,
-      tasks.inProgress.lastMonth,
-      'inProgress'
     )
 
     updatePercentage(
@@ -119,21 +109,10 @@ export default function Progess() {
         <div className='progress-text-container'>
           <p className='progress-title'>In Progress</p>
 
-          <p className='progress-number'>{tasks.inProgress.overall}</p>
+          <p className='progress-number'>{tasks.inProgress}</p>
 
           <p className='progress-classification'>Tasks</p>
         </div>
-
-        <p className='user-monthly-percentage'>
-          <span className='percentage' style={percentageStyles(percentages.inProgress)}>
-            {
-              percentages.inProgress > 0 && '+'
-            }
-            {percentages.inProgress}
-            %
-          </span>
-          This Month
-        </p>
       </div>
 
       <div className='user-progress-child total-box'>
