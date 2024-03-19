@@ -1,7 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { addPopup, removePopup, setUncroppedImage, setCroppedImage } from '../../features/navigation/navigationSlice'
-import { addTask, addTag } from '../../features/tasks/tasksSlice'
-import { addTaskId } from '../../features/user/userSlice'
+import { addTask, addTag } from '../../features/user/userSlice'
 import { useEffect, useState, useRef } from 'react'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker'
@@ -37,7 +36,7 @@ const options = [
 ]
 
 export default function AddTask() {
-  const allTags = useSelector((state) => state.tasks.tags)
+  const allTags = useSelector((state) => state.user.tags)
   const croppedImage = useSelector((state) => state.navigation.croppedImage)
 
   const dispatch = useDispatch()
@@ -218,7 +217,6 @@ export default function AddTask() {
       
       setFormSubmitted(true)
 
-      dispatch(addTaskId(taskId))
       dispatch(addTag(values.tag.name))
       dispatch(addTask({
         id: taskId,
@@ -228,6 +226,7 @@ export default function AddTask() {
         flag: values.flag.value,
         startDate: values.startDate.toISOString(),
         endDate: values.endDate.toISOString(),
+        creator: 'personal',
         isCompleted: false,
         backlog: false
       }))

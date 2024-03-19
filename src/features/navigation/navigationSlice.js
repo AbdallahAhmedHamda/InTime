@@ -18,6 +18,8 @@ const initialState = {
 	currentTask: '',
 	uncroppedImage: '',
 	croppedImage: '',
+	filters: '',
+	sorting: ''
 }
 
 const navigationSlice = createSlice({
@@ -28,7 +30,6 @@ const navigationSlice = createSlice({
 			state.currentPage = action.payload
 		},
 		addPopup: (state, action) => {
-			console.log()
 			if (state.popups[state.popups.length - 1] !== action.payload) {
 				state.popups.push(action.payload)
 			}
@@ -49,6 +50,12 @@ const navigationSlice = createSlice({
 		},
 		setCroppedImage: (state, action) => {
 			state.croppedImage = action.payload
+		},
+		setFilters: (state, action) => {
+			state.filters = action.payload
+		},
+		setSorting: (state, action) => {
+			state.sorting = action.payload
 		}
 	}
 })
@@ -60,6 +67,8 @@ export const {
 	removeAllPopups,
 	setCurrentTask,
 	setUncroppedImage,
-	setCroppedImage
+	setCroppedImage,
+	setFilters,
+	setSorting
 } = navigationSlice.actions
 export default navigationSlice.reducer

@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { addPopup, removePopup, setUncroppedImage, setCroppedImage, setCurrentTask } from '../../features/navigation/navigationSlice'
-import { editTask, addTag } from '../../features/tasks/tasksSlice'
+import { editTask, addTag } from '../../features/user/userSlice'
 import { useEffect, useState, useRef } from 'react'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker'
@@ -36,7 +36,7 @@ const options = [
 ]
 
 export default function EditTask({ currentTask, selectZIndex }) {
-  const allTags = useSelector((state) => state.tasks.tags)
+  const allTags = useSelector((state) => state.user.tags)
   const croppedImage = useSelector((state) => state.navigation.croppedImage)
 
   const dispatch = useDispatch()

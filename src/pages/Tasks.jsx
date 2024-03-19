@@ -1,6 +1,7 @@
 import { useDispatch } from 'react-redux'
 import { setCurrentPage, removeAllPopups } from '../features/navigation/navigationSlice'
 import { useEffect } from 'react'
+import Filters from '../components/tasks/Flters'
 import '../css/pages/Tasks.css'
 
 export default function Tasks() {
@@ -16,6 +17,16 @@ export default function Tasks() {
   return (
     <div className='main-content'>
       <p className='page-name'>Tasks</p>
+
+      <div className='tasks-container'>
+        <div className='tasks-left-section'>
+
+        </div>
+
+        <div className='tasks-right-section'>
+          <Filters />
+        </div>
+      </div>
     </div>
   )
 }

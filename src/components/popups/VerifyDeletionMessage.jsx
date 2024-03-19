@@ -1,7 +1,6 @@
 import { useDispatch } from 'react-redux'
 import { removeAllPopups, removePopup } from '../../features/navigation/navigationSlice'
-import { removeTask } from '../../features/tasks/tasksSlice'
-import { removeTaskId } from '../../features/user/userSlice'
+import { removeTask } from '../../features/user/userSlice'
 import CloseIcon from '../../svg/others/CloseIcon'
 import '../../css/components/Messages.css'
 
@@ -11,11 +10,6 @@ export default function VerifyDeletionMessage({ task }) {
   const deleteTask = () => {
     dispatch(removeTask(task.id))
     dispatch(removeAllPopups())  
-    dispatch(removeTaskId({
-      taskId: task.id,
-      isCompleted: task.isCompleted,
-      backlog: task.backlog
-    }))
   }
     
   return (

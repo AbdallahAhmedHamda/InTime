@@ -24,12 +24,13 @@ const calculatePercentageDifference = (thisMonth, lastMonth) => {
 
 export default function Progess() {
   const tasks = useSelector((state) => state.user.tasks)
+  const completedTasks = useSelector((state) => state.user.completedTasks)
   const totalPoints = useSelector((state) => state.user.totalPoints)
   
   const [percentages, setPercentages] = useState({
     completed: calculatePercentageDifference(
-      tasks.completed.thisMonth,
-      tasks.completed.lastMonth
+      completedTasks.thisMonth,
+      completedTasks.lastMonth
     ),
     points: calculatePercentageDifference(
       totalPoints.thisMonth,
@@ -55,8 +56,8 @@ export default function Progess() {
     }
 
     updatePercentage(
-      tasks.completed.thisMonth,
-      tasks.completed.lastMonth,
+      completedTasks.thisMonth,
+      completedTasks.lastMonth,
       'completed'
     )
 
@@ -65,7 +66,7 @@ export default function Progess() {
       totalPoints.lastMonth,
       'points'
     )
-  }, [tasks, totalPoints])
+  }, [completedTasks, totalPoints])
 
   const percentageStyles = (percentage) => {
     const style = {
@@ -77,6 +78,9 @@ export default function Progess() {
     }
     return style
   }
+
+  const allInProgressTasks =  tasks.filter((task) => !task.isCompleted && !task.backlog).length
+  const allCompletedTasks =  tasks.filter((task) => task.isCompleted).length
   
   return (
     <div className='user-progress-container'>
@@ -86,7 +90,7 @@ export default function Progess() {
         <div>
           <p className='progress-title'>Completed Tasks</p>
 
-          <p className='progress-number'>{tasks.completed.overall}</p>
+          <p className='progress-number'>{allCompletedTasks}</p>
 
           <p className='progress-classification'>Tasks</p>
         </div>
@@ -109,7 +113,7 @@ export default function Progess() {
         <div className='progress-text-container'>
           <p className='progress-title'>In Progress</p>
 
-          <p className='progress-number'>{tasks.inProgress}</p>
+          <p className='progress-number'>{allInProgressTasks}</p>
 
           <p className='progress-classification'>Tasks</p>
         </div>

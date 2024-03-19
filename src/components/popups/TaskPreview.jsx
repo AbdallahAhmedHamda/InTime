@@ -1,12 +1,11 @@
 import { useDispatch } from 'react-redux'
 import { addPopup, removePopup, setCurrentTask } from '../../features/navigation/navigationSlice'
-import { toggleStep, unfinishTask } from '../../features/tasks/tasksSlice'
+import { toggleStep, unfinishTask } from '../../features/user/userSlice'
 import { format } from 'date-fns'
 import CompleteStepIcon from '../../svg/others/CompleteStepIcon'
 import CloseIcon from '../../svg/others/CloseIcon'
 import FlagIcon from '../../svg/others/FlagIcon'
 import '../../css/components/TaskPreview.css'
-import { deductPoints } from '../../features/user/userSlice'
 
 export default function TaskPreview({ currentTask }) {
   const dispatch = useDispatch()
@@ -25,7 +24,6 @@ export default function TaskPreview({ currentTask }) {
       if (completedSteps === currentTask.steps.length && !currentTask.backlog) {
         dispatch(toggleStep({ taskId: currentTask.id, stepId: step.id }))
         dispatch(unfinishTask(currentTask.id))
-        dispatch(deductPoints(20))
         dispatch(setCurrentTask({
           ...currentTask,
           steps: updatedSteps,

@@ -10,7 +10,7 @@ import PlusIcon from '../svg/home/PlusIcon'
 import '../css/pages/Home.css'
 
 export default function Home() {
-  const tasks = useSelector((state) => state.tasks.tasks)
+  const tasks = useSelector((state) => state.user.tasks)
   
   const dispatch = useDispatch()
 

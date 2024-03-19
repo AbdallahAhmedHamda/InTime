@@ -16,8 +16,6 @@ const days = Array.from({ length: 7 }, (_, i) => {
   ).toLocaleString('en-US', { weekday: 'short' })
 })
 
-const intialOverallPoints = 5020
-
 const initialState = {
   id: 1,
   name: 'Jessica Lambert',
@@ -38,20 +36,17 @@ const initialState = {
     }
   },
   totalPoints: {
-    overall: intialOverallPoints,
+    overall: 5020,
     thisMonth: 400,
     lastMonth: 320
   },
-  level: Math.floor(intialOverallPoints / 100),
-  tasks: {
-    id: [],
-    completed: {
-      overall: 50,
-      thisMonth: 16,
-      lastMonth: 20
-    },
-    inProgress: 20
-  }
+  level: Math.floor(5020 / 100),
+  tasks: [],
+  completedTasks: {
+    thisMonth: 16,
+    lastMonth: 20
+  },
+  tags: []
 }
 
 const userSlice = createSlice({
@@ -64,80 +59,118 @@ const userSlice = createSlice({
     setProfilePic: (state, action) => {
       state.profilePic = action.payload
     },
-    addPoints: (state, action) => {
-      const dailyLastIndex = state.points.daily.points.length - 1
-      state.points.daily.points = [
-        ...state.points.daily.points.slice(0, dailyLastIndex),
-        state.points.daily.points[dailyLastIndex] + action.payload
-      ]
-
-      const weeklyLastIndex = state.points.weekly.points.length - 1
-      state.points.weekly.points = [
-        ...state.points.weekly.points.slice(0, weeklyLastIndex),
-        state.points.weekly.points[weeklyLastIndex] + action.payload
-      ]
-
-      const monthlyLastIndex = state.points.monthly.points.length - 1
-      state.points.monthly.points = [
-        ...state.points.monthly.points.slice(0, monthlyLastIndex),
-        state.points.monthly.points[monthlyLastIndex] + action.payload
-      ]
-
-      state.tasks.completed = {
-        ...state.tasks.completed,
-        overall: state.tasks.completed.overall + 1,
-        thisMonth: state.tasks.completed.thisMonth + 1
-      }
-
-      state.tasks.inProgress -= 1
-      state.totalPoints.overall += action.payload
-      state.level = Math.floor(state.totalPoints.overall / 100)
-    },
-    deductPoints: (state, action) => {
-      const dailyLastIndex = state.points.daily.points.length - 1
-      state.points.daily.points = [
-        ...state.points.daily.points.slice(0, dailyLastIndex),
-        state.points.daily.points[dailyLastIndex] - action.payload
-      ]
-
-      const weeklyLastIndex = state.points.weekly.points.length - 1
-      state.points.weekly.points = [
-        ...state.points.weekly.points.slice(0, weeklyLastIndex),
-        state.points.weekly.points[weeklyLastIndex] - action.payload
-      ]
-
-      const monthlyLastIndex = state.points.monthly.points.length - 1
-      state.points.monthly.points = [
-        ...state.points.monthly.points.slice(0, monthlyLastIndex),
-        state.points.monthly.points[monthlyLastIndex] - action.payload
-      ]
-
-      state.tasks.completed = {
-        ...state.tasks.completed,
-        overall: state.tasks.completed.overall - 1,
-        thisMonth: state.tasks.completed.thisMonth - 1
-      }
-
-      state.tasks.inProgress += 1
-      state.totalPoints.overall -= action.payload
-      state.level = Math.floor(state.totalPoints.overall / 100)
-    },
     removeUnread: (state) => {
       state.unreadNotifications = 0
-
     },
-    addTaskId: (state, action) => {
-      state.tasks.inProgress += 1
-      state.tasks.id.push(action.payload)
+    addTask: (state, action) => {
+      state.tasks.push(action.payload)
     },
-    removeTaskId: (state, action) => {
-      const { taskId, isCompleted, backlog } = action.payload
+    editTask: (state, action) => {
+      const { taskId, updatedTask } = action.payload
+      const taskIndex = state.tasks.findIndex((task) => task.id === taskId)
 
-       if (!isCompleted && !backlog) {
-        state.tasks.inProgress -= 1
-       }
+      state.tasks[taskIndex] = {
+        ...state.tasks[taskIndex],
+        ...updatedTask
+      }
+    },
+    finishTask: (state, action) => {
+      const taskIndex = state.tasks.findIndex((task) => task.id === action.payload)
 
-      state.tasks.id = state.tasks.id.filter((id) => id !== taskId)
+      state.tasks[taskIndex] = {
+        ...state.tasks[taskIndex],
+        steps: [...state.tasks[taskIndex].steps.map(step => ({
+          ...step,
+          isCompleted: true
+        }))],
+        isCompleted: true
+      }
+
+      const dailyLastIndex = state.points.daily.points.length - 1
+      state.points.daily.points = [
+        ...state.points.daily.points.slice(0, dailyLastIndex),
+        state.points.daily.points[dailyLastIndex] + 20
+      ]
+
+      const weeklyLastIndex = state.points.weekly.points.length - 1
+      state.points.weekly.points = [
+        ...state.points.weekly.points.slice(0, weeklyLastIndex),
+        state.points.weekly.points[weeklyLastIndex] + 20
+      ]
+
+      const monthlyLastIndex = state.points.monthly.points.length - 1
+      state.points.monthly.points = [
+        ...state.points.monthly.points.slice(0, monthlyLastIndex),
+        state.points.monthly.points[monthlyLastIndex] + 20
+      ]
+
+      state.totalPoints.overall += 20
+      state.level = Math.floor(state.totalPoints.overall / 100)
+      
+      state.completedTasks = {
+        ...state.completedTasks,
+        thisMonth: state.completedTasks.thisMonth + 1
+      }
+    },
+    unfinishTask: (state, action) => {
+      const taskIndex = state.tasks.findIndex((task) => task.id === action.payload)
+
+      state.tasks[taskIndex] = {
+        ...state.tasks[taskIndex],
+        isCompleted: false
+      }
+
+      const dailyLastIndex = state.points.daily.points.length - 1
+      state.points.daily.points = [
+        ...state.points.daily.points.slice(0, dailyLastIndex),
+        state.points.daily.points[dailyLastIndex] - 20
+      ]
+
+      const weeklyLastIndex = state.points.weekly.points.length - 1
+      state.points.weekly.points = [
+        ...state.points.weekly.points.slice(0, weeklyLastIndex),
+        state.points.weekly.points[weeklyLastIndex] - 20
+      ]
+
+      const monthlyLastIndex = state.points.monthly.points.length - 1
+      state.points.monthly.points = [
+        ...state.points.monthly.points.slice(0, monthlyLastIndex),
+        state.points.monthly.points[monthlyLastIndex] - 20
+      ]
+
+      state.completedTasks = {
+        ...state.completedTasks,
+        thisMonth: state.completedTasks.thisMonth - 1
+      }
+
+      state.totalPoints.overall -= 20
+      state.level = Math.floor(state.totalPoints.overall / 100)
+    },
+    removeTask: (state, action) => {
+      state.tasks = state.tasks.filter((task) => task.id !== action.payload)
+    },
+    toggleStep: (state, action) => {
+      const { taskId, stepId } = action.payload
+      const taskIndex = state.tasks.findIndex((task) => task.id === taskId)
+      const stepIndex = state.tasks[taskIndex].steps.findIndex((step) => step.id === stepId)
+      
+      state.tasks[taskIndex].steps[stepIndex] = {
+        ...state.tasks[taskIndex].steps[stepIndex],
+        isCompleted: !state.tasks[taskIndex].steps[stepIndex].isCompleted
+      }
+    },
+    removeStep: (state, action) => {
+      const { taskId, stepId } = action.payload
+      const taskIndex = state.tasks.findIndex((task) => task.id === taskId)
+
+      state.tasks[taskIndex].steps = state.tasks[taskIndex].steps.filter((step) => step.id !== stepId)
+    },
+    addTag: (state, action) => {
+      const tag = action.payload.toLowerCase()
+
+      if (!state.tags.includes(tag)) {
+        state.tags.push(tag)
+      }
     }
   }
 })
@@ -145,12 +178,15 @@ const userSlice = createSlice({
 export const { 
   setName,
   setProfilePic,
-  setLevel,
-  addPoints,
-  deductPoints,
   removeUnread,
-  addTaskId,
-  removeTaskId
+  addTask,
+  editTask,
+  finishTask,
+  unfinishTask,
+  removeTask,
+  toggleStep,
+  removeStep,
+  addTag
 } = userSlice.actions
 
 export default userSlice.reducer
