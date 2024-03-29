@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { setFilters, setTagsToShow } from '../../features/navigation/navigationSlice'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ShowMoreArrow from'../../svg/others/ShowMoreArrow'
 import FlagIcon from '../../svg/others/FlagIcon'
 
@@ -8,11 +8,20 @@ export default function Filters() {
   const filters = useSelector((state) => state.navigation.filters)
   const tagsToShow = useSelector((state) => state.navigation.tagsToShow)
   const tasks = useSelector((state) => state.user.tasks)
-  const tags = useSelector((state) => state.user.tags)
+  const tags = useSelector((state) => state.user.tags).filter((tag) => tag !== null)
+  
   const dispatch = useDispatch()
 
   const [showMoreHovered, setShowMoreHovered] = useState(false)
   const [showLessHovered, setShowLessHovered] = useState(false)
+
+  // add tags to the filters if there is space for them
+  useEffect(() => {
+    if (tags.length <= 6 || tagsToShow % 3 !== 0 || tagsToShow > tags.length) {
+      dispatch(setTagsToShow(tags.length))
+    }
+    // eslint-disable-next-line
+  }, [tags])
   
   const checkboxChecked = (filter, filterOption) => {
     return filters[filter].includes(filterOption)
@@ -213,7 +222,7 @@ export default function Filters() {
       </div>
 
       {
-        tags.length !== 0 && (
+        sortedTags.length !== 0 && (
           <div className='single-filter-container'>
             <p>Tags</p>
 
@@ -242,10 +251,10 @@ export default function Filters() {
       }
 
       {
-        tags.length !== 0 && (
+        sortedTags.length !== 0 && (
           <div className='tags-show-container'>
             {
-              tagsToShow !== 6 && (
+              tagsToShow > 6 && (
                 <div 
                   className='tags-show-less'
                   onClick={showLess}
@@ -276,7 +285,6 @@ export default function Filters() {
           </div>
         )
       }
-
     </div>
   )
 }

@@ -226,7 +226,7 @@ export default function AddTask() {
         flag: values.flag.value,
         startDate: values.startDate.toISOString(),
         endDate: values.endDate.toISOString(),
-        creator: 'personal',
+        creator: 'me',
         isCompleted: false,
         backlog: false
       }))

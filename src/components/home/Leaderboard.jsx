@@ -3,7 +3,7 @@ import numeral from 'numeral'
 import ShowMoreArrow from'../../svg/others/ShowMoreArrow'
 
 export default function Leaderboard() {
-  const [data, setData] = useState([{}, {}, {}, {}, {}])
+  const [dataArraySlice, setDataArraySlice] = useState(5)
 
   const [rankWidth, setRankWidth] = useState('auto')
   const [nameWidth, setNameWidth] = useState('auto')
@@ -18,6 +18,8 @@ export default function Leaderboard() {
     tasks: [],
     points: [],
   })
+
+  const data = new Array(18).fill({})
 
   // calculate each leaderboard column width
   useEffect(() => {
@@ -38,12 +40,24 @@ export default function Leaderboard() {
       const pointsWidthsArray = filteredPointsArray.map(ref => ref.clientWidth)
       setPointsWidth(Math.max(...pointsWidthsArray))
     })
-    console.log(leaderboardRefs)
-  }, [data])
+  }, [dataArraySlice])
+
+  // set data to the number that the array holds if its less than 5
+  useEffect(() => {
+    if (dataArraySlice < 5) {
+      setDataArraySlice(data.length)
+    }
+    // eslint-disable-next-line
+  }, [])
 
   // reset widths and add values when user show more ranks
   const showMore = () => {
-    setData(prevState => [...prevState, {}, {}, {}, {}, {}])
+    const dataToShow =
+    (dataArraySlice % 5 === 0 && data.length - dataArraySlice >= 5)
+      ? dataArraySlice + 5
+      : dataArraySlice + (data.length % 5)
+
+    setDataArraySlice(dataToShow)
     setRankWidth('auto')
     setNameWidth('auto')
     setTasksWidth('auto')
@@ -51,16 +65,21 @@ export default function Leaderboard() {
   }
 
   const showLess = () => {
-    setData(data.slice(0, -5))
+    const dataToShow =
+      dataArraySlice % 5 === 0
+        ? dataArraySlice - 5
+        : dataArraySlice - (data.length % 5)
+
+    setDataArraySlice(dataToShow)
     setRankWidth('auto')
     setNameWidth('auto')
     setTasksWidth('auto')
     setPointsWidth('auto')
 
-    leaderboardRefs.current.ranks = leaderboardRefs.current.ranks.slice(0, -5)
-    leaderboardRefs.current.names = leaderboardRefs.current.names.slice(0, -5)
-    leaderboardRefs.current.tasks = leaderboardRefs.current.tasks.slice(0, -5)
-    leaderboardRefs.current.points = leaderboardRefs.current.points.slice(0, -5)
+    leaderboardRefs.current.ranks = leaderboardRefs.current.ranks.slice(0, dataToShow)
+    leaderboardRefs.current.names = leaderboardRefs.current.names.slice(0, dataToShow)
+    leaderboardRefs.current.tasks = leaderboardRefs.current.tasks.slice(0, dataToShow)
+    leaderboardRefs.current.points = leaderboardRefs.current.points.slice(0, dataToShow)
   }
 
   return (
@@ -69,7 +88,7 @@ export default function Leaderboard() {
 
       <div className='leaderboard'>
         {
-          data.map((_, i) => (
+          data.slice(0, dataArraySlice).map((_, i) => (
             <div className='leaderboard-row' key={i}>
               <p 
                 className='leaderboard-rank' 
@@ -113,7 +132,7 @@ export default function Leaderboard() {
 
       <div className='leaderboard-show-container'>
         {
-          data.length !== 5 && (
+          dataArraySlice > 5 && (
             <div 
               className='leaderboard-show-less'
               onClick={showLess}
@@ -127,16 +146,20 @@ export default function Leaderboard() {
           )
         }
         
-        <div 
-          className='leaderboard-show-more'
-          onClick={showMore}
-          onMouseEnter={() => setShowMoreHovered(true)}
-          onMouseLeave={() => setShowMoreHovered(false)}
-        >
-          <p>Show more</p>
+        {
+          (data.length !== dataArraySlice) && (
+            <div 
+              className='leaderboard-show-more'
+              onClick={showMore}
+              onMouseEnter={() => setShowMoreHovered(true)}
+              onMouseLeave={() => setShowMoreHovered(false)}
+            >
+              <p>Show more</p>
 
-          <ShowMoreArrow isHovered={showMoreHovered}/>
-        </div>
+              <ShowMoreArrow isHovered={showMoreHovered}/>
+            </div>
+          )
+        }
       </div>
     </div>
   )

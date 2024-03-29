@@ -68,12 +68,12 @@ export default function TaskPreview({ currentTask }) {
 
           <div className='task-preview-date-container'>
             <p>
-              Start date: {format(new Date(currentTask.startDate), "d MMM 'at' h:mm aaa")}
+              Start date: {format(new Date(currentTask.startDate), "d MMM yyy 'at' h:mm aaa")}
             </p>
 
             <p>
-              End date: {format(new Date(currentTask.endDate), "d MMM 'at' h:mm aaa")}
-              </p>
+              End date: {format(new Date(currentTask.endDate), "d MMM yyy 'at' h:mm aaa")}
+            </p>
           </div>
         </div>
 

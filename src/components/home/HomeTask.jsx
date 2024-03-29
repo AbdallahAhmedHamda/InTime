@@ -84,7 +84,7 @@ export default function HomeTask({ task }) {
         task.steps.length !== 0 ? 
         <p className='home-task-steps'>
           {
-            task.steps.filter((task) => task.isCompleted).length + '/' + task.steps.length
+            task.steps.filter((setp) => setp.isCompleted).length + '/' + task.steps.length
           }
         </p> :
         ''

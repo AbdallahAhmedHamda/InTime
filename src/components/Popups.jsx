@@ -152,6 +152,10 @@ export default function Popups() {
               <VerifyCompletionMessage 
                 task={currentTask}
               /> :
+              item === 'verify task deletion' ?
+              <VerifyDeletionMessage 
+                task={currentTask}
+              /> :
               ''
             }
           </animated.div>

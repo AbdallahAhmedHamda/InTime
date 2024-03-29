@@ -5,6 +5,135 @@
   justify-content: space-between;
 }
 
+.tasks-left-section {
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+  align-items: flex-end;
+}
+
+.tasks-left-section-tasks {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  grid-gap: 48px;
+  height: fit-content;
+}
+
+.tasks-task-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background-color: white;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  height: fit-content;
+  width: 270px;
+  border-radius: 10px;
+  padding: 15px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.tasks-task-upper-section {
+  display: flex;
+  justify-content: space-between;
+  gap: 35px;
+  align-items: center;
+}
+
+.tasks-task-upper-section > p {
+  color: #FFF;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 3px 12px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.tasks-task-group-icon {
+  min-width: 23px;
+  min-height: 20px;
+}
+
+.tasks-task-middle-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10PX;
+}
+
+.tasks-task-cover-image {
+  width: 227px;
+  height: 121px;
+}
+
+.tasks-task-title {
+  font-size: 17px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.tasks-task-date {
+  color: #232360;
+  font-family: 'DM Sans';
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 4px;
+  border: 1px solid #E2E2E2;
+  padding: 3px 5px;
+  width: fit-content;
+}
+
+.tasks-task-bottom-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tasks-task-button-container {
+  display: flex;
+  gap: 16px;
+}
+
+.tasks-task-steps-container {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+
+.tasks-task-steps {
+  color: #768396;
+  font-family: 'DM Sans';
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.tasks-show-container {
+  display: flex;
+  gap: 18px;
+}
+
+.tasks-show-more, .tasks-show-less {
+  color: #000;
+  font-family: 'Roboto';
+  font-weight: 500;
+  letter-spacing: -1.12px;
+  font-size: 28px;
+  cursor: pointer;
+  background-color: inherit;
+  border: none;
+  outline: none;
+  padding: 0px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  user-select: none;
+}
+
+.tasks-show-more:hover, .tasks-show-less:hover {
+  color: #5468E7;
+}
+
 .tasks-right-section {
   background: #FFF;
   width: fit-content;

@@ -68,10 +68,21 @@ const userSlice = createSlice({
     editTask: (state, action) => {
       const { taskId, updatedTask } = action.payload
       const taskIndex = state.tasks.findIndex((task) => task.id === taskId)
+      const taskOldTag = state.tasks[taskIndex].tag.name
+      const tagExists = state.tasks.some((task) => task.tag.name === taskOldTag)
 
       state.tasks[taskIndex] = {
         ...state.tasks[taskIndex],
         ...updatedTask
+      }
+
+      if (!tagExists) {
+        const newTags = [...state.tags]
+        const tagIndex = state.tags.findIndex((tag) => tag === taskOldTag)
+
+        newTags[tagIndex] = null
+
+        state.tags = newTags
       }
     },
     finishTask: (state, action) => {
