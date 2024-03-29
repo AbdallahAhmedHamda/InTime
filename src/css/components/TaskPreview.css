@@ -16,7 +16,7 @@
   min-width: 100%;
   justify-content: space-between;
   text-wrap: nowrap;
-  gap: 500px;
+  gap: 100px;
 }
 
 .close-task-preview {
@@ -53,6 +53,12 @@
   font-family: "DM Sans";
   font-size: 12px;
   font-weight: 500;
+  text-wrap: wrap;
+}
+
+.task-preview-upper-left-section > svg  {
+  min-width: 23px;
+  min-height: 28px;
 }
 
 .task-preview-date-container {

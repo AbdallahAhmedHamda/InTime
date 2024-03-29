@@ -8,7 +8,7 @@ export default function VerifyDeletionMessage({ task }) {
   const dispatch = useDispatch()
 
   const deleteTask = () => {
-    dispatch(removeTask(task.id))
+    dispatch(removeTask({ taskId: task.id, taskTag: task.tag.name}))
     dispatch(removeAllPopups())  
   }
     
@@ -19,7 +19,7 @@ export default function VerifyDeletionMessage({ task }) {
         
         <CloseIcon
           className='close-message'
-          onClick={() => dispatch(removePopup('verify task completion'))}
+          onClick={() => dispatch(removePopup('verify task deletion'))}
         />
       </div>
 

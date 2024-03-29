@@ -227,6 +227,8 @@ export default function EditTask({ currentTask, selectZIndex }) {
 
           <input
             required={true}
+            pattern='.*\S+.*'
+            title='Include other letters than space!'
             className='task-title-input'
             type='text'
             name='title'
@@ -324,6 +326,9 @@ export default function EditTask({ currentTask, selectZIndex }) {
 
             <input
               required={true}
+              autoComplete='off'
+              pattern='.*\S+.*'
+              title='Include other letters than space!'
               className='tag-input'
               type='text'
               name='tag'

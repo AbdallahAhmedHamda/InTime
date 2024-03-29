@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux'
 import { setCurrentPage, removeAllPopups } from '../features/navigation/navigationSlice'
 import { useEffect } from 'react'
-import Filters from '../components/tasks/Flters'
+import Filters from '../components/tasks/Filters'
 import '../css/pages/Tasks.css'
 
 export default function Tasks() {

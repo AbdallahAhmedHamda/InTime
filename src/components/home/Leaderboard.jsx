@@ -4,11 +4,13 @@ import ShowMoreArrow from'../../svg/others/ShowMoreArrow'
 
 export default function Leaderboard() {
   const [data, setData] = useState([{}, {}, {}, {}, {}])
-  const [hovered, setHovered] = useState(false)
+
   const [rankWidth, setRankWidth] = useState('auto')
   const [nameWidth, setNameWidth] = useState('auto')
   const [tasksWidth, setTasksWidth] = useState('auto')
   const [pointsWidth, setPointsWidth] = useState('auto')
+  const [showMoreHovered, setShowMoreHovered] = useState(false)
+  const [showLessHovered, setShowLessHovered] = useState(false)
 
   const leaderboardRefs = useRef({
     ranks: [],
@@ -20,18 +22,23 @@ export default function Leaderboard() {
   // calculate each leaderboard column width
   useEffect(() => {
     document.fonts.ready.then(() => {
-      const rankWidthsArray = leaderboardRefs.current.ranks.map(ref => ref.clientWidth)
+      const filteredRankArray = leaderboardRefs.current.ranks.filter((rank) => rank !== null)
+      const rankWidthsArray = filteredRankArray.map(ref => ref.clientWidth)
       setRankWidth(Math.max(...rankWidthsArray))
 
-      const nameWidthsArray = leaderboardRefs.current.names.map(ref => ref.clientWidth)
+      const filteredNameArray = leaderboardRefs.current.names.filter((name) => name !== null)
+      const nameWidthsArray = filteredNameArray.map(ref => ref.clientWidth)
       setNameWidth(Math.max(...nameWidthsArray))
 
-      const tasksWidthsArray = leaderboardRefs.current.tasks.map(ref => ref.clientWidth)
+      const filteredTasksArray = leaderboardRefs.current.tasks.filter((tasks) => tasks !== null)
+      const tasksWidthsArray = filteredTasksArray.map(ref => ref.clientWidth)
       setTasksWidth(Math.max(...tasksWidthsArray))
 
-      const pointsWidthsArray = leaderboardRefs.current.points.map(ref => ref.clientWidth)
+      const filteredPointsArray = leaderboardRefs.current.points.filter((points) => points !== null)
+      const pointsWidthsArray = filteredPointsArray.map(ref => ref.clientWidth)
       setPointsWidth(Math.max(...pointsWidthsArray))
     })
+    console.log(leaderboardRefs)
   }, [data])
 
   // reset widths and add values when user show more ranks
@@ -41,6 +48,19 @@ export default function Leaderboard() {
     setNameWidth('auto')
     setTasksWidth('auto')
     setPointsWidth('auto')
+  }
+
+  const showLess = () => {
+    setData(data.slice(0, -5))
+    setRankWidth('auto')
+    setNameWidth('auto')
+    setTasksWidth('auto')
+    setPointsWidth('auto')
+
+    leaderboardRefs.current.ranks = leaderboardRefs.current.ranks.slice(0, -5)
+    leaderboardRefs.current.names = leaderboardRefs.current.names.slice(0, -5)
+    leaderboardRefs.current.tasks = leaderboardRefs.current.tasks.slice(0, -5)
+    leaderboardRefs.current.points = leaderboardRefs.current.points.slice(0, -5)
   }
 
   return (
@@ -91,15 +111,32 @@ export default function Leaderboard() {
         }
       </div>
 
-      <div 
-        className='leaderboard-more'
-        onClick={showMore}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-      >
-        <p>Show more</p>
+      <div className='leaderboard-show-container'>
+        {
+          data.length !== 5 && (
+            <div 
+              className='leaderboard-show-less'
+              onClick={showLess}
+              onMouseEnter={() => setShowLessHovered(true)}
+              onMouseLeave={() => setShowLessHovered(false)}
+            >
+              <p>Show less</p>
 
-        <ShowMoreArrow isHovered={hovered}/>
+              <ShowMoreArrow isHovered={showLessHovered}/>
+            </div>
+          )
+        }
+        
+        <div 
+          className='leaderboard-show-more'
+          onClick={showMore}
+          onMouseEnter={() => setShowMoreHovered(true)}
+          onMouseLeave={() => setShowMoreHovered(false)}
+        >
+          <p>Show more</p>
+
+          <ShowMoreArrow isHovered={showMoreHovered}/>
+        </div>
       </div>
     </div>
   )

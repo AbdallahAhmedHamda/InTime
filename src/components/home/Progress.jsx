@@ -79,8 +79,8 @@ export default function Progess() {
     return style
   }
 
-  const allInProgressTasks =  tasks.filter((task) => !task.isCompleted && !task.backlog).length
-  const allCompletedTasks =  tasks.filter((task) => task.isCompleted).length
+  const allInProgressTasks = tasks.filter((task) => !task.isCompleted && !task.backlog).length
+  const allCompletedTasks = tasks.filter((task) => task.isCompleted).length
   
   return (
     <div className='user-progress-container'>

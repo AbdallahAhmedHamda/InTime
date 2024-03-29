@@ -18,7 +18,13 @@ const initialState = {
 	currentTask: '',
 	uncroppedImage: '',
 	croppedImage: '',
-	filters: '',
+	filters: {
+		creator: [],
+		status: [],
+		priority: [],
+		tags: []
+	},
+	tagsToShow: 6,
 	sorting: ''
 }
 
@@ -54,6 +60,9 @@ const navigationSlice = createSlice({
 		setFilters: (state, action) => {
 			state.filters = action.payload
 		},
+		setTagsToShow: (state, action) => {
+			state.tagsToShow = action.payload
+		},
 		setSorting: (state, action) => {
 			state.sorting = action.payload
 		}
@@ -69,6 +78,7 @@ export const {
 	setUncroppedImage,
 	setCroppedImage,
 	setFilters,
+	setTagsToShow,
 	setSorting
 } = navigationSlice.actions
 export default navigationSlice.reducer

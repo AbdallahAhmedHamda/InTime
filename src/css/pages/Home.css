@@ -262,19 +262,29 @@
   font-weight: 600;
 }
 
-.leaderboard-more {
+.leaderboard-show-container {
+  position: absolute;
+  bottom: 35px;
+  right: 15px;
+  display: flex;
+  gap: 20px;
+}
+
+.leaderboard-show-more, .leaderboard-show-less {
   font-size: 12px;
   cursor: pointer;
   background-color: inherit;
   border: none;
   outline: none;
   padding: 0px;
-  position: absolute;
-  bottom: 35px;
-  right: 15px;
   display: flex;
   align-items: center;
   gap: 5px;
+  user-select: none;
+}
+
+.leaderboard-show-more:hover, .leaderboard-show-less:hover {
+  color: #5468E7;
 }
 
 .home-container > div > p {
@@ -282,10 +292,6 @@
   font-size: 24px;
   font-weight: 500;
   margin-top: 35px;
-}v
-
-.leaderboard-more:hover {
-  color: #5468E7;
 }
 
 .home-bottom-section {

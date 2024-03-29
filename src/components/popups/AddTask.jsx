@@ -204,7 +204,7 @@ export default function AddTask() {
       tag.color = colors[allTags.length]
     }
 
-      return tag 
+    return tag 
   }
 
   const handleSubmit = (e) => {
@@ -262,6 +262,8 @@ export default function AddTask() {
 
           <input
             required={true}
+            pattern='.*\S+.*'
+            title='Include other letters than space!'
             className='task-title-input'
             type='text'
             name='title'
@@ -359,6 +361,9 @@ export default function AddTask() {
 
             <input
               required={true}
+              autoComplete='off'
+              pattern='.*\S+.*'
+              title='Include other letters than space!'
               className='tag-input'
               type='text'
               name='tag'

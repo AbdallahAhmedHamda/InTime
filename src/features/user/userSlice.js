@@ -36,11 +36,11 @@ const initialState = {
     }
   },
   totalPoints: {
-    overall: 5020,
+    overall: 0,
     thisMonth: 400,
     lastMonth: 320
   },
-  level: Math.floor(5020 / 100),
+  level: Math.floor(0 / 100) + 1,
   tasks: [],
   completedTasks: {
     thisMonth: 16,
@@ -105,7 +105,7 @@ const userSlice = createSlice({
       ]
 
       state.totalPoints.overall += 20
-      state.level = Math.floor(state.totalPoints.overall / 100)
+      state.level = Math.floor(state.totalPoints.overall / 100) + 1
       
       state.completedTasks = {
         ...state.completedTasks,
@@ -144,10 +144,23 @@ const userSlice = createSlice({
       }
 
       state.totalPoints.overall -= 20
-      state.level = Math.floor(state.totalPoints.overall / 100)
+      state.level = Math.floor(state.totalPoints.overall / 100) + 1
     },
     removeTask: (state, action) => {
-      state.tasks = state.tasks.filter((task) => task.id !== action.payload)
+      const { taskId, taskTag } = action.payload
+
+      state.tasks = state.tasks.filter((task) => task.id !== taskId)
+
+      const tagExists = state.tasks.some((task) => task.tag.name === taskTag)
+
+      if (!tagExists) {
+        const newTags = [...state.tags]
+        const tagIndex = state.tags.findIndex((tag) => tag === taskTag)
+
+        newTags[tagIndex] = null
+
+        state.tags = newTags
+      }
     },
     toggleStep: (state, action) => {
       const { taskId, stepId } = action.payload
