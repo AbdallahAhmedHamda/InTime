@@ -1,3 +1,48 @@
+.tasks-upper-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tasks-sorting-container {
+  display: flex;
+  gap: 20px;
+}
+
+.tasks-sorting-container .css-13cymwt-control {
+  border-color: white !important;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  min-height: 36px !important;
+  max-height: 36px !important;
+  box-sizing: border-box !important;
+}
+
+.tasks-sorting-container .css-t3ipsp-control {
+  min-height: 36px !important;
+  max-height: 36px !important;
+  box-sizing: border-box !important;
+}
+
+.tasks-sorting-container .css-1dimb5e-singleValue {
+  display: flex;
+}
+
+.tasks-sorting-container .css-1u9des2-indicatorSeparator {
+  display: none;
+}
+
+.tasks-sorting-container .css-tj5bde-Svg {
+  cursor: pointer;
+}
+
+.task-sort-option:first-child {
+  border-radius: 4px 4px 0 0;
+}
+
+.task-sort-option:last-child {
+  border-radius: 0 0 4px 4px;
+}
+
 .tasks-container {
   margin-top: 16px;
   display: flex;

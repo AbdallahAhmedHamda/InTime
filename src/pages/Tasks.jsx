@@ -3,6 +3,7 @@ import { setCurrentPage, removeAllPopups, setTasksToShow } from '../features/nav
 import { useEffect, useState } from 'react'
 import TasksTask from '../components/tasks/TasksTask'
 import Filters from '../components/tasks/Filters'
+import Sorting from '../components/tasks/Sorting'
 import TasksShowMoreArrow from'../svg/tasks/TasksShowMoreArrow'
 import '../css/pages/Tasks.css'
 
@@ -48,7 +49,15 @@ export default function Tasks() {
 
   return (
     <div className='main-content'>
-      <p className='page-name'>Tasks</p>
+      <div className='tasks-upper-section'>
+        <p className='page-name'>Tasks</p>
+        
+        {
+          tasks.length !== 0 && (
+            <Sorting />
+          )
+        }
+      </div>
 
       <div className='tasks-container'>
         <div className='tasks-left-section'>

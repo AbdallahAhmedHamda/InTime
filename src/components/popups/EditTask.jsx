@@ -347,8 +347,13 @@ export default function EditTask({ currentTask, selectZIndex }) {
             <Select
               isSearchable={false}
               options={options}
+              classNames={{
+                option: () =>
+                  'edit-flag-option'
+              }}
               styles={{
                 menuPortal: (base) => ({ ...base, zIndex: selectZIndex}),
+                menuList: (base) => ({ ...base, paddingBlock: 0}),
                 option: (base) => ({ ...base, display: 'flex', cursor: 'pointer' })
               }}
               menuPortalTarget={document.body}

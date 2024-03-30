@@ -197,7 +197,7 @@ button {
   height: 36px;
 }
 
-.css-13cymwt-control {
+.add-popup .css-13cymwt-control, .edit-popup .css-13cymwt-control {
   border-color: white !important;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   min-height: 36px !important;
@@ -205,25 +205,30 @@ button {
   box-sizing: border-box !important;
 }
 
-.css-t3ipsp-control {
+.add-popup .css-t3ipsp-control, .edit-popup .css-t3ipsp-control {
   min-height: 36px !important;
   max-height: 36px !important;
   box-sizing: border-box !important;
 }
 
-.css-1dimb5e-singleValue {
+.add-popup .css-1dimb5e-singleValue, .edit-popup .css-1dimb5e-singleValue {
   display: flex;
-
 }
 
-.css-1u9des2-indicatorSeparator {
+.add-popup .css-1u9des2-indicatorSeparator, .edit-popup .css-1u9des2-indicatorSeparator {
   display: none;
-
 }
 
-.css-tj5bde-Svg {
+.add-popup .css-tj5bde-Svg, .edit-popup .css-tj5bde-Svg {
   cursor: pointer;
+}
 
+.add-flag-option:first-child, .edit-flag-option:first-child {
+  border-radius: 4px 4px 0 0;
+}
+
+.add-flag-option:last-child, .edit-flag-option:last-child {
+  border-radius: 0 0 4px 4px;
 }
 
 .fourth-line-wrapper {

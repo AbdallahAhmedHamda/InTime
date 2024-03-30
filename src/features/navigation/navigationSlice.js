@@ -24,9 +24,12 @@ const initialState = {
 		priority: [],
 		tags: []
 	},
+	sorting: {
+		type: '',
+		order: ''
+	},
 	tagsToShow: 0,
-	tasksToShow: 0,
-	sorting: ''
+	tasksToShow: 0
 }
 
 const navigationSlice = createSlice({

@@ -382,8 +382,13 @@ export default function AddTask() {
             <Select
               isSearchable={false}
               options={options}
+              classNames={{
+                option: () =>
+                  'add-flag-option'
+              }}
               styles={{
                 menuPortal: (base) => ({ ...base, zIndex: 160}),
+                menuList: (base) => ({ ...base, paddingBlock: 0}),
                 option: (base) => ({ ...base, display: 'flex', cursor: 'pointer' })
               }}
               menuPortalTarget={document.body}
