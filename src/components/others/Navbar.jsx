@@ -1,14 +1,14 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { addPopup } from '../features/navigation/navigationSlice'
+import { addPopup } from '../../features/navigation/navigationSlice'
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useTransition, animated } from 'react-spring'
-import NavNotificationsIcon from '../svg/navbar/NavNotificationsIcon'
-import DownArrowIcon from '../svg/navbar/DownArrowIcon'
-import AddTaskIcon from '../svg/navbar/AddTaskIcon'
-import LogoutIcon from '../svg/navbar/LogoutIcon'
-import SearchIcon from '../svg/navbar/SearchIcon'
-import '../css/components/Navbar.css'
+import NavNotificationsIcon from '../../svg/navbar/NavNotificationsIcon'
+import DownArrowIcon from '../../svg/navbar/DownArrowIcon'
+import AddTaskIcon from '../../svg/navbar/AddTaskIcon'
+import LogoutIcon from '../../svg/navbar/LogoutIcon'
+import SearchIcon from '../../svg/navbar/SearchIcon'
+import '../../css/components/Navbar.css'
 
 export default function Navbar() {
   const currentPage = useSelector((state) => state.navigation.currentPage)
@@ -108,7 +108,7 @@ export default function Navbar() {
     <header style={navbarStyles}>
       <Link to='/' >
         <img
-          src={require('../assets/images/logo.png')}
+          src={require('../../assets/images/logo.png')}
           alt='logo'
           className='app-logo'
         />

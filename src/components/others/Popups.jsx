@@ -1,14 +1,14 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { removePopup, setCurrentTask } from '../features/navigation/navigationSlice'
+import { removePopup, setCurrentTask } from '../../features/navigation/navigationSlice'
 import { useRef, useEffect } from 'react'
 import { useTransition, animated } from 'react-spring'
-import VerifyCompletionMessage from './popups/VerifyCompletionMessage'
-import VerifyDeletionMessage from './popups/VerifyDeletionMessage'
-import TaskCoverCrop from './popups/TaskCoverCrop'
-import TaskPreview from './popups/TaskPreview'
-import EditTask from './popups/EditTask'
-import AddTask from './popups/AddTask'
-import Message from './popups/Message'
+import VerifyCompletionMessage from '../popups/VerifyCompletionMessage'
+import VerifyDeletionMessage from '../popups/VerifyDeletionMessage'
+import TaskCoverCrop from '../popups/TaskCoverCrop'
+import TaskPreview from '../popups/TaskPreview'
+import EditTask from '../popups/EditTask'
+import AddTask from '../popups/AddTask'
+import Message from '../popups/Message'
 
 export default function Popups() {
   const popups = useSelector((state) => state.navigation.popups)

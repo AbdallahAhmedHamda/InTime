@@ -13,6 +13,9 @@ p {
 
 a {
   text-decoration: none;
+}
+
+a:not(.calendar-days > a) {
   display: flex;
   align-items: center;
   gap: 10px;
