@@ -1,6 +1,6 @@
+import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { format } from 'date-fns'
 import PrevMonthIcon from '../../svg/calendar/PrevMonthIcon'
 import NextMonthIcon from '../../svg/calendar/NextMonthIcon'
@@ -13,11 +13,23 @@ export default function CalendarView() {
   const [currentDate, setCurrentDate] = useState(new Date())
 
   const nextMonth = () => {
-    setCurrentDate(prevDate => new Date(prevDate.getFullYear(), prevDate.getMonth() + 1, 1))
+    const today = new Date()
+
+    if (currentDate.getMonth() + 1 === today.getMonth() && currentDate.getFullYear() === today.getFullYear()) {
+      setCurrentDate(today)
+    } else {
+      setCurrentDate(prevDate => new Date(prevDate.getFullYear(), prevDate.getMonth() + 1, 1))
+    }
   }
 
   const prevMonth = () => {
-    setCurrentDate(prevDate => new Date(prevDate.getFullYear(), prevDate.getMonth() - 1, 1))
+    const today = new Date()
+
+    if (currentDate.getMonth() - 1 === today.getMonth() && currentDate.getFullYear() === today.getFullYear()) {
+      setCurrentDate(today)
+    } else {
+      setCurrentDate(prevDate => new Date(prevDate.getFullYear(), prevDate.getMonth() - 1, 1))
+    }
   }
 
   const goToToday = () => {
@@ -89,7 +101,7 @@ export default function CalendarView() {
                   thisDay === taskEndDay ?
                   <div className='calendar-task-date'>
                     <p>
-                    {format(new Date(task.endDate), "h':'mm a")}  
+                      {format(new Date(task.endDate), "h':'mm a")}  
                     </p>
 
                     <span>End</span>

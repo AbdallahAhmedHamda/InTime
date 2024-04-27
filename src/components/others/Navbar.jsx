@@ -1,7 +1,7 @@
+import { Link, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { addPopup } from '../../features/navigation/navigationSlice'
 import { useState, useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
 import { useTransition, animated } from 'react-spring'
 import NavNotificationsIcon from '../../svg/navbar/NavNotificationsIcon'
 import DownArrowIcon from '../../svg/navbar/DownArrowIcon'
@@ -11,6 +11,8 @@ import SearchIcon from '../../svg/navbar/SearchIcon'
 import '../../css/components/Navbar.css'
 
 export default function Navbar() {
+  const navigate = useNavigate()
+
   const currentPage = useSelector((state) => state.navigation.currentPage)
   const name = useSelector((state) => state.user.name)
   const profilePic = useSelector((state) => state.user.profilePic)
@@ -82,8 +84,8 @@ export default function Navbar() {
   }
 
   const handleSearch = () => {
-    if (searchTerm) {
-      console.log('Searching for:', searchTerm)
+    if (searchTerm.trim()) {
+      navigate(`/search/${searchTerm.trim()}`)
     }
   }
 

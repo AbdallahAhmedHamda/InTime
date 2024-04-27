@@ -67,6 +67,7 @@ header {
   padding: 12px 20px 12px 10px;
   border-radius: 0px 7px 7px 0px;
   outline: none;
+  cursor: pointer;
 }
 
 @media (max-width: 785px) {

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import numeral from 'numeral'
 import ShowMoreArrow from'../../svg/others/ShowMoreArrow'
+import ShowLessArrow from'../../svg/others/ShowLessArrow'
 
 export default function Leaderboard() {
   const [dataArraySlice, setDataArraySlice] = useState(5)
@@ -62,6 +63,8 @@ export default function Leaderboard() {
     setNameWidth('auto')
     setTasksWidth('auto')
     setPointsWidth('auto')
+    
+    setShowMoreHovered(false)
   }
 
   const showLess = () => {
@@ -80,6 +83,8 @@ export default function Leaderboard() {
     leaderboardRefs.current.names = leaderboardRefs.current.names.slice(0, dataToShow)
     leaderboardRefs.current.tasks = leaderboardRefs.current.tasks.slice(0, dataToShow)
     leaderboardRefs.current.points = leaderboardRefs.current.points.slice(0, dataToShow)
+
+    setShowLessHovered(false)
   }
 
   return (
@@ -141,7 +146,7 @@ export default function Leaderboard() {
             >
               <p>Show less</p>
 
-              <ShowMoreArrow isHovered={showLessHovered}/>
+              <ShowLessArrow isHovered={showLessHovered}/>
             </div>
           )
         }

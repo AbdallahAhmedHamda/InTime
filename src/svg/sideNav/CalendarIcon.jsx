@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 
 export default function CalendarIcon() {
   const currentPage = useSelector((state) => state.navigation.currentPage)
-  const color = (currentPage === 'calendar') ? '#5468E7' : 'black'
+  const color = (currentPage === 'calendar' || currentPage === 'board') ? '#5468E7' : 'black'
   
   return (
     <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>

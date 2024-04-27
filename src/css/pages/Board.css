@@ -1,0 +1,173 @@
+.board-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.board-buttons {
+  display: flex;
+  align-items: stretch;
+}
+
+.board-today-button {
+  cursor: pointer;
+  font-family: 'Poppins';
+  background-color: white;
+  color: #5468E7;
+  font-size: 12px;
+  border-radius: 6px;
+  border: 1px solid #DEE2EC;
+  padding:  8px 13px;
+  flex: 1;
+  outline: none;
+  margin-right: 20px;
+}
+
+.board-buttons > P {
+  color: rgba(0, 0, 0, 0.8);
+  text-wrap: nowrap;
+  text-align: center;
+  margin: auto;
+  font-size: 13px;
+  font-weight: 300;
+  width: 140px;
+}
+
+.board-buttons > *:not(p) {
+  user-select: none;
+}
+
+.board-tasks-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 48px;
+  height: fit-content;
+  align-items: flex-start;
+  min-width: fit-content;
+  max-width: 1542px;
+  justify-content: flex-start;
+  margin-top: 16px;
+}
+
+@media (max-width: 1708px) {
+  .board-tasks-container{
+    max-width: 1224px;
+  }
+}
+
+@media (max-width: 1390px) {
+  .board-tasks-container {
+    max-width: 906px;
+  }
+}
+
+@media (max-width: 1072px) {
+  .board-tasks-container {
+    max-width: 588px;
+  }
+}
+
+@media (max-width: 753px) {
+  .board-tasks-container  {
+    max-width: 270px;
+  }
+}
+
+
+.board-tasks-container > p {
+  font-size: 36px;
+  font-weight: 500;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  text-wrap: nowrap;
+}
+
+.board-svg-container {
+  width: 270px;
+  display: flex;
+  margin-top: auto;
+  margin-bottom: auto;
+  justify-content: center;
+}
+
+.board-task-container {
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+  background-color: white;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  height: fit-content;
+  width: 270px;
+  border-radius: 5px;
+  padding: 15px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.board-task-upper-section {
+  display: flex;
+  justify-content: space-between;
+  gap: 35px;
+  align-items: center;
+}
+
+.board-task-date {
+  font-weight: 600;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.board-task-group-icon {
+  min-width: 23px;
+  min-height: 20px;
+}
+
+.board-task-middle-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10PX;
+}
+
+.board-task-cover-image {
+  width: 240px;
+  height: 128px;
+}
+
+.board-task-title {
+  font-size: 17px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.board-task-bottom-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.board-task-bottom-section > p {
+  color: #FFF;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 3px 12px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.board-task-steps-container {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+
+.board-task-steps {
+  color: #768396;
+  font-family: 'DM Sans';
+  font-size: 12px;
+  font-weight: 700;
+}

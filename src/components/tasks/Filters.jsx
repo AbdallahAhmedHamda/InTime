@@ -1,27 +1,56 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { setFilters, setTagsToShow } from '../../features/navigation/navigationSlice'
-import { useState, useEffect } from 'react'
+import { setFilters } from '../../features/navigation/navigationSlice'
+import { useState, useEffect, useMemo } from 'react'
 import ShowMoreArrow from'../../svg/others/ShowMoreArrow'
+import ShowLessArrow from'../../svg/others/ShowLessArrow'
 import FlagIcon from '../../svg/others/FlagIcon'
 
 export default function Filters() {
   const filters = useSelector((state) => state.navigation.filters)
-  const tagsToShow = useSelector((state) => state.navigation.tagsToShow)
   const tasks = useSelector((state) => state.user.tasks)
-  const tags = useSelector((state) => state.user.tags).filter((tag) => tag !== null)
+  const reduxTags = useSelector((state) => state.user.tags)
   
   const dispatch = useDispatch()
 
+  const tags = useMemo(() => reduxTags.filter((tag) => tag !== null), [reduxTags])
+  
   const [showMoreHovered, setShowMoreHovered] = useState(false)
   const [showLessHovered, setShowLessHovered] = useState(false)
-
-  // add tags to the filters if there is space for them
+  const [tagsSearchValue, setTagsSearchValue] = useState('')
+  const [displayedTags, setDisplayedTags] = useState(tags)
+  const [tagsToShow, setTagsToShow] = useState(6)
+  
+  // updated shown tags whenever the real tags change
   useEffect(() => {
-    if (tags.length <= 6 || tagsToShow % 3 !== 0 || tagsToShow > tags.length) {
-      dispatch(setTagsToShow(tags.length))
+    if (tagsSearchValue.trim() !== '') {
+      setDisplayedTags(tags.filter(tag => tag.includes(tagsSearchValue.trim())))
+    } else {
+      setDisplayedTags(tags)
     }
     // eslint-disable-next-line
   }, [tags])
+
+  // updated shown tags whenever the search changes
+  useEffect(() => {
+
+
+    if (tagsSearchValue.trim() !== '') {
+      setDisplayedTags(tags.filter(tag => tag.includes(tagsSearchValue.trim())))
+      setTagsToShow(6)
+    } else {
+      setDisplayedTags(tags)
+      setTagsToShow(6)
+    }
+    // eslint-disable-next-line
+  }, [tagsSearchValue])
+
+  // add tags to the filters if there is space for them
+  useEffect(() => {
+    if (displayedTags.length <= 6 || tagsToShow % 3 !== 0 || tagsToShow > displayedTags.length) {
+      setTagsToShow(displayedTags.length)
+    }
+    // eslint-disable-next-line
+  }, [displayedTags])
   
   const checkboxChecked = (filter, filterOption) => {
     return filters[filter].includes(filterOption)
@@ -41,19 +70,23 @@ export default function Filters() {
   }
 
   const showMore = () => {
-    if (Math.floor(tags.length / 6) === Math.floor(tagsToShow / 6)) {
-      dispatch(setTagsToShow(tagsToShow + (tags.length - tagsToShow)))
+    if (Math.floor(displayedTags.length / 6) === Math.floor(tagsToShow / 6)) {
+      setTagsToShow(tagsToShow + (displayedTags.length - tagsToShow))
     } else {
-      dispatch(setTagsToShow(tagsToShow + 6))
+      setTagsToShow(tagsToShow + 6)
     }
+
+    setShowMoreHovered(false)
   }
 
   const showLess = () => {
-    if (tags.length === tagsToShow) {
-      dispatch(setTagsToShow(tagsToShow - (tagsToShow % 6)))
+    if (displayedTags.length === tagsToShow) {
+      setTagsToShow(tagsToShow - (tagsToShow % 6 === 0 ? 6 : tagsToShow % 6))
     } else {
-      dispatch(setTagsToShow(tagsToShow - 6))
+      setTagsToShow(tagsToShow - 6)
     }
+
+    setShowLessHovered(false)
   }
 
   const checkmarkStyles = (filter, filterOption) => (
@@ -72,7 +105,7 @@ export default function Filters() {
   const allInProgressTasks = tasks.filter((task) => !task.isCompleted && !task.backlog).length
   const allBacklogTasks = tasks.filter((task) => task.backlog).length
 
-  const sortedTags = [...tags].sort()
+  const sortedTags = [...displayedTags].sort()
 
   return (
     <div className='filters-container'>
@@ -222,9 +255,22 @@ export default function Filters() {
       </div>
 
       {
-        sortedTags.length !== 0 && (
+        tags.length !== 0 && (
           <div className='single-filter-container'>
-            <p>Tags</p>
+            <div className='tag-header-container'>
+              <p>Tags</p>
+
+              <input
+                  className='tags-search'
+                  type='text'
+                  autoComplete='off'
+                  value={tagsSearchValue}
+                  onChange={(e) => {
+                    setTagsSearchValue(e.target.value)
+                  }}
+                  placeholder='search tags...'
+                />
+            </div>
 
             <div className='single-filter-options  tags-filter-options'>
               {
@@ -251,7 +297,7 @@ export default function Filters() {
       }
 
       {
-        sortedTags.length !== 0 && (
+        tags.length !== 0 && (
           <div className='tags-show-container'>
             {
               tagsToShow > 6 && (
@@ -263,13 +309,13 @@ export default function Filters() {
                 >
                   <p>Show less</p>
 
-                  <ShowMoreArrow isHovered={showLessHovered}/>
+                  <ShowLessArrow isHovered={showLessHovered}/>
                 </div>
               )
             }
 
             {
-              tags.length !== tagsToShow && (
+              displayedTags.length !== tagsToShow && (
                 <div 
                   className='tags-show-more'
                   onClick={showMore}

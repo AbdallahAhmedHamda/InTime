@@ -22,7 +22,7 @@ a:not(.calendar-days > a) {
 }
 
 a:visited {
-  color: black;
+  color: none;
 }
 
 button {
@@ -58,7 +58,7 @@ button {
   margin-left: 78px;
   margin-top: 79px;
   min-width: fit-content;
-  max-width: 1500px;
+  width: fit-content;
   position: relative
 }
 

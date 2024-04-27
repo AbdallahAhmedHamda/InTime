@@ -1,25 +1,26 @@
+import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { setCurrentPage, removeAllPopups, addPopup } from '../features/navigation/navigationSlice'
+import { setCurrentPage, removeAllPopups } from '../features/navigation/navigationSlice'
 import { useEffect, useState } from 'react'
 import TasksTask from '../components/tasks/TasksTask'
-import Filters from '../components/tasks/Filters'
-import Sorting from '../components/tasks/Sorting'
 import TasksShowMoreArrow from'../svg/tasks/TasksShowMoreArrow'
 import TasksShowLessArrow from'../svg/tasks/TasksShowLessArrow'
-import AddTaskIcon from '../svg/board/AddTaskIcon'
 import '../css/pages/Tasks.css'
 
-export default function Tasks() {
-  const tasks = useSelector((state) => state.user.tasks)
+export default function Search() {
+  const { searchValue } = useParams()
+
+  const tasks = useSelector((state) => state.user.tasks).filter((task) => task.title.includes(searchValue))
 
   const dispatch = useDispatch()
 
   const [showMoreHovered, setShowMoreHovered] = useState(false)
   const [showLessHovered, setShowLessHovered] = useState(false)
   const [tasksToShow, setTasksToShow] = useState(12)
+
   // change the current page so the app can rerender and update sidenav active icon and remove all popups
   useEffect(() => {
-    dispatch(setCurrentPage('tasks'))
+    dispatch(setCurrentPage('search'))
     dispatch(removeAllPopups())
     // eslint-disable-next-line
   }, [])
@@ -55,29 +56,20 @@ export default function Tasks() {
 
   return (
     <div className='main-content'>
-      <div className='tasks-upper-section'>
-        <p className='page-name'>Tasks</p>
-        
-        {
-          tasks.length !== 0 && (
-            <Sorting />
-          )
-        }
-      </div>
-      {
-        tasks.length !== 0 ? 
-        (
-          <div className='tasks-container'>
-            <div className='tasks-left-section'>
-              <div className='tasks-left-section-tasks'>
-                {
-                  tasks.slice(0, tasksToShow).map((task) => (
-                    <TasksTask task={task} key={task.id}/>
-                  ))
-                }
-              </div>
+      <p className='page-name'>Search results</p>
 
-              <div className='tasks-show-container'>
+      <div className='tasks-left-section search-page'>
+          <div className='tasks-left-section-tasks'>
+            {
+              tasks.slice(0, tasksToShow).map((task) => (
+                <TasksTask task={task} key={task.id}/>
+              ))
+            }
+          </div>
+
+          {
+            tasks !== 0 && (
+              <div className='tasks-show-container search-show'>
                 {
                   tasksToShow > 12 && (
                     <div 
@@ -108,19 +100,9 @@ export default function Tasks() {
                   )
                 }
               </div>
-            </div>
-
-            <div className='tasks-right-section'>
-              <Filters />
-            </div>
-          </div>
-        ) : (
-          <div className='tasks-no-tasks'>
-            <p>There is no Tasks</p>
-            <AddTaskIcon showPopup={() => dispatch(addPopup('add'))}/>
+            )
+          }
         </div>
-        )
-      }
     </div>
   )
 }

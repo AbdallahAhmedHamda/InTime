@@ -99,7 +99,7 @@
 }
 
 .tasks-this-month > span {
-  color: var(--prime, #5468E7);
+  color:  #5468E7;
   font-size: 14px;
 }
 

@@ -27,8 +27,8 @@ export default function TaskCoverCrop() {
   // adjust crop tool when window resizes
   useEffect(() => {
     const handleResize = () => {
-      setMinWidth(227 * imgRef.current?.width / imgRef.current?.naturalWidth)
-      setMinHeight(121 * imgRef.current?.height / imgRef.current?.naturalHeight)
+      setMinWidth(240 * imgRef.current?.width / imgRef.current?.naturalWidth)
+      setMinHeight(128 * imgRef.current?.height / imgRef.current?.naturalHeight)
     }
 
     window.addEventListener('resize', handleResize)
@@ -41,8 +41,8 @@ export default function TaskCoverCrop() {
   // set crop tool when image loads
   const onImageLoad = (e) => {
     const { width, height, naturalWidth, naturalHeight } = e.currentTarget
-    const cropWidthInPercent = (227 / width) * 100
-    const cropHeightInPercent = (121 / height) * 100
+    const cropWidthInPercent = (240 / width) * 100
+    const cropHeightInPercent = (128 / height) * 100
 
     const crop = makeAspectCrop(
       {
@@ -50,13 +50,13 @@ export default function TaskCoverCrop() {
         width: cropWidthInPercent,
         height: cropHeightInPercent
       },
-      227/121,
+      240/128,
       width,
       height
     )
     setCrop(centerCrop(crop, width, height))
-    setMinWidth(227 * width / naturalWidth)
-    setMinHeight(121 * height / naturalHeight)
+    setMinWidth(240 * width / naturalWidth)
+    setMinHeight(128 * height / naturalHeight)
   }
 
   // get the cropped image
@@ -112,7 +112,7 @@ export default function TaskCoverCrop() {
           crop={crop}
           onChange={(_, percentCrop) => setCrop(percentCrop)}
           keepSelection={true}
-          aspect={227/121}
+          aspect={240/128}
           minWidth={minWidth}
           minHeight={minHeight}
           className='task-cover-crop'

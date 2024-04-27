@@ -36,6 +36,11 @@ const options = [
 ]
 
 export default function AddTask() {
+  const url =  window.location.pathname
+  const stringDate = url.includes('/calendar/')
+    ? url.substring(url.lastIndexOf('/') + 1)
+    : ''
+
   const allTags = useSelector((state) => state.user.tags)
   const croppedImage = useSelector((state) => state.navigation.croppedImage)
 
@@ -47,8 +52,22 @@ export default function AddTask() {
       ? {
           ...rawTask,
           flag: options[rawTask.flag.value - 1],
-          startDate: dayjs(rawTask.startDate),
-          endDate: dayjs(rawTask.endDate),
+          startDate: stringDate
+            ? dayjs(stringDate)
+                .startOf('minute')
+                .set('hour', dayjs().hour())
+                .set('minute', dayjs().minute())
+                .add(30 - dayjs().minute() % 30, 'minutes')
+            : dayjs(rawTask.startDate),
+          endDate: stringDate && dayjs(stringDate) > dayjs()
+            ? dayjs(stringDate)
+                .startOf('minute')
+                .set('hour', dayjs().hour())
+                .set('minute', dayjs().minute())
+                .add(90 - dayjs().minute() % 30, 'minutes')
+            : dayjs()
+                .startOf('minute')
+                .add(90 - dayjs().minute() % 30, 'minutes')
         }
       : null
 
@@ -59,12 +78,24 @@ export default function AddTask() {
       tag: { name: '', color: ''},
       flag: options[0],
       image: '',
-      startDate: dayjs()
-        .startOf('minute')
-        .add(30 - dayjs().minute() % 30, 'minutes'),
-      endDate: dayjs()
-        .startOf('minute')
-        .add(90 - dayjs().minute() % 30, 'minutes'),
+      startDate: stringDate
+      ? dayjs(stringDate)
+          .startOf('minute')
+          .set('hour', dayjs().hour())
+          .set('minute', dayjs().minute())
+          .add(30 - dayjs().minute() % 30, 'minutes')
+      : dayjs()
+          .startOf('minute')
+          .add(30 - dayjs().minute() % 30, 'minutes'),
+      endDate: stringDate && dayjs(stringDate) > dayjs()
+      ? dayjs(stringDate)
+          .startOf('minute')
+          .set('hour', dayjs().hour())
+          .set('minute', dayjs().minute())
+          .add(90 - dayjs().minute() % 30, 'minutes')
+      : dayjs()
+          .startOf('minute')
+          .add(90 - dayjs().minute() % 30, 'minutes'),
       steps: []
     }
   )
