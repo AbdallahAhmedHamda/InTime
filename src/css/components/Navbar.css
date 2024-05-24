@@ -6,7 +6,7 @@ header {
   justify-content: space-between;
   align-items: center;
   gap: 15px;
-  width: 100vw;
+  width: 100%;
   min-width: fit-content;
   position: fixed;
   z-index: 10;
@@ -70,7 +70,7 @@ header {
   cursor: pointer;
 }
 
-@media (max-width: 785px) {
+@media (max-width: 870px) {
   .search-bar {
       display: none;
   }

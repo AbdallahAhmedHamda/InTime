@@ -122,6 +122,7 @@ export default function Navbar() {
 
       <div className='search-bar'>
         <input
+        autoComplete='off'
           type='text'
           placeholder='Search anything...'
           name='searchTerm'

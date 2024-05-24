@@ -1,0 +1,85 @@
+.send-otp-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  height: fit-content;
+  min-width: fit-content;
+  padding-left: 30px;
+  padding-right: 30px;
+  gap: 20px;
+}
+
+.send-otp-hero-img {
+  width: 128px;
+  height: 196px;
+}
+
+.send-otp-page-disc {
+  color: rgba(0, 0, 0, 0.60);
+  text-align: center;
+  font-family: 'Roboto';
+  font-size: 24px;
+  font-weight: 400;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.send-otp-blue-text {
+  color: #23235F;
+  font-size: 48px;
+  font-weight: 700;
+}
+
+.send-otp-page-container > button {
+  height: 46px;
+  border-radius: 8px;
+  outline: none;
+  border: none;
+  background-color: #5468E7;
+  color: white;
+  font-family: 'Roboto';
+  font-size: 22px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 448px;
+  box-sizing: content-box;
+  padding: 0;
+}
+
+.send-otp-page-container > button:hover {
+  background-color: #0056b3;
+}
+
+.send-otp-resend {
+  color: #111;
+  font-family: 'Roboto';
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: left;
+}
+
+.otp-input-container {
+  gap: 16px !important;
+  width: 448px !important;
+}
+
+.otp-input-container > input {
+  width: 100px !important;
+  height: 100px !important;
+  box-sizing: border-box;
+  border-radius: 8px;
+  border: 1px solid #585A66 !important;
+  color: #23235F;
+  font-family: 'Roboto';
+  font-size: 32px;
+  padding: 0;
+}
+
+.otp-input-container > input:focus {
+  outline: 1px #1976d2 solid;
+}

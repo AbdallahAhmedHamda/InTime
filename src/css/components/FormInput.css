@@ -1,0 +1,53 @@
+.sign-form-input {
+  display: flex;
+  flex-direction: column;
+  width: 520px;
+  gap: 10px;
+  position: relative;
+}
+
+.sign-form-input > input {
+  padding: 0 15px;
+  height: 46px;
+  border-radius: 8px;
+  border: 1px solid rgba(102, 102, 102, 0.35);
+  color: #585A66;
+}
+
+.sign-form-input > input:focus {
+  outline: 1px #1976d2 solid;
+}
+
+.sign-form-input > label {
+  color: #23235F;
+  font-size: 16px;
+}
+
+.sign-form-input > span {
+  font-size: 12px;
+  padding: 3px;
+  color: red;
+  display: none;
+}
+
+.sign-form-input > .sign-form-error {
+  border: 1px solid red;
+}
+
+.sign-form-input > .sign-form-error ~ span {
+  display: block;
+}
+
+.sign-form-input > a {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  color: #111;
+  font-family: 'Roboto';
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.sign-in-password {
+  margin-bottom: 24.8px;
+}

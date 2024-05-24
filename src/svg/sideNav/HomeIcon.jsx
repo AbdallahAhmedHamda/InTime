@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 
 export default function HomeIcon() {
   const currentPage = useSelector((state) => state.navigation.currentPage)
-  const color = (currentPage === '') ? '#5468E7' : 'black'
+  const color = (currentPage === 'home') ? '#5468E7' : 'black'
 
   return (
     <svg width='20' height='21' viewBox='0 0 20 21' fill='none' xmlns='http://www.w3.org/2000/svg'>

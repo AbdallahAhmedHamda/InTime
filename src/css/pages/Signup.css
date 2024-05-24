@@ -1,0 +1,95 @@
+.signup-page-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  height: fit-content;
+  min-width: fit-content;
+  padding-left: 30px;
+  padding-right: 30px;
+  gap: 200px;
+}
+
+.signup-page-right {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: min-content;
+  gap: 24px;
+}
+
+.signup-hero-img {
+  width: 281px;
+  height: 272px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.signup-app-logo-text {
+  position: relative;
+  color: #5468E7;
+  font-family: 'Roboto';
+  font-size: 80px;
+  font-weight: 700;
+  text-wrap: nowrap;
+  text-align: center;
+}
+
+.signup-app-logo-text > span {
+  color: black;
+}
+
+.signup-page-disc {
+  color: #585A66;
+  text-align: center;
+  font-size: 26px;
+  text-wrap: nowrap;
+}
+
+.signup-page-left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.signup-page-left > p:first-child {
+  color: #5468E7;
+  font-family: 'Roboto';
+  font-size: 56px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  margin-bottom: 10px;
+}
+
+.signup-page-left > button {
+  height: 46px;
+  border-radius: 8px;
+  outline: none;
+  background-color: #5468E7;
+  border: 1px solid #5468E7;
+  color: white;
+  font-family: 'Roboto';
+  font-size: 22px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border 0.3s ease;
+  box-sizing: content-box;
+  padding: 0;
+}
+
+.signup-page-left > button:hover {
+  background-color: #0056b3;
+  border: 1px solid #0056b3;
+}
+
+.signup-page-left > p:last-child {
+  color: #2F394B;
+  text-align: center;
+  font-family: 'Roboto';
+  font-size: 20px;
+}
+
+.signup-page-left > p:last-child > a {
+  color: #5468E7;
+  display: inline;
+}

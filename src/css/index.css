@@ -21,10 +21,6 @@ a:not(.calendar-days > a) {
   gap: 10px;
 }
 
-a:visited {
-  color: none;
-}
-
 button {
   user-select: none;
 }
