@@ -52,7 +52,7 @@
   gap: 9px;
 }
 
-.input-block > p {
+.input-block > label, .input-block > p {
   font-size: 20px;
 }
 
@@ -79,6 +79,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
+  font-size: 20px;
 }
 
 .optional-input-wrapper > .optional-input {

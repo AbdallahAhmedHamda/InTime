@@ -108,7 +108,7 @@ export default function Navbar() {
   
   return (
     <header style={navbarStyles}>
-      <Link to='/' >
+      <Link to='/home' >
         <img
           src={require('../../assets/images/logo.png')}
           alt='logo'
@@ -122,8 +122,10 @@ export default function Navbar() {
 
       <div className='search-bar'>
         <input
-        autoComplete='off'
+          autoComplete='off'
+          spellCheck='false'
           type='text'
+          id='searchBar'
           placeholder='Search anything...'
           name='searchTerm'
           value={searchTerm}
@@ -170,10 +172,6 @@ export default function Navbar() {
             {
               dropdownTransition((style, item) => item && (
                 <animated.div className='account-dropdown' style={style}>
-                  <p>Switch account</p>
-
-                  <hr />
-
                   <div className='logout-container'>
                     <LogoutIcon /> 
                     

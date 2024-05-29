@@ -63,6 +63,11 @@
   text-align: left;
 }
 
+.send-otp-resend.send-otp-disabled {
+  color: rgba(0, 0, 0, 0.40);
+  cursor: auto;
+}
+
 .otp-input-container {
   gap: 16px !important;
   width: 448px !important;

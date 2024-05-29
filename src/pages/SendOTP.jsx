@@ -8,10 +8,12 @@ export default function SendOTP() {
   const dispatch = useDispatch()
 
   const [focusVerified, setFocusVerified] = useState(false)
+  const [timer, setTimer] = useState(0)
   const [otp, setOtp] = useState('')
 
   const containerRef = useRef(null)
   const verifyRef = useRef(null)
+  const resendRef = useRef(null)
 
   // change the current page so the app can rerender and update sidenav active icon and remove all popups
   useEffect(() => {
@@ -64,10 +66,62 @@ export default function SendOTP() {
     }
   }, [otp, focusVerified])
 
+  // calculate timer start
+  useEffect(() => {
+    const savedTimestamp = localStorage.getItem('sendOtpTimestamp')
+    if (savedTimestamp) {
+      const elapsedTime = Math.floor((Date.now() - savedTimestamp) / 1000)
+      const remainingTime = Math.max(30 - elapsedTime, 0)
+
+      setTimer(remainingTime)
+
+      if (remainingTime > 0) {
+        resendRef.current.classList.add('send-otp-disabled')
+      } else {
+        resendRef.current.classList.remove('send-otp-disabled')
+        localStorage.removeItem('sendOtpTimestamp')
+      }
+    }
+  }, [])
+
+  // resend countdown
+  useEffect (() => {
+    let countdown
+    if (timer > 0) {
+      countdown = setInterval(() => {
+        setTimer((prevTimer) => {
+          const newTimer = prevTimer - 1
+
+          if (newTimer === 0) {
+            clearInterval(countdown)
+            localStorage.removeItem('sendOtpTimestamp')
+            resendRef.current.classList.remove('send-otp-disabled')
+          }
+
+          return newTimer
+        })
+      }, 1000)
+    }
+
+    return () => clearInterval(countdown)
+  }, [timer])
+
   const handleSubmit = (e) => {
     e.preventDefault()
 
     console.log("verify")
+  }
+
+  const disableResend = (e) => {
+    e.preventDefault()
+
+    if (!resendRef.current.classList.contains('send-otp-disabled')) {
+      resendRef.current.classList.add('send-otp-disabled')
+
+      setTimer(30)
+
+      localStorage.setItem('sendOtpTimestamp', Date.now())
+    }
   }
   
   return (
@@ -94,12 +148,15 @@ export default function SendOTP() {
           }
         }}
         numInputs={4}
-        renderInput={(props) => <input {...props} />}
+        renderInput={(props, i) => <input
+          {...props}
+          id={`otpInputNum${i}`}
+        />}
         inputType='tel'
         shouldAutoFocus
       />
-      
-      <p className='send-otp-resend'>Resend OTP</p>
+
+      <p className={`send-otp-resend ${timer ? 'send-otp-disabled' : ''}`} onClick={disableResend} ref={resendRef}>Resend OTP{timer ? ' in ' : ''}{timer ? timer : ''}{timer ? 's' : ''}</p>
 
       <button type="submit" ref={verifyRef}>
         <p>Verify</p>

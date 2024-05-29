@@ -1,8 +1,8 @@
 import { useDispatch } from 'react-redux'
 import { removeAllPopups, setCurrentPage } from '../features/navigation/navigationSlice'
 import { useState, useEffect, useRef } from 'react'
-import '../css/pages/ChangePassword.css'
 import FormInput from '../components/others/FormInput'
+import '../css/pages/ChangePassword.css'
 
 export default function ChangePassword() {
   const dispatch = useDispatch()
@@ -47,6 +47,7 @@ export default function ChangePassword() {
 
   const inputs = [
     {
+      autoFocus: true,
       id: 1,
       name: 'oldPassword',
       type: 'password',

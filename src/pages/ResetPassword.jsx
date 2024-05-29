@@ -2,13 +2,14 @@ import { useDispatch } from 'react-redux'
 import { removeAllPopups, setCurrentPage } from '../features/navigation/navigationSlice'
 import { useState, useEffect, useRef } from 'react'
 import OtpInput from 'react-otp-input'
-import '../css/pages/ResetPassword.css'
 import FormInput from '../components/others/FormInput'
+import '../css/pages/ResetPassword.css'
 
 export default function ResetPassword() {
   const dispatch = useDispatch()
 
   const [focusNext, setFocusNext] = useState(false)
+  const [timer, setTimer] = useState(0)
   const [otp, setOtp] = useState('')
   const [values, setValues] = useState({
     password: '',
@@ -18,6 +19,7 @@ export default function ResetPassword() {
 
   const containerRef = useRef(null)
   const nextInputRef = useRef(null)
+  const resendRef = useRef(null)
 
   // change the current page so the app can rerender and update sidenav active icon and remove all popups
   useEffect(() => {
@@ -69,6 +71,46 @@ export default function ResetPassword() {
       nextInputRef.current.focus()
     }
   }, [otp, focusNext])
+
+  // calculate timer start
+  useEffect(() => {
+    const savedTimestamp = localStorage.getItem('resetPasswordTimestamp')
+    if (savedTimestamp) {
+      const elapsedTime = Math.floor((Date.now() - savedTimestamp) / 1000)
+      const remainingTime = Math.max(30 - elapsedTime, 0)
+
+      setTimer(remainingTime)
+
+      if (remainingTime > 0) {
+        resendRef.current.classList.add('reset-password-disabled')
+      } else {
+        resendRef.current.classList.remove('reset-password-disabled')
+        localStorage.removeItem('resetPasswordTimestamp')
+      }
+    }
+  }, [])
+
+  // resend countdown
+  useEffect (() => {
+    let countdown
+    if (timer > 0) {
+      countdown = setInterval(() => {
+        setTimer((prevTimer) => {
+          const newTimer = prevTimer - 1
+
+          if (newTimer === 0) {
+            clearInterval(countdown)
+            localStorage.removeItem('resetPasswordTimestamp')
+            resendRef.current.classList.remove('reset-password-disabled')
+          }
+
+          return newTimer
+        })
+      }, 1000)
+    }
+
+    return () => clearInterval(countdown)
+  }, [timer])
 
   const inputs = [
     {
@@ -123,6 +165,18 @@ export default function ResetPassword() {
     setValues({ ...values, [e.target.name]: e.target.value })
     setErrors({ ...errors, [e.target.name]: '' })
   }
+
+  const disableResend = (e) => {
+    e.preventDefault()
+
+    if (!resendRef.current.classList.contains('reset-password-disabled')) {
+      resendRef.current.classList.add('reset-password-disabled')
+
+      setTimer(30)
+
+      localStorage.setItem('resetPasswordTimestamp', Date.now())
+    }
+  }
   
   return (
     <form
@@ -149,12 +203,15 @@ export default function ResetPassword() {
           }
         }}
         numInputs={4}
-        renderInput={(props) => <input {...props} />}
+        renderInput={(props, i) => <input
+          {...props}
+          id={`otpInputNum${i}`}
+        />}
         inputType='tel'
         shouldAutoFocus
       />
 
-      <p className='reset-password-resend'>Resend OTP</p>
+      <p className={`reset-password-resend ${timer ? 'reset-password-disabled' : ''}`} onClick={disableResend} ref={resendRef}>Resend OTP{timer ? ' in ' : ''}{timer ? timer : ''}{timer ? 's' : ''}</p>
 
       {
         inputs.map((input) => (

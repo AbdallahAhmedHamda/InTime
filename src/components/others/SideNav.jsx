@@ -87,7 +87,7 @@ export default function SideNav() {
   }
 
   const navigationPages = [
-    { path: '/', label: 'Home', icon: <HomeIcon /> },
+    { path: '/home', label: 'Home', icon: <HomeIcon /> },
     { path: '/tasks', label: 'Tasks', icon: <TasksIcon /> },
     { path: '/calendar', label: 'Calendar', icon: <CalendarIcon /> },
     { path: '/notifications', label: 'Notifications', icon: <SideNotificationsIcon /> },

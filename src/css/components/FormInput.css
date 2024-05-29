@@ -6,16 +6,35 @@
   position: relative;
 }
 
-.sign-form-input > input {
+.form-input-container.eye-container {
+  position: relative;
+}
+
+.sign-form-input > .form-input-container.eye-container > input {
   padding: 0 15px;
   height: 46px;
   border-radius: 8px;
   border: 1px solid rgba(102, 102, 102, 0.35);
   color: #585A66;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.sign-form-input > input:focus {
+.sign-form-input > .form-input-container.eye-container > .form-password-input {
+  padding-right: 55px;
+}
+
+.sign-form-input > .form-input-container.eye-container > input:focus {
   outline: 1px #1976d2 solid;
+}
+
+.form-input-container.eye-container > svg {
+  position: absolute;
+  right: 17.5px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  user-select: none;
 }
 
 .sign-form-input > label {
@@ -27,7 +46,6 @@
   font-size: 12px;
   padding: 3px;
   color: red;
-  display: none;
 }
 
 .sign-form-input > .sign-form-error {

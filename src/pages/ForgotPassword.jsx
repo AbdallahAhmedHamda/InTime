@@ -62,10 +62,11 @@ export default function ForgotPassword() {
 
       <FormInput
         name='email'
-        type='text'
+        type='email'
         placeholder='Email'
         required
         value={emailValue}
+        autoFocus
         onChange={(e) => setEmailValue(e.target.value)}
       />
 

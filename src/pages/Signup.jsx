@@ -49,6 +49,7 @@ export default function Signup() {
 
   const inputs = [
     {
+      autoFocus: true,
       id: 1,
       name: 'fullname',
       type: 'text',
@@ -86,7 +87,7 @@ export default function Signup() {
       required: true,
     },
   ]
-
+  
   const validate = () => {
     let valid = true
     let newErrors = {}

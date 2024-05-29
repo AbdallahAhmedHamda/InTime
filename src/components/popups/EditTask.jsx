@@ -223,15 +223,19 @@ export default function EditTask({ currentTask, selectZIndex }) {
       
       <div  className='edit-content'>
         <div className='input-block'>
-          <p>Title</p>
+          <label htmlFor='title'>Title</label>
 
           <input
+            autoFocus
+            spellCheck='false'
+            autoComplete='off'
             required={true}
             pattern='.*\S+.*'
             title='Include other letters than space!'
             className='task-title-input'
             type='text'
             name='title'
+            id='title'
             value={values.title}
             onChange={onTextInputChange}
             placeholder='Enter a title....'
@@ -239,15 +243,16 @@ export default function EditTask({ currentTask, selectZIndex }) {
         </div>
 
         <div className='input-block disc-input-block'>
-          <div className='optional-input-wrapper'>
+          <label htmlFor='disc' className='optional-input-wrapper'>
             <p>Description</p>
             
             <p className='optional-input'>(optional)</p>
-          </div>
+          </label>
 
           <textarea
             className='disc-input'
             name='disc'
+            id='disc'
             value={values.disc}
             onChange={onTextInputChange}
             placeholder='Add description....'
@@ -276,6 +281,7 @@ export default function EditTask({ currentTask, selectZIndex }) {
 
             <input
               type='file'
+              id='cover'
               accept='image/png, image/jpeg'
               onChange={onImageSelection}
               hidden={true}
@@ -322,15 +328,17 @@ export default function EditTask({ currentTask, selectZIndex }) {
           </div>
 
           <div className='input-block'>
-            <p>Tag</p>
+            <label htmlFor='tag'>Tag</label>
 
             <input
               required={true}
+              spellCheck='false'
               autoComplete='off'
               pattern='.*\S+.*'
               title='Include other letters than space!'
               className='tag-input'
               type='text'
+              id='tag'
               name='tag'
               value={values.tag.name}
               onChange={(e) => {
@@ -438,14 +446,17 @@ export default function EditTask({ currentTask, selectZIndex }) {
         {
           values.steps.map((step, i) => (
             <div key={step.id} className='input-block'>
-              <p>step {i + 1}</p>
+              <label htmlFor={`step-num-${i + 1}`}>step {i + 1}</label>
 
               <div className='step-wrapper'>
                 <input
                   required={true}
+                  spellCheck='false'
+                  autoComplete='off'
                   className='step-input'
                   type='text'
-                  name='title'
+                  name={`step-num-${i + 1}`}
+                  id={`step-num-${i + 1}`}
                   value={values.steps[i].content}
                   onChange={(e) => {
                     const updatedSteps = [...values.steps]

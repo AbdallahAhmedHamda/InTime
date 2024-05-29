@@ -46,9 +46,10 @@ export default function Signin() {
 
   const inputs = [
     {
+      autoFocus: true,
       id: 1,
       name: 'email',
-      type: 'text',
+      type: 'email',
       label: 'Your email',
       required: true,
     },

@@ -263,7 +263,9 @@ export default function Filters() {
               <input
                   className='tags-search'
                   type='text'
+                  id='tagsSearch'
                   autoComplete='off'
+                  spellCheck='false'
                   value={tagsSearchValue}
                   onChange={(e) => {
                     setTagsSearchValue(e.target.value)
