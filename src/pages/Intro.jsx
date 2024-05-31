@@ -13,8 +13,7 @@ export default function Intro() {
   useEffect(() => {
     dispatch(setCurrentPage(''))
     dispatch(removeAllPopups())
-    // eslint-disable-next-line
-  }, [])
+  }, [dispatch])
 
   //change the min-width for the page depending if there is a scroll or if there is not
   useEffect(() => {

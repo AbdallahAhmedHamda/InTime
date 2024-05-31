@@ -12,6 +12,7 @@ export default function Signin() {
     email: '',
     password: '',
   })
+  const [disabled, setDisabled] = useState(false)
 
   const containerRef = useRef(null)
 
@@ -19,8 +20,7 @@ export default function Signin() {
   useEffect(() => {
     dispatch(setCurrentPage('signin'))
     dispatch(removeAllPopups())
-    // eslint-disable-next-line
-  }, [])
+  }, [dispatch])
 
   //change the min-width for the page depending if there is a scroll or if there is not
   useEffect(() => {
@@ -65,7 +65,25 @@ export default function Signin() {
   const handleSubmit = (e) => {
     e.preventDefault()
 
-    console.log("Log in")
+    setDisabled(true)
+    fetch('https://intime-9hga.onrender.com/api/v1/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(values),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setDisabled(false);
+
+        console.log(data)
+      })
+      .catch((error) => {
+        setDisabled(false);
+        
+        console.error('Error in sign in:', error)
+      })
   }
 
   const onChange = (e) => {
@@ -91,7 +109,7 @@ export default function Signin() {
           ))
         }
 
-        <button type="submit">Log in</button>
+        <button type="submit" disabled={disabled}>Log in</button>
 
         <p>Don't have an account? <Link to='/signup' >Sign up</Link></p>
       </form>

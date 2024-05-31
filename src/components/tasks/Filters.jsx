@@ -32,8 +32,6 @@ export default function Filters() {
 
   // updated shown tags whenever the search changes
   useEffect(() => {
-
-
     if (tagsSearchValue.trim() !== '') {
       setDisplayedTags(tags.filter(tag => tag.includes(tagsSearchValue.trim())))
       setTagsToShow(6)

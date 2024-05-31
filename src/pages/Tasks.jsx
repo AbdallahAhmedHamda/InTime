@@ -21,8 +21,7 @@ export default function Tasks() {
   useEffect(() => {
     dispatch(setCurrentPage('tasks'))
     dispatch(removeAllPopups())
-    // eslint-disable-next-line
-  }, [])
+  }, [dispatch])
 
   // add tasks to the filters if there is space for them
   useEffect(() => {

@@ -46,10 +46,9 @@ export default function Leaderboard() {
   // set data to the number that the array holds if its less than 5
   useEffect(() => {
     if (dataArraySlice < 5) {
-      setDataArraySlice(data.length)
+      setDataArraySlice()
     }
-    // eslint-disable-next-line
-  }, [])
+  }, [dataArraySlice, data.length])
 
   // reset widths and add values when user show more ranks
   const showMore = () => {
@@ -152,7 +151,7 @@ export default function Leaderboard() {
         }
         
         {
-          (data.length !== dataArraySlice) && (
+          (data.length > 5 && data.length !== dataArraySlice) && (
             <div 
               className='leaderboard-show-more'
               onClick={showMore}

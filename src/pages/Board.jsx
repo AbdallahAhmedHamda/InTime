@@ -20,8 +20,7 @@ export default function Board() {
   useEffect(() => {
     dispatch(setCurrentPage('board'))
     dispatch(removeAllPopups())
-    // eslint-disable-next-line
-  }, [])
+  }, [dispatch])
 
   const monthTitle = () => {
     const options = { month: 'long', day: 'numeric', year: 'numeric' }

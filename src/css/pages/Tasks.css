@@ -90,14 +90,8 @@
 
 .tasks-left-section.search-page {
   align-items: flex-start;
-  max-width: 1542px;
+  max-width: 1224px;
   margin-top: 16px;
-}
-
-@media (max-width: 1708px) {
-  .tasks-left-section.search-page {
-    max-width: 1224px;
-  }
 }
 
 @media (max-width: 1390px) {

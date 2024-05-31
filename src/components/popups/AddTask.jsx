@@ -110,8 +110,7 @@ export default function AddTask() {
       dispatch(setUncroppedImage(''))
       dispatch(setCroppedImage(''))
     }
-    // eslint-disable-next-line
-  }, [])
+  }, [dispatch])
 
   useEffect(() => {
     if (!formSubmitted) {

@@ -20,8 +20,7 @@ export default function ChangePassword() {
   useEffect(() => {
     dispatch(setCurrentPage('changePassword'))
     dispatch(removeAllPopups())
-    // eslint-disable-next-line
-  }, [])
+  }, [dispatch])
 
   //change the min-width for the page depending if there is a scroll or if there is not
   useEffect(() => {
@@ -60,9 +59,9 @@ export default function ChangePassword() {
       name: 'newPassword',
       type: 'password',
       errorMessage:
-        'Password should be 8-20 characters and include at least 1 letter, 1 number and 1 special character!',
+      'Password should be at least 8 characters and include both upper and lowercase letters, 1 number and 1 special character (!, @, #, $, %, ^, &)!',
       placeholder: 'New Password',
-      pattern: /^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$/,
+      pattern: /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&])[a-zA-Z0-9!@#$%^&]{8,}$/,
       required: true,
     },
     {

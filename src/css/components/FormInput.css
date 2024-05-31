@@ -69,3 +69,27 @@
 .sign-in-password {
   margin-bottom: 24.8px;
 }
+
+.react-tel-input {
+  height: 46px !important;
+}
+
+.react-tel-input .form-control {
+  width: 100% !important; 
+  height: 100% !important; 
+  padding-left: 55px !important;
+}
+
+.react-tel-input .selected-flag {
+  width: 45px !important;
+  padding: 0 !important;
+}
+
+.react-tel-input .selected-flag .flag {
+  margin-left: 50%;
+  transform: translateX(-70%);
+}
+
+.react-tel-input .country-list {
+  border-radius: 8px;
+}

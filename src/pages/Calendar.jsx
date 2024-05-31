@@ -11,8 +11,7 @@ export default function Calendar() {
   useEffect(() => {
     dispatch(setCurrentPage('calendar'))
     dispatch(removeAllPopups())
-    // eslint-disable-next-line
-  }, [])
+  }, [dispatch])
 
   return (
     <div className='main-content'>

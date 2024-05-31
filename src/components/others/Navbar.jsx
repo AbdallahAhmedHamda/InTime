@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { addPopup } from '../../features/navigation/navigationSlice'
 import { useState, useEffect, useRef } from 'react'
@@ -13,6 +13,8 @@ import '../../css/components/Navbar.css'
 export default function Navbar() {
   const navigate = useNavigate()
 
+  const { searchValue } = useParams()
+
   const currentPage = useSelector((state) => state.navigation.currentPage)
   const name = useSelector((state) => state.user.name)
   const profilePic = useSelector((state) => state.user.profilePic)
@@ -21,19 +23,16 @@ export default function Navbar() {
 
   const dispatch = useDispatch()
   
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm, setSearchTerm] = useState(searchValue || '')
   const [showDropdown, setShowDropdown] = useState(false)
   const [scrollPosition, setScrollPosition] = useState(window.scrollY)
   const [hasExceededThreshold, setHasExceededThreshold] = useState(false)
-  
+
   const accountDropdownRef = useRef(null)
 
   // hide account dropdown when user changes the page
   useEffect(() => {
-    if (showDropdown) {
-      setShowDropdown(false)
-    }
-    // eslint-disable-next-line
+    setShowDropdown(false)
   }, [currentPage])
 
   // hide account dropdown when user clicks outside it

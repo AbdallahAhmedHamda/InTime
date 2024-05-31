@@ -46,10 +46,7 @@ export default function SideNav() {
   
   // reset sidenav to its original size whenever i redirect
 	useEffect(() => {
-    if (sideNavActive) {
-      setSideNavActive(false)
-    }
-    // eslint-disable-next-line
+    setSideNavActive(false)
   }, [currentPage])
   
   // disable wide sidenav when user clicks outside it

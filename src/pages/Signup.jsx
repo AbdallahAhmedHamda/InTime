@@ -9,8 +9,9 @@ export default function Signup() {
   const dispatch = useDispatch()
 
   const [values, setValues] = useState({
-    fullname: '',
+    name: '',
     email: '',
+    phone: '',
     password: '',
     confirmPassword: '',
   })
@@ -22,8 +23,7 @@ export default function Signup() {
   useEffect(() => {
     dispatch(setCurrentPage('signup'))
     dispatch(removeAllPopups())
-    // eslint-disable-next-line
-  }, [])
+  }, [dispatch])
 
   //change the min-width for the page depending if there is a scroll or if there is not
   useEffect(() => {
@@ -51,10 +51,10 @@ export default function Signup() {
     {
       autoFocus: true,
       id: 1,
-      name: 'fullname',
+      name: 'name',
       type: 'text',
       errorMessage: 'Include other letters than space!',
-      label: 'Full Name',
+      label: 'Name',
       pattern: /.*\S+.*/,
       required: true,
     },
@@ -62,23 +62,31 @@ export default function Signup() {
       id: 2,
       name: 'email',
       type: 'email',
-      errorMessage: 'It should be a valid email address!',
+      errorMessage: 'This should be a valid email address!',
       label: 'Email',
       pattern: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
       required: true,
     },
     {
       id: 3,
-      name: 'password',
-      type: 'password',
-      errorMessage:
-        'Password should be 8-20 characters and include at least 1 letter, 1 number and 1 special character!',
-      label: 'Password',
-      pattern: /^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$/,
+      name: 'phone',
+      label: 'Phone',
+      errorMessage: "This can't be empty!",
+      pattern: null,
       required: true,
     },
     {
       id: 4,
+      name: 'password',
+      type: 'password',
+      errorMessage:
+      'Password should be at least 8 characters and include both upper and lowercase letters, 1 number and 1 special character (!, @, #, $, %, ^, &)!',
+      label: 'Password',
+      pattern: /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&])[a-zA-Z0-9!@#$%^&]{8,}$/,
+      required: true,
+    },
+    {
+      id: 5,
       name: 'confirmPassword',
       type: 'password',
       errorMessage: "Passwords don't match!",
@@ -116,8 +124,12 @@ export default function Signup() {
   }
 
   const onChange = (e) => {
-    setValues({ ...values, [e.target.name]: e.target.value })
-    setErrors({ ...errors, [e.target.name]: '' })
+    const name = e.target ? e.target.name : 'phone'
+    const value = e.target ? e.target.value : e
+
+    setValues({ ...values, [name]: value })
+    setErrors({ ...errors, [name]: '' })
+
   }
   
   return (

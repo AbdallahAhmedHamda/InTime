@@ -10,8 +10,7 @@ export default function Settings() {
   useEffect(() => {
     dispatch(setCurrentPage('settings'))
     dispatch(removeAllPopups())
-    // eslint-disable-next-line
-  }, [])
+  }, [dispatch])
 
   return (
     <div className='main-content'>

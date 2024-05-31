@@ -12,8 +12,7 @@ export default function Notifications() {
     dispatch(setCurrentPage('notifications'))
     dispatch(removeAllPopups())
     dispatch(removeUnread())
-    // eslint-disable-next-line
-  }, [])
+  }, [dispatch])
 
   return (
     <div className='main-content'>

@@ -11,8 +11,7 @@ export default function NotFound() {
   useEffect(() => {
     dispatch(setCurrentPage('notFound'))
     dispatch(removeAllPopups())
-    // eslint-disable-next-line
-  }, [])
+  }, [dispatch])
   
   return (
     <div className="not-found-container">

@@ -18,8 +18,7 @@ export default function Home() {
   useEffect(() => {
     dispatch(setCurrentPage('home'))
     dispatch(removeAllPopups())
-    // eslint-disable-next-line
-  }, [])
+  }, [dispatch])
 
   const orderedTasks = 
     [...tasks]

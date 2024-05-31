@@ -34,8 +34,7 @@ export default function Popups() {
       document.body.style.overflow = 'auto'
       clearTimeout(clearReduxTimeout)
     }
-    // eslint-disable-next-line
-  }, [popups])
+  }, [dispatch, currentTask, popups])
 
   // remove box shadow when there is x-overflow
   useEffect(() => {
@@ -72,8 +71,7 @@ export default function Popups() {
     return () => {
       document.body.removeEventListener('keydown', handleKeyDown)
     }
-    // eslint-disable-next-line
-  }, [popups])
+  }, [dispatch, popups])
   
   const firstDimTransition = useTransition(popups[0], {
     from: { backgroundColor: 'rgba(0, 0, 0, 0)', pointerEvents: 'none' },

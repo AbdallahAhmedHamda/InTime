@@ -57,8 +57,7 @@ export default function EditTask({ currentTask, selectZIndex }) {
       dispatch(setUncroppedImage(''))
       dispatch(setCroppedImage(''))
     }
-    // eslint-disable-next-line
-  }, [])
+  }, [dispatch])
 
   // set task cover when its cropped
   useEffect(() => {
