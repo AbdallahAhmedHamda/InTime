@@ -1,12 +1,17 @@
-import { useDispatch } from 'react-redux'
-import { removeAllPopups, setCurrentPage } from '../features/navigation/navigationSlice'
+import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { removeAllPopups, setCurrentEmail, setCurrentPage } from '../features/navigation/navigationSlice'
 import { useState, useEffect, useRef } from 'react'
 import OtpInput from 'react-otp-input'
 import FormInput from '../components/others/FormInput'
 import '../css/pages/ResetPassword.css'
 
 export default function ResetPassword() {
+  const navigate = useNavigate()
+
   const dispatch = useDispatch()
+  
+  const currentEmail = useSelector((state) => state.navigation.currentEmail)
 
   const [focusNext, setFocusNext] = useState(false)
   const [timer, setTimer] = useState(0)
@@ -15,7 +20,10 @@ export default function ResetPassword() {
     password: '',
     confirmPassword: '',
   })
-  const [errors, setErrors] = useState({})
+  const [apiError, setApiError] = useState()
+  const [inputErrors, setInputErrors] = useState({})
+  const [disabled, setDisabled] = useState(false)
+
 
   const containerRef = useRef(null)
   const nextInputRef = useRef(null)
@@ -48,21 +56,6 @@ export default function ResetPassword() {
       window.removeEventListener('resize', adjustHeight)
     }
   }, [containerRef])
-
-  // click when the user presses enter on verify button
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Enter' && e.target.tagName === 'BUTTON') {
-        nextInputRef.current.click()
-      }
-    }
-
-    document.body.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      document.body.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [])
 
   // focus verify if otp length is 4
   useEffect(() => {
@@ -119,7 +112,7 @@ export default function ResetPassword() {
       errorMessage:
         'Password should be 8-20 characters and include at least 1 letter, 1 number and 1 special character!',
       placeholder: 'Password',
-      pattern: /^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$/,
+      pattern: /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&])[a-zA-Z0-9!@#$%^&]{8,}$/,
       required: true,
     },
     {
@@ -140,7 +133,7 @@ export default function ResetPassword() {
     inputs.forEach((input) => {
       if (input.required && !values[input.name]) {
         valid = false
-        newErrors[input.name] = input.errorMessage
+        newErrors[input.name] = "This shouldn't be empty"
       } else if (input.pattern && !input.pattern.test(values[input.name])) {
         valid = false
         newErrors[input.name] = input.errorMessage
@@ -149,20 +142,55 @@ export default function ResetPassword() {
         newErrors[input.name] = input.errorMessage
       }
     })
-    setErrors(newErrors)
+    setInputErrors(newErrors)
     return valid
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
     if (validate()) {
-      console.log("Form submitted")
+      setDisabled(true)
+    
+      fetch(`https://intime-9hga.onrender.com/api/v1/auth/forgetpassword/changepassword/${otp}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          password: values.password,
+          confirmPassword: values.confirmPassword,
+          email: currentEmail
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setDisabled(false)
+  
+          if (data.message === 'cant find this page') {
+            setApiError('Please enter an OTP!')
+          } else if (data.message === 'Invalid OTP') {
+            setApiError('Invalid OTP!')
+          } else if (data.message === 'password must be unique') {
+            setInputErrors(prevErrors => ({...prevErrors, password: 'Please enter a different password than your already existing one!'}))
+          } else if (data.message === 'password changed') {
+            dispatch(setCurrentEmail(''))
+
+            navigate('/signin')
+          } else  {
+            console.log(data)
+          }
+        })
+        .catch((error) => {
+          setDisabled(false)
+          
+          console.error('Error in resetting:', error)
+        })
     }
   }
 
   const onChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value })
-    setErrors({ ...errors, [e.target.name]: '' })
+    setInputErrors({ ...inputErrors, [e.target.name]: '' })
   }
 
   const disableResend = (e) => {
@@ -174,6 +202,23 @@ export default function ResetPassword() {
       setTimer(30)
 
       localStorage.setItem('resetPasswordTimestamp', Date.now())
+
+      fetch('https://intime-9hga.onrender.com/api/v1/auth/forgetpassword', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: currentEmail,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data)
+        })
+        .catch((error) => {          
+          console.error('Error in resending:', error)
+        })
     }
   }
   
@@ -217,15 +262,18 @@ export default function ResetPassword() {
           <FormInput
             key={input.id}
             {...input}
+            errorMessage={inputErrors[input.name]}
             value={values[input.name]}
             onChange={onChange}
-            showError={!!errors[input.name]}
+            showError={!!inputErrors[input.name]}
             inputRef={input.name === 'password' && input.id === 1 ? nextInputRef : null}
           />
         ))
       }
 
-      <button type="submit">Verify</button>
+      <button type="submit" disabled={disabled}>Verify</button>
+
+      {apiError ? <p className='reset-password-error'>{apiError}</p> : ''}
     </form>
   )
 }

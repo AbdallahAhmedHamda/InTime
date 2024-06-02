@@ -13,6 +13,7 @@ const trimPath = (pathname) => {
 }
 
 const initialState = {
+	currentEmail: '',
 	currentPage: trimPath(window.location.pathname),
 	popups: [],
 	currentTask: '',
@@ -34,6 +35,9 @@ const navigationSlice = createSlice({
 	name: 'currentObject',
 	initialState,
 	reducers: {
+		setCurrentEmail: (state, action) => {
+			state.currentEmail = action.payload
+		},
 		setCurrentPage: (state, action) => {
 			state.currentPage = action.payload
 		},
@@ -69,6 +73,7 @@ const navigationSlice = createSlice({
 })
 
 export const {
+	setCurrentEmail,
 	setCurrentPage,
 	addPopup,
 	removePopup,

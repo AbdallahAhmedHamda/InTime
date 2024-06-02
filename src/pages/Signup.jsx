@@ -1,11 +1,14 @@
+import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { removeAllPopups, setCurrentPage } from '../features/navigation/navigationSlice'
+import { removeAllPopups, setCurrentPage, setCurrentEmail } from '../features/navigation/navigationSlice'
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import FormInput from '../components/others/FormInput'
 import '../css/pages/Signup.css'
 
 export default function Signup() {
+  const navigate = useNavigate();
+
   const dispatch = useDispatch()
 
   const [values, setValues] = useState({
@@ -16,6 +19,7 @@ export default function Signup() {
     confirmPassword: '',
   })
   const [errors, setErrors] = useState({})
+  const [disabled, setDisabled] = useState(false)
 
   const containerRef = useRef(null)
 
@@ -53,7 +57,7 @@ export default function Signup() {
       id: 1,
       name: 'name',
       type: 'text',
-      errorMessage: 'Include other letters than space!',
+      errorMessage: "This shouldn't be empty!",
       label: 'Name',
       pattern: /.*\S+.*/,
       required: true,
@@ -70,9 +74,10 @@ export default function Signup() {
     {
       id: 3,
       name: 'phone',
+      type: 'tel',
+      errorMessage: "Phone must be 11 numbers!",
       label: 'Phone',
-      errorMessage: "This can't be empty!",
-      pattern: null,
+      pattern: /^\d{11}$/,
       required: true,
     },
     {
@@ -103,7 +108,7 @@ export default function Signup() {
     inputs.forEach((input) => {
       if (input.required && !values[input.name]) {
         valid = false
-        newErrors[input.name] = input.errorMessage
+        newErrors[input.name] = "This shouldn't be empty"
       } else if (input.pattern && !input.pattern.test(values[input.name])) {
         valid = false
         newErrors[input.name] = input.errorMessage
@@ -119,17 +124,49 @@ export default function Signup() {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (validate()) {
-      console.log("Form submitted")
+      setDisabled(true)
+
+      fetch('https://intime-9hga.onrender.com/api/v1/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name : values.name,
+          password : values.password,
+          email : values.email,
+          phone :values.phone
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setDisabled(false)
+
+          if (data.message === 'please enter a valid email') {
+            setErrors(prevErrors => ({...prevErrors, email: inputs[1].errorMessage}))
+          } else if (data.message === 'this email already exists') {
+            setErrors(prevErrors => ({...prevErrors, email: 'This email already exists!'}))
+          } else if (data.message === 'phone must be 11 numbers') {
+            setErrors(prevErrors => ({...prevErrors, phone: 'Phone number must be 11 numbers!'}))
+          } else if (data.message === 'check your mail to activate your account') {
+            dispatch(setCurrentEmail(values.email))
+
+            navigate('/sendOTP')
+          } else {
+            console.log(data)
+          }
+        })
+        .catch((error) => {
+          setDisabled(false)
+          
+          console.error('Error in signing up:', error)
+        })
     }
   }
 
   const onChange = (e) => {
-    const name = e.target ? e.target.name : 'phone'
-    const value = e.target ? e.target.value : e
-
-    setValues({ ...values, [name]: value })
-    setErrors({ ...errors, [name]: '' })
-
+    setValues({ ...values, [e.target.name]: e.target.value })
+    setErrors({ ...errors, [e.target.name]: '' })
   }
   
   return (
@@ -146,6 +183,7 @@ export default function Signup() {
             <FormInput
               key={input.id}
               {...input}
+              errorMessage={errors[input.name]}
               value={values[input.name]}
               onChange={onChange}
               showError={!!errors[input.name]}
@@ -153,7 +191,7 @@ export default function Signup() {
           ))
         }
 
-        <button type="submit">Sign up</button>
+        <button type="submit" disabled={disabled}>Sign up</button>
 
         <p>Already have an account? <Link to='/signin' >Sign in</Link></p>
       </form>

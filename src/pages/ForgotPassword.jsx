@@ -1,13 +1,19 @@
+import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { removeAllPopups, setCurrentPage } from '../features/navigation/navigationSlice'
+import { removeAllPopups, setCurrentEmail, setCurrentPage } from '../features/navigation/navigationSlice'
 import { useState, useEffect, useRef } from 'react'
 import FormInput from '../components/others/FormInput'
 import '../css/pages/ForgotPassword.css'
 
 export default function ForgotPassword() {
+  const navigate = useNavigate()
+
   const dispatch = useDispatch()
 
   const [emailValue, setEmailValue] = useState('')
+  const [emailError, setEmailError] = useState('')
+  const [error, setError] = useState(false)
+  const [disabled, setDisabled] = useState('')
 
   const containerRef = useRef(null)
 
@@ -42,7 +48,64 @@ export default function ForgotPassword() {
   const handleSubmit = (e) => {
     e.preventDefault()
 
-    console.log("Send OTP")
+    setDisabled(true)
+    
+    fetch('https://intime-9hga.onrender.com/api/v1/auth/forgetpassword', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: emailValue,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setDisabled(false)
+
+        if (data.message === 'user not registered') {
+          setEmailError("This email doesn't exist")
+        } else if (data.message === 'you have to activate the account first') {
+          setError(true)
+        } else if (data.success) {
+          dispatch(setCurrentEmail(emailValue))
+
+          navigate('/resetPassword')
+        } else {
+          console.log(data)
+        }
+      })
+      .catch((error) => {        
+        console.error('Error in submitting:', error)
+      })
+  }
+
+  const sendOTP = (e) => {    
+    e.preventDefault()
+
+    fetch('https://intime-9hga.onrender.com/api/v1/auth/resendactivationcode', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: emailValue
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {  
+          console.log(emailValue)
+        if (data.message === 'code sent') {
+          dispatch(setCurrentEmail(emailValue))
+
+          navigate('/sendOTP')
+        } else {
+          console.log(data)
+        }
+      })
+      .catch((error) => {          
+        console.error('Error in sending otp:', error)
+      })
   }
   
   return (
@@ -54,22 +117,30 @@ export default function ForgotPassword() {
       <img src={require("../assets/images/3275432 1.png")} alt="forgot-password-hero-img" className='forgot-password-hero-img' />
 
       <p className='forgot-password-page-disc'>
-        <span className='forgot-password-blue-text'>Forgot password ?</span>
+        <span className='forgot-password-blue-text'>Forgot password?</span>
         Enter your Email then we will send you OTP<br/>
         to reset new password
       </p>
 
       <FormInput
-        name='email'
+        name='emailValue'
         type='email'
         placeholder='Email'
         required
         value={emailValue}
         autoFocus
-        onChange={(e) => setEmailValue(e.target.value)}
+        onChange={(e) => {
+          setEmailValue(e.target.value)
+          setEmailError('')
+          setError('')
+        }}
+        errorMessage={emailError}
+        showError={!!emailError}
       />
 
-      <button type="submit">Send OTP</button>
+      <button type="submit" disabled={disabled}>Send OTP</button>
+
+      {error ? <p className='forgot-password-error'>Your account is not activated! <Link onClick={sendOTP}>Click here</Link>  To activate it. </p> : ''}
     </form>
   )
 }

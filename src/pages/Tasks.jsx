@@ -43,7 +43,6 @@ export default function Tasks() {
 
   const showLess = () => {
     if (tasks.length === tasksToShow) {
-      console.log('here')
       setTasksToShow(tasksToShow - (tasksToShow % 12 === 0 ? 12 : tasksToShow % 12 ))
     } else {
       setTasksToShow(tasksToShow - 12)
@@ -93,7 +92,7 @@ export default function Tasks() {
                 }
 
                 {
-                  tasks.length !== tasksToShow && (
+                  (tasks.length > 12 && tasks.length !== tasksToShow )&& (
                     <div 
                       className='tasks-show-more'
                       onClick={showMore}

@@ -262,7 +262,7 @@ export default function Filters() {
                   className='tags-search'
                   type='text'
                   id='tagsSearch'
-                  autoComplete='off'
+                  autoComplete='on'
                   spellCheck='false'
                   value={tagsSearchValue}
                   onChange={(e) => {
@@ -315,7 +315,7 @@ export default function Filters() {
             }
 
             {
-              displayedTags.length !== tagsToShow && (
+              (displayedTags.length > 6 && displayedTags.length !== tagsToShow) && (
                 <div 
                   className='tags-show-more'
                   onClick={showMore}

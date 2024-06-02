@@ -82,7 +82,7 @@ export default function ChangePassword() {
     inputs.forEach((input) => {
       if (input.required && !values[input.name]) {
         valid = false
-        newErrors[input.name] = input.errorMessage
+        newErrors[input.name] = "This shouldn't be empty"
       } else if (input.pattern && !input.pattern.test(values[input.name])) {
         valid = false
         newErrors[input.name] = input.errorMessage
@@ -126,6 +126,7 @@ export default function ChangePassword() {
           <FormInput
             key={input.id}
             {...input}
+            errorMessage={errors[input.name]}
             value={values[input.name]}
             onChange={onChange}
             showError={!!errors[input.name]}

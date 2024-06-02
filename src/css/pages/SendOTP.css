@@ -8,7 +8,7 @@
   min-width: fit-content;
   padding-left: 30px;
   padding-right: 30px;
-  gap: 20px;
+  gap: 15px;
 }
 
 .send-otp-hero-img {
@@ -87,4 +87,11 @@
 
 .otp-input-container > input:focus {
   outline: 1px #1976d2 solid;
+}
+
+.send-otp-error {
+  font-size: 14px;
+  color: red;
+  margin-top: -10px;
+  display: block;
 }

@@ -85,7 +85,7 @@ export default function Search() {
                 }
 
                 {
-                  tasks.length !== tasksToShow && (
+                  (tasks.length > 12 && tasks.length !== tasksToShow) && (
                     <div 
                       className='tasks-show-more'
                       onClick={showMore}

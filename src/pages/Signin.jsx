@@ -1,17 +1,21 @@
+import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { removeAllPopups, setCurrentPage } from '../features/navigation/navigationSlice'
+import { removeAllPopups, setCurrentPage, setCurrentEmail } from '../features/navigation/navigationSlice'
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import FormInput from '../components/others/FormInput'
 import '../css/pages/Signin.css'
 
 export default function Signin() {
+  const navigate = useNavigate()
+  
   const dispatch = useDispatch()
 
   const [values, setValues] = useState({
     email: '',
     password: '',
   })
+  const [errors, setErrors] = useState({})
   const [disabled, setDisabled] = useState(false)
 
   const containerRef = useRef(null)
@@ -66,21 +70,59 @@ export default function Signin() {
     e.preventDefault()
 
     setDisabled(true)
+    
     fetch('https://intime-9hga.onrender.com/api/v1/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(values),
+      body: JSON.stringify({
+        email: values.email,
+        password: values.password
+      }),
     })
       .then((response) => response.json())
       .then((data) => {
-        setDisabled(false);
+        setDisabled(false)
 
-        console.log(data)
+        if (data.message === 'user not registered') {
+          setErrors(prevErrors => ({...prevErrors, email: "This email doesn't exist"}))
+        } else if (data.message === 'wrong password') {
+          setErrors(prevErrors => ({...prevErrors, password: 'The password you entered is incorrect!'}))
+        } else if (data.message === 'you have to activate your account first') {
+          fetch('https://intime-9hga.onrender.com/api/v1/auth/resendactivationcode', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: values.email,
+            }),
+          })
+            .then((activationResponse) => activationResponse.json())
+            .then((activationData) => {  
+              if (activationData.message === 'code sent') {    
+                dispatch(setCurrentEmail(values.email))
+
+                navigate('/sendOTP')
+              } else {
+                console.log(activationData)
+              }
+            })
+            .catch((error) => {          
+              console.error('Error in sending otp:', error)
+            })
+        } else if (data.success) {
+          localStorage.setItem('accessToken', data.accessToken)
+          localStorage.setItem('refreshToken', data.refreshToken)
+
+          navigate('/home')
+        } else {
+          console.log(data)
+        }
       })
       .catch((error) => {
-        setDisabled(false);
+        setDisabled(false)
         
         console.error('Error in sign in:', error)
       })
@@ -88,7 +130,10 @@ export default function Signin() {
 
   const onChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value })
+    setErrors({ ...errors, [e.target.name]: '' })
   }
+
+  console.log()
   
   return (
     <div className='signin-page-container' ref={containerRef}>
@@ -103,8 +148,10 @@ export default function Signin() {
             <FormInput
               key={input.id}
               {...input}
+              errorMessage={errors[input.name]}
               value={values[input.name]}
               onChange={onChange}
+              showError={!!errors[input.name]}
             />
           ))
         }
@@ -126,7 +173,6 @@ export default function Signin() {
           management<br/>
         </p>
       </div>
-
     </div>
   )
 }

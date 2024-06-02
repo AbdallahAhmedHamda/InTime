@@ -1,14 +1,21 @@
-import { useDispatch } from 'react-redux'
-import { removeAllPopups, setCurrentPage } from '../features/navigation/navigationSlice'
+import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { removeAllPopups, setCurrentEmail, setCurrentPage } from '../features/navigation/navigationSlice'
 import { useState, useEffect, useRef } from 'react'
 import OtpInput from 'react-otp-input'
 import '../css/pages/SendOTP.css'
 
 export default function SendOTP() {
+  const navigate = useNavigate()
+
   const dispatch = useDispatch()
 
+  const currentEmail = useSelector((state) => state.navigation.currentEmail)
+
   const [focusVerified, setFocusVerified] = useState(false)
+  const [disabled, setDisabled] = useState(false)
   const [timer, setTimer] = useState(0)
+  const [error, setError] = useState('')
   const [otp, setOtp] = useState('')
 
   const containerRef = useRef(null)
@@ -108,7 +115,41 @@ export default function SendOTP() {
   const handleSubmit = (e) => {
     e.preventDefault()
 
-    console.log("verify")
+    setDisabled(true)
+    
+    fetch(`https://intime-9hga.onrender.com/api/v1/auth/activation/${otp}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: currentEmail
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setDisabled(false)
+
+        if (data.message === 'cant find this page') {
+          setError('Please enter an OTP!')
+        } else if (data.message === 'Invalid OTP') {
+          setError('Invalid OTP!')
+        } else if (data.message === 'this account is now active') {
+          dispatch(setCurrentEmail(''))
+          
+          localStorage.setItem('accessToken', data.accessToken)
+          localStorage.setItem('refreshToken', data.refreshToken)
+          
+          navigate('/home')
+        } else {
+          console.log(data)
+        }
+      })
+      .catch((error) => {
+        setDisabled(false)
+        
+        console.error('Error in submitting:', error)
+      })
   }
 
   const disableResend = (e) => {
@@ -120,6 +161,23 @@ export default function SendOTP() {
       setTimer(30)
 
       localStorage.setItem('sendOtpTimestamp', Date.now())
+
+      fetch('https://intime-9hga.onrender.com/api/v1/auth/resendactivationcode', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: currentEmail,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {  
+          console.log(data.message)
+        })
+        .catch((error) => {          
+          console.error('Error in resending:', error)
+        })
     }
   }
   
@@ -141,6 +199,7 @@ export default function SendOTP() {
         value={otp}
         onChange={(e) => {
           setOtp(e)
+          setError('')
           setFocusVerified(false)
           if (document.activeElement === document.querySelector('.otp-input-container > input:last-child')) {
             setFocusVerified(true)
@@ -157,9 +216,11 @@ export default function SendOTP() {
 
       <p className={`send-otp-resend ${timer ? 'send-otp-disabled' : ''}`} onClick={disableResend} ref={resendRef}>Resend OTP{timer ? ' in ' : ''}{timer ? timer : ''}{timer ? 's' : ''}</p>
 
-      <button type="submit" ref={verifyRef}>
+      <button type="submit" disabled={disabled} ref={verifyRef}>
         <p>Verify</p>
       </button>
+
+      {error ? <p className='send-otp-error'>{error}</p> : ''}
     </form>
   )
 }
