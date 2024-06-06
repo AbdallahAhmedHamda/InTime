@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import FormInput from '../components/others/FormInput'
 import '../css/pages/Signin.css'
 
-export default function Signin() {
+export default function Signin({ onLogin }) {
   const navigate = useNavigate()
   
   const dispatch = useDispatch()
@@ -113,8 +113,12 @@ export default function Signin() {
               console.error('Error in sending otp:', error)
             })
         } else if (data.success) {
+          dispatch(setCurrentEmail(''))
+
           localStorage.setItem('accessToken', data.accessToken)
           localStorage.setItem('refreshToken', data.refreshToken)
+
+          onLogin()
 
           navigate('/home')
         } else {

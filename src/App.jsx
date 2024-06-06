@@ -1,5 +1,6 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { useEffect, useState } from 'react'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import ChangePassword from './pages/ChangePassword'
@@ -20,6 +21,52 @@ import Tasks from './pages/Tasks'
 import Home from './pages/Home'
 
 export default function App() {
+	const currentEmail = useSelector((state) => state.navigation.currentEmail)
+
+	const [isAuthenticated, setIsAuthenticated] = useState(false)
+	const [loading, setLoading] = useState(true)
+
+	// check if user is authenticated or not
+	useEffect(() => {
+    const refreshToken = localStorage.getItem('refreshToken')
+    const accessToken = localStorage.getItem('accessToken')
+
+    if (refreshToken && accessToken) {
+			fetch('https://intime-9hga.onrender.com/api/v1/auth/refreshToken', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					refreshToken: refreshToken,
+				}),
+			})
+				.then((response) => response.json())
+				.then((data) => {  
+					if (data.success) {    
+						setIsAuthenticated(true)
+						
+						localStorage.setItem('refreshToken', data.newRefreshToken)
+						localStorage.setItem('accessToken', data.newAccessToken)
+					} else {
+						setIsAuthenticated(false)
+
+						localStorage.removeItem('refreshToken')
+						localStorage.removeItem('accessToken')
+					}
+				})
+				.catch((error) => {          
+					console.error('Error in sending otp:', error)
+				})
+				.finally(() => {
+					setLoading(false)
+				})
+    } else {
+      setIsAuthenticated(false)
+			setLoading(false)
+    }
+  }, [])
+
 	// disable enter button when a button is focused
 	useEffect(() => {
     const handleKeyDown = (e) => {
@@ -37,85 +84,187 @@ export default function App() {
 
 	const Layout = ({ children }) => (
 		<>
-			<Navbar />
+			<Navbar onSignout={() => setIsAuthenticated(false)} />
+
 			<SideNav />
+
 			{children}
 		</>
 	)
+
+  const PrivateRoute = ({ children }) => {
+    return isAuthenticated ? children : <Navigate to="/" />
+  }
+
+  const PublicRoute = ({ children }) => {
+    return isAuthenticated ? <Navigate to="/home" /> : children
+  }
+
+	const EmailCheck = ({ children }) => {
+    return currentEmail ? children : <Navigate to="/" />
+  }
+
+	if (loading) {
+		return (
+			<div
+				style={{ 
+					backgroundColor: 'white',
+					width: '100vw',
+					height: '100vh'
+				}}
+			>
+			
+			</div>
+		)
+	}
 	
 	return (
 		<Router>
 			<Routes>
 				<Route
 					path='/'
-					element={<Intro />}
+					element={
+						<PublicRoute>
+							<Intro />
+						</PublicRoute>
+					}
 				/>
 
 				<Route
 					path='/signin'
-					element={<Signin />}
+					element={
+						<PublicRoute>
+							<Signin onLogin={() => setIsAuthenticated(true)} />
+						</PublicRoute>
+					}
 				/>
 
 				<Route
 					path='/signup'
-					element={<Signup />}
+					element={
+						<PublicRoute>
+							<Signup />
+						</PublicRoute>
+					}
 				/>
 
 				<Route
 					path='/forgotPassword'
-					element={<ForgotPassword />}
+					element={
+						<PublicRoute>
+							<ForgotPassword />
+						</PublicRoute>
+					}
 				/>
 
 				<Route
 					path='/sendOTP'
-					element={<SendOTP />}
+					element={
+						<PublicRoute>
+							<EmailCheck>
+								<SendOTP onLogin={() => setIsAuthenticated(true)} />
+							</EmailCheck>
+						</PublicRoute>
+					}
 				/>
 
 				<Route
 					path='/resetPassword'
-					element={<ResetPassword />}
+					element={
+						<PublicRoute>
+							<EmailCheck>
+								<ResetPassword />
+							</EmailCheck>
+						</PublicRoute>
+					}
 				/>
 
 				<Route
 					path='/changePassword'
-					element={<ChangePassword />}
+					element={
+						<PrivateRoute>
+							<ChangePassword />
+						</PrivateRoute>
+					}
 				/>
 				
 				<Route
 					path='/home'
-					element={<Layout><Home /></Layout>}
+					element={
+						<PrivateRoute>
+							<Layout>
+								<Home />
+							</Layout>
+						</PrivateRoute>
+					}
 				/>
 
 				<Route
 					path='/tasks'
-					element={<Layout><Tasks /></Layout>}
+					element={
+						<PrivateRoute>
+							<Layout>
+								<Tasks />
+							</Layout>
+						</PrivateRoute>
+					}
 				/>
 
 				<Route path='/calendar'>
 					<Route
 						index
-						element={<Layout><Calendar /></Layout>}
+						element={
+							<PrivateRoute>
+								<Layout>
+									<Calendar />
+								</Layout>
+							</PrivateRoute>
+						}
 					/>
 
 					<Route
 						path=':stringDate'
-						element={<Layout><Board /></Layout>}
+						element={
+							<PrivateRoute>
+								<Layout>
+									<Board />
+								</Layout>
+							</PrivateRoute>
+						}
 					/>
 				</Route>
 
 				<Route
 					path='/notifications'
-					element={<Layout><Notifications /></Layout>}
+					element={
+						<PrivateRoute>
+							<Layout>
+								<Notifications />
+							</Layout>
+						</PrivateRoute>
+					}
 				/>
 
 				<Route
 					path='/settings'
-					element={<Layout><Settings /></Layout>}
+					element={
+						<PrivateRoute>
+							<Layout>
+								<Settings />
+							</Layout>
+						</PrivateRoute>
+					}
 				/>
 
 				<Route
 					path='/search/:searchValue'
-					element={<Layout><Search /></Layout>}
+					element={
+						<PrivateRoute>
+							<Layout>
+								<Search />
+							</Layout>
+						</PrivateRoute>
+					}
 				/>
 				
 				<Route

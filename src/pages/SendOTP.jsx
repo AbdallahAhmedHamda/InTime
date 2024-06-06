@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react'
 import OtpInput from 'react-otp-input'
 import '../css/pages/SendOTP.css'
 
-export default function SendOTP() {
+export default function SendOTP({ onLogin }) {
   const navigate = useNavigate()
 
   const dispatch = useDispatch()
@@ -139,6 +139,8 @@ export default function SendOTP() {
           
           localStorage.setItem('accessToken', data.accessToken)
           localStorage.setItem('refreshToken', data.refreshToken)
+
+          onLogin()
           
           navigate('/home')
         } else {

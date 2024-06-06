@@ -10,7 +10,7 @@ import LogoutIcon from '../../svg/navbar/LogoutIcon'
 import SearchIcon from '../../svg/navbar/SearchIcon'
 import '../../css/components/Navbar.css'
 
-export default function Navbar() {
+export default function Navbar({ onSignout }) {
   const navigate = useNavigate()
 
   const { searchValue } = useParams()
@@ -94,6 +94,36 @@ export default function Navbar() {
     }
   }
 
+  const logout = () => {
+    const refreshToken = localStorage.getItem('refreshToken')
+
+    fetch('https://intime-9hga.onrender.com/api/v1/auth/signOut', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					refreshToken: refreshToken,
+				}),
+			})
+				.then((response) => response.json())
+				.then((data) => {  
+					if (data.success) {    						
+            localStorage.removeItem('refreshToken')
+						localStorage.removeItem('accessToken')
+
+            onSignout()
+
+            navigate('/signin')
+					} else {
+						console.log(data)
+					}
+				})
+				.catch((error) => {          
+					console.error('Error in sending otp:', error)
+				})
+  }
+
   const dropdownTransition = useTransition(showDropdown, {
     from: { opacity: 0, pointerEvents: 'none' },
     enter: { opacity: 1, pointerEvents: 'auto' },
@@ -171,7 +201,7 @@ export default function Navbar() {
             {
               dropdownTransition((style, item) => item && (
                 <animated.div className='account-dropdown' style={style}>
-                  <div className='logout-container'>
+                  <div className='logout-container' onClick={logout}>
                     <LogoutIcon /> 
                     
                     <p>Logout</p>
