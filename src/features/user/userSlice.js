@@ -18,7 +18,9 @@ const days = Array.from({ length: 7 }, (_, i) => {
 
 const initialState = {
   id: 1,
-  name: 'Jessica Lambert',
+  name: '',
+  email: '',
+  phone: '',
   profilePic: require('../../assets/images/profile-pic.jpeg'),
   unreadNotifications: 2,
   points: {
@@ -55,6 +57,12 @@ const userSlice = createSlice({
   reducers: {
     setName: (state, action) => {
       state.name = action.payload
+    },
+    setEmail: (state, action) => {
+      state.email = action.payload
+    },
+    setPhone: (state, action) => {
+      state.phone = action.payload
     },
     setProfilePic: (state, action) => {
       state.profilePic = action.payload
@@ -201,6 +209,8 @@ const userSlice = createSlice({
 
 export const { 
   setName,
+  setEmail,
+  setPhone,
   setProfilePic,
   removeUnread,
   addTask,

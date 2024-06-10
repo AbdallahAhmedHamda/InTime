@@ -1,87 +1,56 @@
-import { Navigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { setIsAuthenticated } from '../features/navigation/navigationSlice'
 import { useCallback, useState } from 'react'
+import { refreshTokenApi } from '../apis/authApi'
 
-export default function useApi() {
-
+export default function useApi(apiFunction) {
   const dispatch = useDispatch()
 
-  const [apiLoading, setApiLoading] = useState(true)
+  const [apiLoading, setApiLoading] = useState(false)
   const [apiError, setApiError] = useState()
-  const [apiData, setApiData] = useState({})
+  const [apiData, setApiData] = useState()
 
-  const fetchApi = useCallback((url, options = {}) => {
-    const existingRefreshToken = localStorage.getItem('refreshToken')
-    const existingAccessToken = localStorage.getItem('accessToken')
-    
-    // first api call
-    fetch(url, {
-      ...options,
-      headers: {
-        ...options.headers,
-        'Authorization': `Bearer ${existingAccessToken}`,
-      },
-    })
-      .then((firstApiResponse) => firstApiResponse.json())
-      .then((firstApiData) => {
-        if (firstApiData.success) {    
-          setApiData(firstApiData)
+  const fetchApi = useCallback(async () => {
+    setApiLoading(true)
+
+    try {
+      const firstApiData = await apiFunction()
+
+      setApiData(firstApiData)
+    } catch (firstApiError) {
+      if (firstApiError.message === 'Unauthorized') {
+        const refreshToken = localStorage.getItem('refreshToken')
+
+        if (refreshToken) {
+          try {
+            const refreshData = await refreshTokenApi(refreshToken)
+                    
+            localStorage.setItem('refreshToken', refreshData.newRefreshToken)
+            localStorage.setItem('accessToken', refreshData.newAccessToken)
+
+            try {
+              const secondApiData = await apiFunction()
+      
+              setApiData(secondApiData)
+            } catch (secondApiError) {
+              setApiError('Second api error:', secondApiError.message)
+            }
+          } catch (refreshError) {
+            dispatch(setIsAuthenticated(false))
+  
+            localStorage.removeItem('refreshToken')
+            localStorage.removeItem('accessToken')
+          }
         } else {
-          // check if refresh token is valid when the access token is expired
-          fetch('https://intime-9hga.onrender.com/api/v1/auth/refreshToken', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              refreshToken: existingRefreshToken,
-            }),
-          })
-            .then((refreshTokenResponse) => refreshTokenResponse.json())
-            .then((refreshTokenData) => {  
-              if (refreshTokenData.success) {
-                localStorage.setItem('refreshToken', refreshTokenData.newRefreshToken)
-                localStorage.setItem('accessToken', refreshTokenData.newAccessToken)
-  
-                const newAccessToken = localStorage.getItem('accessToken')
-  
-                // second api call
-                fetch(url, {
-                  ...options,
-                  headers: {
-                    ...options.headers,
-                    'Authorization': `Bearer ${newAccessToken}`,
-                  },
-                })
-                  .then((secondApiResponse) => secondApiResponse.json())
-                  .then((secondApiData) => {    
-                    setApiData(secondApiData)
-                  })
-                  .catch((error) => {          
-                    setApiError('Error in fetching data in the second time: ' + error)
-                  })
-              } else {
-                dispatch(setIsAuthenticated(false))
-  
-                localStorage.removeItem('refreshToken')
-                localStorage.removeItem('accessToken')
-        
-                return <Navigate to="/signin" />
-              }
-            })
-            .catch((error) => {          
-              setApiError('Error in updating refresh token: ' + error)
-            })
+          dispatch(setIsAuthenticated(false))
         }
-      })
-      .catch((error) => {          
-        setApiError('Error in fetching data in the first time: ' + error)
-      })
-      .finally(() => {
-        setApiLoading(false)
-      })
-  }, [dispatch])
+      } else {
+        setApiError('Firt api error:', firstApiError.message)
+      }
+    } finally {
+      setApiLoading(false)
+    }
+  }, [dispatch, apiFunction])
 
   return { fetchApi, apiLoading, apiError, apiData }
 }

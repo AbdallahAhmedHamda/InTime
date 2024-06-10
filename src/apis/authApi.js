@@ -50,10 +50,7 @@ export const activationApi = async (otp, email) => {
 
 export const resendActivationApi = async (email) => {
   try {
-    const response = await axios.post(`${API_URL}/resendactivationcode`, {
-      email,
-      password: 'Aa147896325#'
-    })
+    const response = await axios.post(`${API_URL}/resendactivationcode`, { email })
 
     if (response.data.success) {
       return response.data

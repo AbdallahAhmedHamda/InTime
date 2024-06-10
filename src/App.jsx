@@ -1,8 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { setIsAuthenticated } from './features/navigation/navigationSlice'
+import { setEmail, setName, setPhone } from './features/user/userSlice'
 import { useEffect, useState } from 'react'
 import { refreshTokenApi } from './apis/authApi'
+import { userDataApi } from './apis/userApi'
 import useApi from './hooks/useApi'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
@@ -31,9 +33,11 @@ export default function App() {
 	
 	const [loading, setLoading] = useState(true)
 
-	// const {
-	// 	fetchApi
-	// } = useApi()
+	const {
+		fetchApi,
+		apiData: userDataApiData,
+		apiError: userDataApiError
+	} = useApi(userDataApi)
 	
 	// check if user is authenticated or not
 	useEffect(() => {
@@ -69,14 +73,21 @@ export default function App() {
   }, [dispatch])
 
 
-	// // load account data when the user is authenticated
-	// useEffect(() => {
-	// 	if (isAuthenticated) {
-	// 		fetchApi('https://intime-9hga.onrender.com/api/v1/user/', {
-	// 			method: 'GET',
-	// 		})
-	// 	}
-	// }, [isAuthenticated, fetchApi])
+	// load account data when the user is authenticated
+	useEffect(() => {
+    if (isAuthenticated) {
+      fetchApi()
+    }
+	}, [isAuthenticated, fetchApi])
+
+	// change the account data when the api loads
+	useEffect(() => {
+    if (userDataApiData?.success) {
+     	dispatch(setName(userDataApiData.record.name))
+			dispatch(setEmail(userDataApiData.record.email))
+			dispatch(setPhone(userDataApiData.record.phone))
+    }
+  }, [userDataApiData, isAuthenticated, dispatch]) 
 
 	// disable enter button when a button is focused
 	useEffect(() => {
@@ -123,10 +134,12 @@ export default function App() {
 					width: '100vw',
 					height: '100vh'
 				}}
-			>
-			
-			</div>
+			/>
 		)
+	}
+
+	if (userDataApiError) {
+		console.log(userDataApiError)
 	}
 
 	return (
