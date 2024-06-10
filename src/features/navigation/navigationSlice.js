@@ -14,7 +14,9 @@ const trimPath = (pathname) => {
 
 const initialState = {
 	currentEmail: '',
+	currentPassword: '',
 	currentPage: trimPath(window.location.pathname),
+	isAuthenticated: false,
 	popups: [],
 	currentTask: '',
 	uncroppedImage: '',
@@ -38,8 +40,14 @@ const navigationSlice = createSlice({
 		setCurrentEmail: (state, action) => {
 			state.currentEmail = action.payload
 		},
+		setCurrentPassword: (state, action) => {
+			state.currentPassword = action.payload
+		},
 		setCurrentPage: (state, action) => {
 			state.currentPage = action.payload
+		},
+		setIsAuthenticated: (state, action) => {
+			state.isAuthenticated = action.payload
 		},
 		addPopup: (state, action) => {
 			if (state.popups[state.popups.length - 1] !== action.payload) {
@@ -74,7 +82,9 @@ const navigationSlice = createSlice({
 
 export const {
 	setCurrentEmail,
+	setCurrentPassword,
 	setCurrentPage,
+	setIsAuthenticated,
 	addPopup,
 	removePopup,
 	removeAllPopups,

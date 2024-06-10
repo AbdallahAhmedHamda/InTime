@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { removeAllPopups, setCurrentEmail, setCurrentPage } from '../features/navigation/navigationSlice'
 import { useState, useEffect, useRef } from 'react'
+import { forgotPasswordApi, resetPasswordApi } from '../apis/authApi'
 import OtpInput from 'react-otp-input'
 import FormInput from '../components/others/FormInput'
 import '../css/pages/ResetPassword.css'
@@ -146,45 +147,30 @@ export default function ResetPassword() {
     return valid
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (validate()) {
       setDisabled(true)
-    
-      fetch(`https://intime-9hga.onrender.com/api/v1/auth/forgetpassword/changepassword/${otp}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          password: values.password,
-          confirmPassword: values.confirmPassword,
-          email: currentEmail
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setDisabled(false)
-  
-          if (data.message === 'cant find this page') {
-            setApiError('Please enter an OTP!')
-          } else if (data.message === 'Invalid OTP') {
-            setApiError('Invalid OTP!')
-          } else if (data.message === 'password must be unique') {
-            setInputErrors(prevErrors => ({...prevErrors, password: 'Please enter a different password than your already existing one!'}))
-          } else if (data.message === 'password changed') {
-            dispatch(setCurrentEmail(''))
 
-            navigate('/signin')
-          } else  {
-            console.log(data)
-          }
-        })
-        .catch((error) => {
-          setDisabled(false)
-          
-          console.error('Error in resetting:', error)
-        })
+      try {
+        await resetPasswordApi(otp, values, currentEmail)
+
+        dispatch(setCurrentEmail(''))
+
+        navigate('/signin')
+      } catch (error) {
+        if (error.message === 'cant find this page') {
+          setApiError('Please enter an OTP!')
+        } else if (error.message === 'Invalid OTP') {
+          setApiError('Invalid OTP!')
+        } else if (error.message === 'password must be unique') {
+          setInputErrors(prevErrors => ({...prevErrors, password: 'Please enter a different password than your already existing one!'}))
+        } else {
+          console.error('Error in resetting password:', error.message)
+        }
+      } finally {
+        setDisabled(false)
+      }
     }
   }
 
@@ -193,7 +179,7 @@ export default function ResetPassword() {
     setInputErrors({ ...inputErrors, [e.target.name]: '' })
   }
 
-  const disableResend = (e) => {
+  const disableResend = async (e) => {
     e.preventDefault()
 
     if (!resendRef.current.classList.contains('reset-password-disabled')) {
@@ -203,22 +189,11 @@ export default function ResetPassword() {
 
       localStorage.setItem('resetPasswordTimestamp', Date.now())
 
-      fetch('https://intime-9hga.onrender.com/api/v1/auth/forgetpassword', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: currentEmail,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data)
-        })
-        .catch((error) => {          
-          console.error('Error in resending:', error)
-        })
+      try {
+        await forgotPasswordApi(currentEmail)
+      } catch (error) {
+        console.error('Error in resending otp:', error.message)
+      } 
     }
   }
   

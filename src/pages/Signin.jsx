@@ -1,12 +1,12 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { removeAllPopups, setCurrentPage, setCurrentEmail } from '../features/navigation/navigationSlice'
+import { removeAllPopups, setCurrentPage, setCurrentEmail, setIsAuthenticated, setCurrentPassword } from '../features/navigation/navigationSlice'
 import { useState, useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { loginApi, resendActivationApi } from '../apis/authApi'
 import FormInput from '../components/others/FormInput'
 import '../css/pages/Signin.css'
 
-export default function Signin({ onLogin }) {
+export default function Signin() {
   const navigate = useNavigate()
   
   const dispatch = useDispatch()
@@ -66,70 +66,45 @@ export default function Signin({ onLogin }) {
     }
   ]
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
     setDisabled(true)
-    
-    fetch('https://intime-9hga.onrender.com/api/v1/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: values.email,
-        password: values.password
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setDisabled(false)
 
-        if (data.message === 'user not registered') {
-          setErrors(prevErrors => ({...prevErrors, email: "This email doesn't exist"}))
-        } else if (data.message === 'wrong password') {
-          setErrors(prevErrors => ({...prevErrors, password: 'The password you entered is incorrect!'}))
-        } else if (data.message === 'you have to activate your account first') {
-          fetch('https://intime-9hga.onrender.com/api/v1/auth/resendactivationcode', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              email: values.email,
-            }),
-          })
-            .then((activationResponse) => activationResponse.json())
-            .then((activationData) => {  
-              if (activationData.message === 'code sent') {    
-                dispatch(setCurrentEmail(values.email))
+    try {
+      const data = await loginApi(values)
+      
+      dispatch(setCurrentEmail(''))
+      dispatch(setCurrentPassword(''))
 
-                navigate('/sendOTP')
-              } else {
-                console.log(activationData)
-              }
-            })
-            .catch((error) => {          
-              console.error('Error in sending otp:', error)
-            })
-        } else if (data.success) {
-          dispatch(setCurrentEmail(''))
+      localStorage.setItem('accessToken', data.accessToken)
+      localStorage.setItem('refreshToken', data.refreshToken)
 
-          localStorage.setItem('accessToken', data.accessToken)
-          localStorage.setItem('refreshToken', data.refreshToken)
+      dispatch(setIsAuthenticated(true))
 
-          onLogin()
-
-          navigate('/home')
-        } else {
-          console.log(data)
-        }
-      })
-      .catch((error) => {
-        setDisabled(false)
+      navigate('/home')
+    } catch (signinError) {
+      if (signinError.message === 'user not registered') {
+        setErrors(prevErrors => ({...prevErrors, email: "This email doesn't exist"}))
+      } else if (signinError.message === 'wrong password') {
+        setErrors(prevErrors => ({...prevErrors, password: 'The password you entered is incorrect!'}))
+      } else if (signinError.message === 'you have to activate your account first') {
+        try {
+          await resendActivationApi(values.email)
         
-        console.error('Error in sign in:', error)
-      })
+          dispatch(setCurrentEmail(values.email))
+          dispatch(setCurrentPassword(values.password))
+
+          navigate('/sendOTP')
+        } catch (activationError) {
+          console.error('Error in resending otp:', activationError.message)
+        }
+      } else {
+        console.error('Error in signing in:', signinError.message)
+      }
+    } finally {
+      setDisabled(false)
+    }
   }
 
   const onChange = (e) => {

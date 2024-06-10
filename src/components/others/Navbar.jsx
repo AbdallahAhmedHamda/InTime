@@ -1,8 +1,9 @@
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { addPopup } from '../../features/navigation/navigationSlice'
+import { addPopup, setIsAuthenticated } from '../../features/navigation/navigationSlice'
 import { useState, useEffect, useRef } from 'react'
 import { useTransition, animated } from 'react-spring'
+import { signOutApi } from '../../apis/authApi'
 import NavNotificationsIcon from '../../svg/navbar/NavNotificationsIcon'
 import DownArrowIcon from '../../svg/navbar/DownArrowIcon'
 import AddTaskIcon from '../../svg/navbar/AddTaskIcon'
@@ -10,7 +11,7 @@ import LogoutIcon from '../../svg/navbar/LogoutIcon'
 import SearchIcon from '../../svg/navbar/SearchIcon'
 import '../../css/components/Navbar.css'
 
-export default function Navbar({ onSignout }) {
+export default function Navbar() {
   const navigate = useNavigate()
 
   const { searchValue } = useParams()
@@ -94,34 +95,21 @@ export default function Navbar({ onSignout }) {
     }
   }
 
-  const logout = () => {
+  const logout = async () => {
     const refreshToken = localStorage.getItem('refreshToken')
 
-    fetch('https://intime-9hga.onrender.com/api/v1/auth/signOut', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					refreshToken: refreshToken,
-				}),
-			})
-				.then((response) => response.json())
-				.then((data) => {  
-					if (data.success) {    						
-            localStorage.removeItem('refreshToken')
-						localStorage.removeItem('accessToken')
-
-            onSignout()
-
-            navigate('/signin')
-					} else {
-						console.log(data)
-					}
-				})
-				.catch((error) => {          
-					console.error('Error in sending otp:', error)
-				})
+    try {
+      await signOutApi(refreshToken)
+      
+      localStorage.removeItem('refreshToken')
+      localStorage.removeItem('accessToken')
+      
+      dispatch(setIsAuthenticated(false))
+      
+      navigate('/signin')
+    } catch (error) {
+      console.error('Error in logging out:', error.message)
+    }
   }
 
   const dropdownTransition = useTransition(showDropdown, {

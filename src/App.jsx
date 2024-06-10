@@ -1,6 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { setIsAuthenticated } from './features/navigation/navigationSlice'
 import { useEffect, useState } from 'react'
+import { refreshTokenApi } from './apis/authApi'
+import useApi from './hooks/useApi'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import ChangePassword from './pages/ChangePassword'
@@ -22,50 +25,58 @@ import Home from './pages/Home'
 
 export default function App() {
 	const currentEmail = useSelector((state) => state.navigation.currentEmail)
+	const isAuthenticated = useSelector((state) => state.navigation.isAuthenticated)
 
-	const [isAuthenticated, setIsAuthenticated] = useState(false)
+	const dispatch = useDispatch()
+	
 	const [loading, setLoading] = useState(true)
 
+	// const {
+	// 	fetchApi
+	// } = useApi()
+	
 	// check if user is authenticated or not
 	useEffect(() => {
     const refreshToken = localStorage.getItem('refreshToken')
     const accessToken = localStorage.getItem('accessToken')
 
     if (refreshToken && accessToken) {
-			fetch('https://intime-9hga.onrender.com/api/v1/auth/refreshToken', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					refreshToken: refreshToken,
-				}),
-			})
-				.then((response) => response.json())
-				.then((data) => {  
-					if (data.success) {    
-						setIsAuthenticated(true)
+			const checkAuthentication = async () => {
+				try {
+					const data = await refreshTokenApi(refreshToken)
+	
+					dispatch(setIsAuthenticated(true))
 						
-						localStorage.setItem('refreshToken', data.newRefreshToken)
-						localStorage.setItem('accessToken', data.newAccessToken)
-					} else {
-						setIsAuthenticated(false)
+					localStorage.setItem('refreshToken', data.newRefreshToken)
+					localStorage.setItem('accessToken', data.newAccessToken)
+				} catch (error) {
+					dispatch(setIsAuthenticated(false))
 
-						localStorage.removeItem('refreshToken')
-						localStorage.removeItem('accessToken')
-					}
-				})
-				.catch((error) => {          
-					console.error('Error in sending otp:', error)
-				})
-				.finally(() => {
+					localStorage.removeItem('refreshToken')
+					localStorage.removeItem('accessToken')
+
+					console.error('Error in updating refresh token:', error.message)
+				} finally {
 					setLoading(false)
-				})
+				}
+			}
+
+			checkAuthentication()
     } else {
-      setIsAuthenticated(false)
+      dispatch(setIsAuthenticated(false))
 			setLoading(false)
     }
-  }, [])
+  }, [dispatch])
+
+
+	// // load account data when the user is authenticated
+	// useEffect(() => {
+	// 	if (isAuthenticated) {
+	// 		fetchApi('https://intime-9hga.onrender.com/api/v1/user/', {
+	// 			method: 'GET',
+	// 		})
+	// 	}
+	// }, [isAuthenticated, fetchApi])
 
 	// disable enter button when a button is focused
 	useEffect(() => {
@@ -84,7 +95,7 @@ export default function App() {
 
 	const Layout = ({ children }) => (
 		<>
-			<Navbar onSignout={() => setIsAuthenticated(false)} />
+			<Navbar />
 
 			<SideNav />
 
@@ -93,7 +104,7 @@ export default function App() {
 	)
 
   const PrivateRoute = ({ children }) => {
-    return isAuthenticated ? children : <Navigate to="/" />
+    return isAuthenticated ? children : <Navigate to="/signin" />
   }
 
   const PublicRoute = ({ children }) => {
@@ -101,7 +112,7 @@ export default function App() {
   }
 
 	const EmailCheck = ({ children }) => {
-    return currentEmail ? children : <Navigate to="/" />
+    return currentEmail ? children : <Navigate to="/signin" />
   }
 
 	if (loading) {
@@ -117,7 +128,7 @@ export default function App() {
 			</div>
 		)
 	}
-	
+
 	return (
 		<Router>
 			<Routes>
@@ -134,7 +145,7 @@ export default function App() {
 					path='/signin'
 					element={
 						<PublicRoute>
-							<Signin onLogin={() => setIsAuthenticated(true)} />
+							<Signin/>
 						</PublicRoute>
 					}
 				/>
@@ -162,7 +173,7 @@ export default function App() {
 					element={
 						<PublicRoute>
 							<EmailCheck>
-								<SendOTP onLogin={() => setIsAuthenticated(true)} />
+								<SendOTP/>
 							</EmailCheck>
 						</PublicRoute>
 					}

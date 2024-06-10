@@ -1,16 +1,18 @@
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { removeAllPopups, setCurrentEmail, setCurrentPage } from '../features/navigation/navigationSlice'
+import { removeAllPopups, setCurrentEmail, setCurrentPage, setCurrentPassword, setIsAuthenticated } from '../features/navigation/navigationSlice'
 import { useState, useEffect, useRef } from 'react'
+import { resendActivationApi, activationApi, loginApi } from '../apis/authApi'
 import OtpInput from 'react-otp-input'
 import '../css/pages/SendOTP.css'
 
-export default function SendOTP({ onLogin }) {
+export default function SendOTP() {
   const navigate = useNavigate()
 
   const dispatch = useDispatch()
 
   const currentEmail = useSelector((state) => state.navigation.currentEmail)
+  const currentPassword = useSelector((state) => state.navigation.currentPassword)
 
   const [focusVerified, setFocusVerified] = useState(false)
   const [disabled, setDisabled] = useState(false)
@@ -112,49 +114,50 @@ export default function SendOTP({ onLogin }) {
     return () => clearInterval(countdown)
   }, [timer])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
     setDisabled(true)
-    
-    fetch(`https://intime-9hga.onrender.com/api/v1/auth/activation/${otp}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: currentEmail
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setDisabled(false)
 
-        if (data.message === 'cant find this page') {
-          setError('Please enter an OTP!')
-        } else if (data.message === 'Invalid OTP') {
-          setError('Invalid OTP!')
-        } else if (data.message === 'this account is now active') {
-          dispatch(setCurrentEmail(''))
-          
-          localStorage.setItem('accessToken', data.accessToken)
-          localStorage.setItem('refreshToken', data.refreshToken)
+    try {
+      await activationApi(otp, currentEmail)
 
-          onLogin()
-          
-          navigate('/home')
-        } else {
-          console.log(data)
+      try {
+        const values = {
+          email: currentEmail,
+          password: currentPassword
         }
-      })
-      .catch((error) => {
-        setDisabled(false)
         
-        console.error('Error in submitting:', error)
-      })
+        const data = await loginApi(values)
+  
+        localStorage.setItem('accessToken', data.accessToken)
+        localStorage.setItem('refreshToken', data.refreshToken)
+  
+        dispatch(setIsAuthenticated(true))
+  
+        navigate('/home')
+      } catch (error) {
+        console.error('Error in signing in:', error.message)
+        
+        navigate('/signin')
+      } finally {    
+        dispatch(setCurrentEmail(''))
+        dispatch(setCurrentPassword(''))
+      }
+    } catch (error) {
+      if (error.message === 'cant find this page') {
+        setError('Please enter an OTP!')
+      } else if (error.message === 'Invalid OTP') {
+        setError('Invalid OTP!')
+      } else {
+        console.error('Error in activating:', error.message)
+      }
+    } finally {
+      setDisabled(false)
+    }
   }
 
-  const disableResend = (e) => {
+  const disableResend = async (e) => {
     e.preventDefault()
 
     if (!resendRef.current.classList.contains('send-otp-disabled')) {
@@ -164,22 +167,11 @@ export default function SendOTP({ onLogin }) {
 
       localStorage.setItem('sendOtpTimestamp', Date.now())
 
-      fetch('https://intime-9hga.onrender.com/api/v1/auth/resendactivationcode', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: currentEmail,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {  
-          console.log(data.message)
-        })
-        .catch((error) => {          
-          console.error('Error in resending:', error)
-        })
+      try {
+        await resendActivationApi(currentEmail)
+      } catch (error) {
+        console.error('Error in resending otp:', error.message)
+      }
     }
   }
   

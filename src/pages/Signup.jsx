@@ -1,10 +1,11 @@
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { removeAllPopups, setCurrentPage, setCurrentEmail } from '../features/navigation/navigationSlice'
+import { removeAllPopups, setCurrentPage, setCurrentEmail, setCurrentPassword } from '../features/navigation/navigationSlice'
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import FormInput from '../components/others/FormInput'
 import '../css/pages/Signup.css'
+import { singupApi } from '../apis/authApi'
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -121,46 +122,32 @@ export default function Signup() {
     return valid
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
+    
     if (validate()) {
       setDisabled(true)
 
-      fetch('https://intime-9hga.onrender.com/api/v1/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name : values.name,
-          password : values.password,
-          email : values.email,
-          phone :values.phone
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setDisabled(false)
+      try {
+        await singupApi(values)
+        
+        dispatch(setCurrentEmail(values.email))
+        dispatch(setCurrentPassword(values.password))
 
-          if (data.message === 'please enter a valid email') {
-            setErrors(prevErrors => ({...prevErrors, email: inputs[1].errorMessage}))
-          } else if (data.message === 'this email already exists') {
-            setErrors(prevErrors => ({...prevErrors, email: 'This email already exists!'}))
-          } else if (data.message === 'phone must be 11 numbers') {
-            setErrors(prevErrors => ({...prevErrors, phone: 'Phone number must be 11 numbers!'}))
-          } else if (data.message === 'check your mail to activate your account') {
-            dispatch(setCurrentEmail(values.email))
-
-            navigate('/sendOTP')
-          } else {
-            console.log(data)
-          }
-        })
-        .catch((error) => {
-          setDisabled(false)
-          
-          console.error('Error in signing up:', error)
-        })
+        navigate('/sendOTP')
+      } catch (error) {
+        if (error.message === 'please enter a valid email') {
+          setErrors(prevErrors => ({...prevErrors, email: inputs[1].errorMessage}))
+        } else if (error.message === 'this email already exists') {
+          setErrors(prevErrors => ({...prevErrors, email: 'This email already exists!'}))
+        } else if (error.message === 'phone must be 11 numbers') {
+          setErrors(prevErrors => ({...prevErrors, phone: 'Phone number must be 11 numbers!'}))
+        } else {
+          console.error('Error in signing up:', error.message)
+        }
+      } finally {
+        setDisabled(false)
+      }
     }
   }
 
