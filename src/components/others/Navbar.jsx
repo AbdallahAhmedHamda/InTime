@@ -18,6 +18,7 @@ export default function Navbar() {
 
   const currentPage = useSelector((state) => state.navigation.currentPage)
   const name = useSelector((state) => state.user.name)
+  const title = useSelector((state) => state.user.title)
   const profilePic = useSelector((state) => state.user.profilePic)
   const level = useSelector((state) => state.user.level)
   const unreadNotifications = useSelector((state) => state.user.unreadNotifications)
@@ -28,6 +29,7 @@ export default function Navbar() {
   const [showDropdown, setShowDropdown] = useState(false)
   const [scrollPosition, setScrollPosition] = useState(window.scrollY)
   const [hasExceededThreshold, setHasExceededThreshold] = useState(false)
+  const [disabled, setDisabled] = useState(false)
 
   const accountDropdownRef = useRef(null)
 
@@ -98,6 +100,8 @@ export default function Navbar() {
   const logout = async () => {
     const refreshToken = localStorage.getItem('refreshToken')
 
+    setDisabled(true)
+
     try {
       await signOutApi(refreshToken)
       
@@ -109,6 +113,8 @@ export default function Navbar() {
       navigate('/signin')
     } catch (error) {
       console.error('Error in logging out:', error.message)
+    } finally {
+      setDisabled(false)
     }
   }
 
@@ -173,15 +179,23 @@ export default function Navbar() {
         </Link>
 
         <div className='navbar-user-info'>
-          <Link to='/settings' >
+          <Link to='/profile' >
             <img
               src={profilePic}
               alt='profile-pic'
               className='navbar-profile-pic'
+              onError={(e) => {
+                e.target.onerror = null
+                e.target.src = require('../../assets/images/profile-pic.jpeg')
+              }}
             />
           </Link>
 
-          <p className='navbar-username'>{name}</p>
+          <div className='navbar-username-container'>
+            <p className='navbar-username'>{name}</p>
+            
+            <p className='navbar-title'>{title}</p>
+          </div>
 
           <div className='account-dropdown-container no-select' ref={accountDropdownRef}>
             <DownArrowIcon toggle={toggleAccountDropdown} isOpen={showDropdown}/>
@@ -189,7 +203,7 @@ export default function Navbar() {
             {
               dropdownTransition((style, item) => item && (
                 <animated.div className='account-dropdown' style={style}>
-                  <div className='logout-container' onClick={logout}>
+                  <div className='logout-container' onClick={logout} style={{ pointerEvents: disabled ? 'none' : '', cursor: disabled ? 'auto' : '' }}>
                     <LogoutIcon /> 
                     
                     <p>Logout</p>

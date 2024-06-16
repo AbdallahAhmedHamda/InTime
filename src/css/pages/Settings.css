@@ -1,0 +1,135 @@
+.settings-container {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.settings-left-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings-left-upper-section {
+  margin-left: 135px;
+  margin-right: 135px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 45px;
+}
+
+.settings-profile-pic-container {
+  position: relative;
+  height: 175px;
+  width: 175px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-profile-pic-input {
+  height: 167px;
+  width: 167px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 0 2px #5468E7;
+}
+
+.settings-profile-pic-buttons-container {
+  display: flex;
+  gap: 50px;
+}
+
+.settings-profile-pic-delete, .settings-profile-pic-upload {
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  width: 120px;
+  height: 40px;
+  cursor: pointer;
+  outline: none;
+  border-radius: 4px;
+  font-family: 'Poppins';
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.settings-profile-pic-upload {
+  background-color: #5468E7;
+  color: white;
+  border: 1px solid #5468E7;
+}
+
+.settings-profile-pic-delete {
+  background-color: inherit;
+  color: #2E2E2E;
+  border: 1px solid #232360;
+}
+
+.settings-left-bottom-section {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.settings-right-section {
+  display: flex;
+  flex-direction: column;
+  min-width: fit-content;
+  padding-right: 90px;
+}
+
+.settings-right-section > .sign-form-input {
+  width: 645px;
+}
+
+.settings-right-section > .sign-form-input > label  {
+  color: black;
+}
+
+.settings-right-section > .sign-form-input > .form-input-container.eye-container > input, .settings-right-section > .sign-form-input > .form-input-container.eye-container > textarea {
+  color: #23235F ;
+  border: 2px solid #E5E5E5;
+  background-color: #F3F7FA ;
+  height: 35px ;
+  font-size: 14px ;
+}
+
+.settings-right-section > .sign-form-input > .form-input-container.eye-container > input:not(:read-only):focus, .settings-right-section > .sign-form-input > .form-input-container.eye-container > textarea:not(:read-only):focus {
+  border: 2px #1976d2 solid;
+}
+
+.settings-right-section > button, .settings-left-bottom-section > * {
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  font-family: 'Poppins';
+  border-radius: 7px;
+  width: 160px;
+  height: 40px;
+  outline: none;
+  border: none;
+  padding: 0;
+  margin-top: 24px;
+  cursor: pointer;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.settings-right-section > button {
+  margin-left: auto;
+  background-color: #5468E7;
+}
+
+.settings-delete-account {
+  background-color: #D20000;
+}
+
+.settings-change-password {
+  background-color: #5468E7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

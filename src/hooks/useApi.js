@@ -7,16 +7,17 @@ export default function useApi(apiFunction) {
   const dispatch = useDispatch()
 
   const [apiLoading, setApiLoading] = useState(false)
-  const [apiError, setApiError] = useState()
-  const [apiData, setApiData] = useState()
+  const [apiError, setApiError] = useState(null)
+  const [apiData, setApiData] = useState(null)
 
-  const fetchApi = useCallback(async () => {
+  const fetchApi = useCallback(async (...args) => {
     setApiLoading(true)
 
     try {
-      const firstApiData = await apiFunction()
+      const firstApiData = await apiFunction(...args)
 
       setApiData(firstApiData)
+      setApiError(null)
     } catch (firstApiError) {
       if (firstApiError.message === 'Unauthorized') {
         const refreshToken = localStorage.getItem('refreshToken')
@@ -29,11 +30,13 @@ export default function useApi(apiFunction) {
             localStorage.setItem('accessToken', refreshData.newAccessToken)
 
             try {
-              const secondApiData = await apiFunction()
+              const secondApiData = await apiFunction(...args)
       
               setApiData(secondApiData)
+              setApiError(null)
             } catch (secondApiError) {
-              setApiError('Second api error:', secondApiError.message)
+              setApiError(secondApiError.message)
+              setApiData(null)
             }
           } catch (refreshError) {
             dispatch(setIsAuthenticated(false))
@@ -45,7 +48,8 @@ export default function useApi(apiFunction) {
           dispatch(setIsAuthenticated(false))
         }
       } else {
-        setApiError('Firt api error:', firstApiError.message)
+        setApiError(firstApiError.message)
+        setApiData(null)
       }
     } finally {
       setApiLoading(false)

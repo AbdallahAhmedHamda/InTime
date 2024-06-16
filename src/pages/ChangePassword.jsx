@@ -1,10 +1,15 @@
+import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { removeAllPopups, setCurrentPage } from '../features/navigation/navigationSlice'
 import { useState, useEffect, useRef } from 'react'
+import { changePasswordApi } from '../apis/userApi'
+import useApi from '../hooks/useApi'
 import FormInput from '../components/others/FormInput'
 import '../css/pages/ChangePassword.css'
 
 export default function ChangePassword() {
+  const navigate = useNavigate()
+
   const dispatch = useDispatch()
 
   const [values, setValues] = useState({
@@ -15,6 +20,13 @@ export default function ChangePassword() {
   const [errors, setErrors] = useState({})
 
   const containerRef = useRef(null)
+
+  const {
+		fetchApi : fetchChangePasswordApi,
+		apiData: changePasswordApiData,
+		apiError: changePasswordApiError,
+		apiLoading: changePasswordApiLoading
+	} = useApi(changePasswordApi)
 
   // change the current page so the app can rerender and update sidenav active icon and remove all popups
   useEffect(() => {
@@ -43,6 +55,26 @@ export default function ChangePassword() {
       window.removeEventListener('resize', adjustHeight)
     }
   }, [containerRef])
+
+  // navigate to settings on success
+	useEffect(() => {
+    if (changePasswordApiData?.success) {
+      navigate('/settings')
+		}
+  }, [changePasswordApiData, navigate])
+
+  // show errors
+	useEffect(() => {
+    if (changePasswordApiError) {
+      if (changePasswordApiError === 'wrong password') {
+        setErrors(prevErrors => ({...prevErrors, oldPassword: 'The password you entered is incorrect!'}))
+      } else if (changePasswordApiError === '"newPassword" contains an invalid value') {
+        setErrors(prevErrors => ({...prevErrors, newPassword: 'Your new and old passwords must be different!'}))
+      } else {
+        console.error('Error in changing password:', changePasswordApiError)
+      }
+		}
+  }, [changePasswordApiError]) 
 
   const inputs = [
     {
@@ -99,7 +131,7 @@ export default function ChangePassword() {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (validate()) {
-      console.log("Reset Password")
+      fetchChangePasswordApi(values)
     }
   }
 
@@ -134,7 +166,7 @@ export default function ChangePassword() {
         ))
       }
 
-      <button type="submit">Verify</button>
+      <button type="submit" disabled={changePasswordApiLoading}>Verify</button>
     </form>
   )
 }

@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { addPopup, removePopup, setUncroppedImage, setCroppedImage } from '../../features/navigation/navigationSlice'
+import { addPopup, removePopup, setUncroppedTaskImage, setCroppedTaskImage } from '../../features/navigation/navigationSlice'
 import { addTask, addTag } from '../../features/user/userSlice'
 import { useEffect, useState, useRef } from 'react'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
@@ -42,7 +42,7 @@ export default function AddTask() {
     : ''
 
   const allTags = useSelector((state) => state.user.tags)
-  const croppedImage = useSelector((state) => state.navigation.croppedImage)
+  const croppedImage = useSelector((state) => state.navigation.croppedTaskImage)
 
   const dispatch = useDispatch()
 
@@ -107,8 +107,8 @@ export default function AddTask() {
   // remove saved images from redux when popup unmounts
   useEffect(() => {
     return () => {
-      dispatch(setUncroppedImage(''))
-      dispatch(setCroppedImage(''))
+      dispatch(setUncroppedTaskImage(''))
+      dispatch(setCroppedTaskImage(''))
     }
   }, [dispatch])
 
@@ -116,7 +116,6 @@ export default function AddTask() {
     if (!formSubmitted) {
       sessionStorage.setItem('task',JSON.stringify(values))
     } else {
-      console.log()
       sessionStorage.removeItem('task')
     }
   }, [values, formSubmitted])
@@ -146,13 +145,13 @@ export default function AddTask() {
         img.onload = (e) => {
           const { naturalWidth, naturalHeight } = e.currentTarget
 
-          if (naturalWidth < 227 || naturalHeight < 121) {
+          if (naturalWidth < 240 || naturalHeight < 128) {
             dispatch(addPopup('small task cover'))
           } else if (sizeInMB > 3) {
             dispatch(addPopup('big size image'))
           } else {
             dispatch(addPopup('crop task cover'))
-            dispatch(setUncroppedImage(reader.result))
+            dispatch(setUncroppedTaskImage(reader.result))
           }
         }
       }
@@ -376,7 +375,7 @@ export default function AddTask() {
                     <CloseIcon
                       className='task-cover-remove'
                       onClick={() => {
-                        dispatch(setUncroppedImage(''))
+                        dispatch(setUncroppedTaskImage(''))
                         setValues({
                           ...values,
                           image: ''

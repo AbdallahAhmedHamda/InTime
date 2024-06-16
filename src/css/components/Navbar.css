@@ -70,7 +70,7 @@ header {
   cursor: pointer;
 }
 
-@media (max-width: 870px) {
+@media (max-width: 965px) {
   .search-bar {
       display: none;
   }
@@ -125,10 +125,28 @@ header {
   cursor: pointer;
 }
 
+.navbar-user-name-container {
+  display: flex;
+  flex-direction: column;
+}
+
 .navbar-username {
   font-family: 'Inter';
   font-weight: 500;
   letter-spacing: -0.16px;
+  overflow: hidden;
+  text-wrap: nowrap;
+  text-overflow: ellipsis;
+  max-width: 250px;
+}
+
+.navbar-title {
+  font-family: "DM Sans";
+  overflow: hidden;
+  text-wrap: nowrap;
+  text-overflow: ellipsis;
+  max-width: 250px;
+  color: rgba(0, 0, 0, 0.40);
 }
 
 .account-dropdown-container {

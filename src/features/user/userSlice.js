@@ -17,11 +17,14 @@ const days = Array.from({ length: 7 }, (_, i) => {
 })
 
 const initialState = {
-  id: 1,
+  id: '',
   name: '',
   email: '',
   phone: '',
-  profilePic: require('../../assets/images/profile-pic.jpeg'),
+  title: '',
+  about: '',
+  rank: '',
+  profilePic: '',
   unreadNotifications: 2,
   points: {
     daily: {
@@ -38,16 +41,18 @@ const initialState = {
     }
   },
   totalPoints: {
-    overall: 0,
+    overall: '',
     thisMonth: 400,
     lastMonth: 320
   },
-  level: Math.floor(0 / 100) + 1,
+  level: '',
   tasks: [],
   completedTasks: {
+    overall: '',
     thisMonth: 16,
     lastMonth: 20
   },
+  inProgressTasks: '',
   tags: []
 }
 
@@ -55,6 +60,9 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
+    setId: (state, action) => {
+      state.id = action.payload
+    },
     setName: (state, action) => {
       state.name = action.payload
     },
@@ -64,8 +72,29 @@ const userSlice = createSlice({
     setPhone: (state, action) => {
       state.phone = action.payload
     },
+    setTitle: (state, action) => {
+      state.title = action.payload
+    },
+    setAbout: (state, action) => {
+      state.about = action.payload
+    },
+    setRank: (state, action) => {
+      state.rank = action.payload
+    },
     setProfilePic: (state, action) => {
       state.profilePic = action.payload
+    },
+    setTotalPoints: (state, action) => {
+      state.totalPoints.overall = action.payload
+    },
+    setLevel: (state, action) => {
+      state.level = action.payload
+    },
+    setTotalCompletedTasks: (state, action) => {
+      state.completedTasks.overall = action.payload
+    },
+    setInProgressTasks: (state, action) => {
+      state.inProgressTasks = action.payload
     },
     removeUnread: (state) => {
       state.unreadNotifications = 0
@@ -208,9 +237,17 @@ const userSlice = createSlice({
 })
 
 export const { 
+  setId,
   setName,
   setEmail,
   setPhone,
+  setTitle,
+  setAbout,
+  setRank,
+  setTotalPoints,
+  setLevel,
+  setTotalCompletedTasks,
+  setInProgressTasks,
   setProfilePic,
   removeUnread,
   addTask,

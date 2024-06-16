@@ -10,7 +10,7 @@ export default function FormInput(props) {
   const togglePassword = () => {
     setShowPassword(!showPassword)
   }
-
+  
   const { pattern, inputRef, label, errorMessage, onChange, id, showError, type, value, ...inputProps } = props
   return (
     <div
@@ -19,15 +19,17 @@ export default function FormInput(props) {
       <label htmlFor={inputProps.name}>{label}</label>
 
       <div className='form-input-container eye-container'>
-        <input
+        {
+          inputProps.name !== 'about' ?
+          <input
           id={inputProps.name}
           ref={inputRef}
           type={
             type === 'password'
             ? showPassword
             ? 'text'
-                :  'password'
-              : type
+            :  'password'
+            : type
           }
           autoComplete='on'
           spellCheck='false'
@@ -44,7 +46,31 @@ export default function FormInput(props) {
             ? 'form-password-input'
             : ''
           }
-        />
+          /> :
+          <textarea
+            id={inputProps.name}
+            ref={inputRef}
+            {...inputProps}
+            value={value}
+            onChange={onChange}
+            maxLength='300'
+            autoComplete='off'
+            autoCorrect='off'
+            autoCapitalize='off'
+            spellCheck='false'
+            data-gramm='false'
+            data-gramm_editor='false'
+            data-enable-grammarly='false'
+          />
+        }
+
+        {
+          inputProps.name === 'about' ?
+          <p className='about-max-letters'>
+            {value.length}/300
+          </p> :
+          ''
+        }
 
         {
           type === 'password' ?

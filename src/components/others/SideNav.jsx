@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import SideNotificationsIcon from '../../svg/sideNav/SideNotificationsIcon'
 import SettingsIcon from '../../svg/sideNav/SettingsIcon'
 import CalendarIcon from '../../svg/sideNav/CalendarIcon'
+import ProfileIcon from '../../svg/sideNav/ProfileIcon'
 import TasksIcon from '../../svg/sideNav/TasksIcon'
 import HomeIcon from '../../svg/sideNav/HomeIcon'
 import '../../css/components/SideNav.css'
@@ -88,7 +89,8 @@ export default function SideNav() {
     { path: '/tasks', label: 'Tasks', icon: <TasksIcon /> },
     { path: '/calendar', label: 'Calendar', icon: <CalendarIcon /> },
     { path: '/notifications', label: 'Notifications', icon: <SideNotificationsIcon /> },
-    { path: '/settings', label: 'Settings', icon: <SettingsIcon /> },
+    { path: '/profile', label: 'Profile', icon: <ProfileIcon /> },
+    { path: '/settings', label: 'Settings', icon: <SettingsIcon /> }
   ]
 
   return (

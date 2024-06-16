@@ -8,7 +8,7 @@ import '../css/pages/Signup.css'
 import { singupApi } from '../apis/authApi'
 
 export default function Signup() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const dispatch = useDispatch()
 
@@ -76,9 +76,9 @@ export default function Signup() {
       id: 3,
       name: 'phone',
       type: 'tel',
-      errorMessage: "Phone must be 11 numbers!",
+      errorMessage: "Phone must be valid and consits of 11 digits!",
       label: 'Phone',
-      pattern: /^\d{11}$/,
+      pattern: /^0\d{10}$/,
       required: true,
     },
     {
@@ -140,8 +140,6 @@ export default function Signup() {
           setErrors(prevErrors => ({...prevErrors, email: inputs[1].errorMessage}))
         } else if (error.message === 'this email already exists') {
           setErrors(prevErrors => ({...prevErrors, email: 'This email already exists!'}))
-        } else if (error.message === 'phone must be 11 numbers') {
-          setErrors(prevErrors => ({...prevErrors, phone: 'Phone number must be 11 numbers!'}))
         } else {
           console.error('Error in signing up:', error.message)
         }

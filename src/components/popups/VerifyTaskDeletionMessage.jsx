@@ -4,7 +4,7 @@ import { removeTask } from '../../features/user/userSlice'
 import CloseIcon from '../../svg/others/CloseIcon'
 import '../../css/components/Messages.css'
 
-export default function VerifyDeletionMessage({ task }) {
+export default function VerifyTaskDeletionMessage({ task }) {
   const dispatch = useDispatch()
 
   const deleteTask = () => {

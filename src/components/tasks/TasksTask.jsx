@@ -71,7 +71,9 @@ export default function TasksTask({ task }) {
         <div className='tasks-task-button-container'>
           <TasksTaskDeleteIcon verifyDeletion={verifyDeletion}/>
 
-          <TasksTaskEditIcon editTask={editTask}/>
+          {
+            (!task.isCompleted && !task.backlog) ? <TasksTaskEditIcon editTask={editTask}/> : ''
+          }
         </div>
 
         { 

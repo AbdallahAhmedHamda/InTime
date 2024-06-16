@@ -4,7 +4,7 @@ import { finishTask } from '../../features/user/userSlice'
 import CloseIcon from '../../svg/others/CloseIcon'
 import '../../css/components/Messages.css'
 
-export default function VerifyCompletionMessage({ task }) {
+export default function VerifyTaskCompletionMessage({ task }) {
   const dispatch = useDispatch()
 
   const completeTask = () => {

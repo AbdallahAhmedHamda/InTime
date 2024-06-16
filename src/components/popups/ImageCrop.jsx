@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { removePopup, setCroppedImage } from '../../features/navigation/navigationSlice'
+import { removePopup, setCroppedTaskImage, setCroppedProfilePic } from '../../features/navigation/navigationSlice'
 import { useRef, useState, useEffect } from 'react'
 import ReactCrop, {
   centerCrop,
@@ -12,8 +12,15 @@ import '../../css/components/ImageCrop.css'
 
 
 
-export default function TaskCoverCrop() {
-  const uncroppedImage = useSelector((state) => state.navigation.uncroppedImage)
+export default function ImageCrop({ popup, bestWidth, bestHeight, imageFor }) {
+  const uncroppedImage = useSelector((state) => (
+    imageFor === 'task'
+      ? state.navigation.uncroppedTaskImage
+      : imageFor === 'profilePic'
+        ? state.navigation.uncroppedProfilePic
+        : ''
+  ))
+
 
   const dispatch = useDispatch()
 
@@ -27,8 +34,8 @@ export default function TaskCoverCrop() {
   // adjust crop tool when window resizes
   useEffect(() => {
     const handleResize = () => {
-      setMinWidth(240 * imgRef.current?.width / imgRef.current?.naturalWidth)
-      setMinHeight(128 * imgRef.current?.height / imgRef.current?.naturalHeight)
+      setMinWidth(bestWidth * imgRef.current?.width / imgRef.current?.naturalWidth)
+      setMinHeight(bestHeight * imgRef.current?.height / imgRef.current?.naturalHeight)
     }
 
     window.addEventListener('resize', handleResize)
@@ -36,13 +43,13 @@ export default function TaskCoverCrop() {
     return () => {
       window.removeEventListener('resize', handleResize)
     }
-  }, [])
+  }, [bestWidth, bestHeight])
 
   // set crop tool when image loads
   const onImageLoad = (e) => {
     const { width, height, naturalWidth, naturalHeight } = e.currentTarget
-    const cropWidthInPercent = (240 / width) * 100
-    const cropHeightInPercent = (128 / height) * 100
+    const cropWidthInPercent = (bestWidth / width) * 100
+    const cropHeightInPercent = (bestHeight / height) * 100
 
     const crop = makeAspectCrop(
       {
@@ -50,13 +57,13 @@ export default function TaskCoverCrop() {
         width: cropWidthInPercent,
         height: cropHeightInPercent
       },
-      240/128,
+      bestWidth/bestHeight,
       width,
       height
     )
     setCrop(centerCrop(crop, width, height))
-    setMinWidth(240 * width / naturalWidth)
-    setMinHeight(128 * height / naturalHeight)
+    setMinWidth(bestWidth * width / naturalWidth)
+    setMinHeight(bestHeight * height / naturalHeight)
   }
 
   // get the cropped image
@@ -103,7 +110,7 @@ export default function TaskCoverCrop() {
         
         <CloseIcon
           className='close-task-cover-crop'
-          onClick={() => dispatch(removePopup('crop task cover'))}
+          onClick={() => dispatch(removePopup(popup))}
         />
       </div>
 
@@ -112,7 +119,7 @@ export default function TaskCoverCrop() {
           crop={crop}
           onChange={(_, percentCrop) => setCrop(percentCrop)}
           keepSelection={true}
-          aspect={240/128}
+          aspect={bestWidth/bestHeight}
           minWidth={minWidth}
           minHeight={minHeight}
           className='task-cover-crop'
@@ -143,8 +150,14 @@ export default function TaskCoverCrop() {
               imgRef.current.height
             )
           )
-          dispatch(setCroppedImage(previewCanvasRef.current.toDataURL()))
-          dispatch(removePopup('crop task cover'))
+
+          if (imageFor === 'task') {
+            dispatch(setCroppedTaskImage(previewCanvasRef.current.toDataURL()))
+          } else if (imageFor === 'profilePic') {
+            dispatch(setCroppedProfilePic(previewCanvasRef.current.toDataURL()))
+          }
+
+          dispatch(removePopup(popup))
         }}
       >
         Crop Image

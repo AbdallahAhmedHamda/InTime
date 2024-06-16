@@ -10,10 +10,21 @@
   position: relative;
 }
 
+.sign-form-input > .form-input-container.eye-container > textarea {
+  min-height: 80px;
+  resize: none;
+  padding: 3px 15px;
+  font-family: 'Poppins';
+}
+
 .sign-form-input > .form-input-container.eye-container > input {
   padding: 0 15px;
+}
+
+.sign-form-input > .form-input-container.eye-container > input, .sign-form-input > .form-input-container.eye-container > textarea {
   height: 46px;
   border-radius: 8px;
+  outline: none;
   border: 1px solid rgba(102, 102, 102, 0.35);
   color: #585A66;
   width: 100%;
@@ -22,12 +33,17 @@
   font-weight: 400;
 }
 
+.sign-form-input > .form-input-container.eye-container > input:read-only, .sign-form-input > .form-input-container.eye-container > textarea:read-only {
+  color: rgba(0, 0, 0, 0.40) !important;
+  cursor: auto;
+}
+
 .sign-form-input > .form-input-container.eye-container > .form-password-input {
   padding-right: 55px;
 }
 
-.sign-form-input > .form-input-container.eye-container > input:focus {
-  outline: 1px #1976d2 solid;
+.sign-form-input > .form-input-container.eye-container > input:not(:read-only):focus, .sign-form-input > .form-input-container.eye-container > textarea:not(:read-only):focus {
+  border: 1px #1976d2 solid;
 }
 
 .form-input-container.eye-container > svg {
@@ -58,7 +74,8 @@
 }
 
 .sign-form-input > .form-input-container.eye-container > .sign-form-error {
-  outline: 1px solid red;
+  border: 1px solid red;
+  outline: none;
 }
 
 .sign-form-input > .under-form-input-container >  span {
@@ -72,4 +89,14 @@
   font-weight: 700;
   margin-left: auto;
   text-wrap: nowrap;
+}
+
+.about-max-letters {
+  position: absolute;
+  right: 5px;
+  bottom: -15px;
+  color: #768396;
+  font-family: 'DM Sans';
+  font-size: 12px !important;
+  font-weight: 400;
 }

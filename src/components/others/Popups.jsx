@@ -2,9 +2,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { removePopup, setCurrentTask } from '../../features/navigation/navigationSlice'
 import { useRef, useEffect } from 'react'
 import { useTransition, animated } from 'react-spring'
-import VerifyCompletionMessage from '../popups/VerifyCompletionMessage'
-import VerifyDeletionMessage from '../popups/VerifyDeletionMessage'
-import TaskCoverCrop from '../popups/TaskCoverCrop'
+import VerifyTaskCompletionMessage from '../popups/VerifyTaskCompletionMessage'
+import VerifyTaskDeletionMessage from '../popups/VerifyTaskDeletionMessage'
+import VerifyAccountDeletionMessage from '../popups/VerifyAccountDeletionMessage'
+import ImageCrop from '../popups/ImageCrop'
 import TaskPreview from '../popups/TaskPreview'
 import EditTask from '../popups/EditTask'
 import AddTask from '../popups/AddTask'
@@ -20,19 +21,19 @@ export default function Popups() {
 
   // disable page scrollbars when popus are active
   useEffect(() => {
-    let clearReduxTimeout
+    let reduxTimeout
 
     if (popups.length !== 0) {
       document.body.style.overflow = 'hidden'
     } else if (currentTask) {
-      clearReduxTimeout = setTimeout(() => {
+      reduxTimeout = setTimeout(() => {
         dispatch(setCurrentTask(''))
       }, 300)
     }
     
     return () => {
       document.body.style.overflow = 'auto'
-      clearTimeout(clearReduxTimeout)
+      clearTimeout(reduxTimeout)
     }
   }, [dispatch, currentTask, popups])
 
@@ -147,12 +148,40 @@ export default function Popups() {
                 currentTask={currentTask}
               /> :
               item === 'verify task completion' ?
-              <VerifyCompletionMessage 
+              <VerifyTaskCompletionMessage 
                 task={currentTask}
               /> :
               item === 'verify task deletion' ?
-              <VerifyDeletionMessage 
+              <VerifyTaskDeletionMessage 
                 task={currentTask}
+              /> :
+              item === 'verify account deletion' ?
+              <VerifyAccountDeletionMessage
+              /> :
+              item === 'not image' ?
+              <Message 
+                popup='not image'
+                heading="Can't Read The File"
+                content='Your image should be saved as JPG, PNG, GIF, TIFF, HEIF or WebP'
+              /> :
+              item === 'small profile pic' ?
+              <Message 
+                popup='small profile pic'
+                heading='Please Choose Another Image'
+                content='This image is too small please upload a larger one'
+              /> :
+              item === 'big size image' ?
+              <Message 
+                popup='big size image'
+                heading='Please Choose Another Image'
+                content='Your image should be less than 3 MB'
+              /> :
+              item === 'crop profile pic' ?
+              <ImageCrop
+                popup='crop profile pic'
+                bestWidth={170}
+                bestHeight={170}
+                imageFor='profilePic'
               /> :
               ''
             }
@@ -184,11 +213,11 @@ export default function Popups() {
                 selectZIndex={260}
               /> :
               item === 'verify task completion' ?
-              <VerifyCompletionMessage 
+              <VerifyTaskCompletionMessage 
                 task={currentTask}
               /> :
               item === 'verify task deletion' ?
-              <VerifyDeletionMessage 
+              <VerifyTaskDeletionMessage 
                 task={currentTask}
               /> :
               item === 'not image' ?
@@ -210,7 +239,13 @@ export default function Popups() {
                 content='Your image should be less than 3 MB'
               /> :
               item === 'crop task cover' ?
-              <TaskCoverCrop /> :
+              <ImageCrop
+                popup='crop task cover'
+                bestWidth={240}
+                bestHeight={128}
+                imageFor='task'
+
+              /> :
               item === 'only one step' ?
               <Message 
                 popup='only one step'
@@ -261,7 +296,12 @@ export default function Popups() {
                 content='Your image should be less than 3 MB'
               /> :
               item === 'crop task cover' ?
-              <TaskCoverCrop /> :
+              <ImageCrop
+                popup='crop task cover'
+                bestWidth={240}
+                bestHeight={128}
+                imageFor='task'
+              /> :
               item === 'only one step' ?
               <Message 
                 popup='only one step'

@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { setIsAuthenticated } from './features/navigation/navigationSlice'
-import { setEmail, setName, setPhone } from './features/user/userSlice'
+import { setEmail, setName, setPhone, setProfilePic, setTitle, setAbout, setId, setRank, setTotalPoints, setLevel, setTotalCompletedTasks, setInProgressTasks } from './features/user/userSlice'
+import { setAllRanks, setIsAuthenticated } from './features/navigation/navigationSlice'
 import { useEffect, useState } from 'react'
+import { userDataApi, rankApi } from './apis/userApi'
 import { refreshTokenApi } from './apis/authApi'
-import { userDataApi } from './apis/userApi'
 import useApi from './hooks/useApi'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
@@ -17,6 +17,7 @@ import Settings from './pages/Settings'
 import Calendar from './pages/Calendar'
 import NotFound from './pages/NotFound'
 import SendOTP from './pages/SendOTP'
+import Profile from './pages/Profile'
 import Search from './pages/Search'
 import Signup from './pages/Signup'
 import Signin from './pages/Signin'
@@ -34,10 +35,18 @@ export default function App() {
 	const [loading, setLoading] = useState(true)
 
 	const {
-		fetchApi,
+		fetchApi : fetchUserDataApi,
 		apiData: userDataApiData,
-		apiError: userDataApiError
+		apiError: userDataApiError,
+		apiLoading: userDataApiLoading
 	} = useApi(userDataApi)
+
+	const {
+		fetchApi : fetchRankApi,
+		apiData: rankApiData,
+		apiError: rankApiError,
+		apiLoading: rankApiLoading
+	} = useApi(rankApi)
 	
 	// check if user is authenticated or not
 	useEffect(() => {
@@ -45,7 +54,7 @@ export default function App() {
     const accessToken = localStorage.getItem('accessToken')
 
     if (refreshToken && accessToken) {
-			const checkAuthentication = async () => {
+			const checkAuthentication = async () => {				
 				try {
 					const data = await refreshTokenApi(refreshToken)
 	
@@ -60,7 +69,7 @@ export default function App() {
 					localStorage.removeItem('accessToken')
 
 					console.error('Error in updating refresh token:', error.message)
-				} finally {
+
 					setLoading(false)
 				}
 			}
@@ -70,24 +79,55 @@ export default function App() {
       dispatch(setIsAuthenticated(false))
 			setLoading(false)
     }
-  }, [dispatch])
-
-
+	}, [dispatch])
+		
+		
 	// load account data when the user is authenticated
 	useEffect(() => {
-    if (isAuthenticated) {
-      fetchApi()
-    }
-	}, [isAuthenticated, fetchApi])
+		const fetchApis = async () => {
+			if (isAuthenticated) {
+				setLoading(true)
+	
+				await fetchUserDataApi()
+
+				await fetchRankApi()
+			}
+		}
+	
+		fetchApis()
+	}, [isAuthenticated, fetchUserDataApi, fetchRankApi])
 
 	// change the account data when the api loads
 	useEffect(() => {
-    if (userDataApiData?.success) {
-     	dispatch(setName(userDataApiData.record.name))
-			dispatch(setEmail(userDataApiData.record.email))
-			dispatch(setPhone(userDataApiData.record.phone))
-    }
+		if (isAuthenticated) {
+			if (userDataApiData?.success) {
+				dispatch(setId(userDataApiData.record._id))
+				dispatch(setName(userDataApiData.record.name))
+				dispatch(setEmail(userDataApiData.record.email))
+				dispatch(setPhone('0' + userDataApiData.record.phone))
+				dispatch(setProfilePic(`https://intime-9hga.onrender.com/api/v1/images/${userDataApiData.record.avatar}`))
+				dispatch(setTitle(userDataApiData.record.title ? userDataApiData.record.title : ''))
+				dispatch(setAbout(userDataApiData.record.about ? userDataApiData.record.about.replace(/\r\n/g, '\n') : ''))
+			}
+		}
   }, [userDataApiData, isAuthenticated, dispatch]) 
+
+	// change the account data when the api loads
+	useEffect(() => {
+		if (isAuthenticated) {
+			if (rankApiData) {
+				dispatch(setRank(rankApiData.myRank + 1))
+				dispatch(setTotalPoints(rankApiData.rankedUser[rankApiData.myRank].points.totalPoints))
+				dispatch(setLevel(Math.floor(rankApiData.rankedUser[rankApiData.myRank].points.totalPoints / 100) + 1))
+				dispatch(setTotalCompletedTasks(rankApiData.rankedUser[rankApiData.myRank].tasks.completedTasks))
+				dispatch(setInProgressTasks(rankApiData.rankedUser[rankApiData.myRank].tasks.onGoingTasks))
+
+				dispatch(setAllRanks(rankApiData.rankedUser))
+
+				setLoading(false)
+			}
+		}
+	}, [rankApiData, isAuthenticated, dispatch])
 
 	// disable enter button when a button is focused
 	useEffect(() => {
@@ -126,7 +166,7 @@ export default function App() {
     return currentEmail ? children : <Navigate to="/signin" />
   }
 
-	if (loading) {
+	if (loading || userDataApiLoading || rankApiLoading) {
 		return (
 			<div
 				style={{ 
@@ -140,6 +180,14 @@ export default function App() {
 
 	if (userDataApiError) {
 		console.log(userDataApiError)
+
+		setLoading(false)
+	}
+
+	if (rankApiError) {
+		console.log(rankApiError)
+
+		setLoading(false)
 	}
 
 	return (
@@ -264,6 +312,17 @@ export default function App() {
 						<PrivateRoute>
 							<Layout>
 								<Notifications />
+							</Layout>
+						</PrivateRoute>
+					}
+				/>
+
+				<Route
+					path='/profile'
+					element={
+						<PrivateRoute>
+							<Layout>
+								<Profile />
 							</Layout>
 						</PrivateRoute>
 					}

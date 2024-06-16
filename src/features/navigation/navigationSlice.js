@@ -13,14 +13,17 @@ const trimPath = (pathname) => {
 }
 
 const initialState = {
+	allRanks: '',
 	currentEmail: '',
 	currentPassword: '',
 	currentPage: trimPath(window.location.pathname),
 	isAuthenticated: false,
 	popups: [],
 	currentTask: '',
-	uncroppedImage: '',
-	croppedImage: '',
+	uncroppedTaskImage: '',
+	croppedTaskImage: '',
+	uncroppedProfilePic: '',
+	croppedProfilePic: '',
 	filters: {
 		creator: [],
 		status: [],
@@ -37,6 +40,9 @@ const navigationSlice = createSlice({
 	name: 'currentObject',
 	initialState,
 	reducers: {
+		setAllRanks: (state, action) => {
+			state.allRanks = action.payload
+		},
 		setCurrentEmail: (state, action) => {
 			state.currentEmail = action.payload
 		},
@@ -65,11 +71,17 @@ const navigationSlice = createSlice({
 		setCurrentTask: (state, action) => {
 			state.currentTask = action.payload
 		},
-		setUncroppedImage: (state, action) => {
-			state.uncroppedImage = action.payload
+		setUncroppedTaskImage: (state, action) => {
+			state.uncroppedTaskImage = action.payload
 		},
-		setCroppedImage: (state, action) => {
-			state.croppedImage = action.payload
+		setCroppedTaskImage: (state, action) => {
+			state.croppedTaskImage = action.payload
+		},
+		setUncroppedProfilePic: (state, action) => {
+			state.uncroppedProfilePic = action.payload
+		},
+		setCroppedProfilePic: (state, action) => {
+			state.croppedProfilePic = action.payload
 		},
 		setFilters: (state, action) => {
 			state.filters = action.payload
@@ -81,7 +93,8 @@ const navigationSlice = createSlice({
 })
 
 export const {
-	setCurrentEmail,
+	setAllRanks, 
+	setCurrentEmail, 
 	setCurrentPassword,
 	setCurrentPage,
 	setIsAuthenticated,
@@ -89,8 +102,10 @@ export const {
 	removePopup,
 	removeAllPopups,
 	setCurrentTask,
-	setUncroppedImage,
-	setCroppedImage,
+	setUncroppedTaskImage,
+	setCroppedTaskImage,
+	setUncroppedProfilePic,
+	setCroppedProfilePic,
 	setFilters,
 	setSorting
 } = navigationSlice.actions

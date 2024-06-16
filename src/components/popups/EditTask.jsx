@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { addPopup, removePopup, setUncroppedImage, setCroppedImage, setCurrentTask } from '../../features/navigation/navigationSlice'
+import { addPopup, removePopup, setUncroppedTaskImage, setCroppedTaskImage, setCurrentTask } from '../../features/navigation/navigationSlice'
 import { editTask, addTag } from '../../features/user/userSlice'
 import { useEffect, useState, useRef } from 'react'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
@@ -37,7 +37,7 @@ const options = [
 
 export default function EditTask({ currentTask, selectZIndex }) {
   const allTags = useSelector((state) => state.user.tags)
-  const croppedImage = useSelector((state) => state.navigation.croppedImage)
+  const croppedImage = useSelector((state) => state.navigation.croppedTaskImage)
 
   const dispatch = useDispatch()
 
@@ -54,8 +54,8 @@ export default function EditTask({ currentTask, selectZIndex }) {
   // remove saved images from redux when popup unmounts
   useEffect(() => {
     return () => {
-      dispatch(setUncroppedImage(''))
-      dispatch(setCroppedImage(''))
+      dispatch(setUncroppedTaskImage(''))
+      dispatch(setCroppedTaskImage(''))
     }
   }, [dispatch])
 
@@ -84,13 +84,13 @@ export default function EditTask({ currentTask, selectZIndex }) {
         img.onload = (e) => {
           const { naturalWidth, naturalHeight } = e.currentTarget
 
-          if (naturalWidth < 227 || naturalHeight < 121) {
+          if (naturalWidth < 240 || naturalHeight < 128) {
             dispatch(addPopup('small task cover'))
           } else if (sizeInMB > 3) {
             dispatch(addPopup('big size image'))
           } else {
             dispatch(addPopup('crop task cover'))
-            dispatch(setUncroppedImage(reader.result))
+            dispatch(setUncroppedTaskImage(reader.result))
           }
         }
       }
@@ -310,7 +310,7 @@ export default function EditTask({ currentTask, selectZIndex }) {
                     <CloseIcon
                       className='task-cover-remove'
                       onClick={() => {
-                        dispatch(setUncroppedImage(''))
+                        dispatch(setUncroppedTaskImage(''))
                         setValues({
                           ...values,
                           image: ''

@@ -23,6 +23,7 @@ a:not(.calendar-days > a) {
 
 button {
   user-select: none;
+  transition: background-color 0.3s ease, border 0.3s ease;
 }
 
 button:disabled {
@@ -57,11 +58,11 @@ button:disabled {
 }
 
 .main-content {
-  padding: 24px 40px;
+  padding: 24px 40px 12px 40px;
   margin-left: 78px;
   margin-top: 79px;
   min-width: fit-content;
-  width: fit-content;
+  max-width: 3100px;
   position: relative
 }
 
