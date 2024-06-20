@@ -9,6 +9,7 @@ import ImageCrop from '../popups/ImageCrop'
 import TaskPreview from '../popups/TaskPreview'
 import EditTask from '../popups/EditTask'
 import AddTask from '../popups/AddTask'
+import AddProject from '../popups/AddProject'
 import Message from '../popups/Message'
 
 export default function Popups() {
@@ -138,6 +139,8 @@ export default function Popups() {
             {
               item === 'add' ?
               <AddTask /> :
+              item === 'add project' ?
+              <AddProject /> :
               item === 'edit' ?
               <EditTask 
                 currentTask={currentTask}
@@ -244,7 +247,13 @@ export default function Popups() {
                 bestWidth={240}
                 bestHeight={128}
                 imageFor='task'
-
+              /> :
+              item === 'crop project cover' ?
+              <ImageCrop
+                popup='crop project cover'
+                bestWidth={283}
+                bestHeight={121}
+                imageFor='project'
               /> :
               ''
             }

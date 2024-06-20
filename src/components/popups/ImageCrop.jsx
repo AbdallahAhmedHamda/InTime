@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { removePopup, setCroppedTaskImage, setCroppedProfilePic } from '../../features/navigation/navigationSlice'
+import { removePopup, setCroppedTaskImage, setCroppedProfilePic, setCroppedProjectImage } from '../../features/navigation/navigationSlice'
 import { useRef, useState, useEffect } from 'react'
 import ReactCrop, {
   centerCrop,
@@ -18,7 +18,10 @@ export default function ImageCrop({ popup, bestWidth, bestHeight, imageFor }) {
       ? state.navigation.uncroppedTaskImage
       : imageFor === 'profilePic'
         ? state.navigation.uncroppedProfilePic
-        : ''
+        : imageFor === 'project'
+          ? state.navigation.uncroppedProjectImage
+          : ''
+
   ))
 
 
@@ -155,6 +158,8 @@ export default function ImageCrop({ popup, bestWidth, bestHeight, imageFor }) {
             dispatch(setCroppedTaskImage(previewCanvasRef.current.toDataURL()))
           } else if (imageFor === 'profilePic') {
             dispatch(setCroppedProfilePic(previewCanvasRef.current.toDataURL()))
+          } else if (imageFor === 'project') {
+            dispatch(setCroppedProjectImage(previewCanvasRef.current.toDataURL()))
           }
 
           dispatch(removePopup(popup))

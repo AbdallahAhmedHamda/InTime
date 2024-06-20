@@ -96,7 +96,10 @@ export default function Home() {
                 Task
               </button>
 
-              <button className='home-add-project-button'>
+              <button
+                className='home-add-project-button'
+                onClick={() => dispatch(addPopup('add project'))}
+              >
                 <PlusIcon color='#F48C06'/>
 
                 Project

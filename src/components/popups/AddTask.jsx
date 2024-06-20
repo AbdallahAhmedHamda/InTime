@@ -103,6 +103,7 @@ export default function AddTask() {
   const [nameError, setNameError] = useState('')
   const [coverHovered, setCoverHovered] = useState(false)
   const [formSubmitted, setFormSubmitted] = useState(null)
+  const [apiCallAttempt, setApiCallAttempt] = useState(0)
 
   const imageInputRef = useRef()
 
@@ -154,7 +155,7 @@ export default function AddTask() {
     } else if (createTaskApiError) {
       console.log(createTaskApiError)
     }
-	}, [createTaskApiError, dispatch])
+	}, [createTaskApiError, apiCallAttempt, dispatch])
 
   // handle image selection
   const onImageSelection = (e) => {
@@ -272,6 +273,8 @@ export default function AddTask() {
       endAt: values.endAt.toISOString(),
       steps: values.steps.map((step) => step.stepDisc)
     })
+
+    setApiCallAttempt(prevAttempts => prevAttempts + 1)
   }
 
   const today = dayjs()

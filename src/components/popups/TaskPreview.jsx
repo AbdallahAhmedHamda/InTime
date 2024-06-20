@@ -167,7 +167,7 @@ export default function TaskPreview({ currentTask }) {
         </button>
 
         {
-          (!currentTask.compleleted) && (
+          (!currentTask.completed) && (
             <div className='task-preview-left-button-wrapper-section'>
               <button
                 className='task-preview-button white'

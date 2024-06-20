@@ -16,6 +16,7 @@ import Popups from './components/others/Popups'
 import Navbar from './components/others/Navbar'
 import Settings from './pages/Settings'
 import Calendar from './pages/Calendar'
+import Projects from './pages/Projects'
 import NotFound from './pages/NotFound'
 import SendOTP from './pages/SendOTP'
 import Profile from './pages/Profile'
@@ -490,6 +491,17 @@ export default function App() {
 						<PrivateRoute>
 							<Layout>
 								<Tasks />
+							</Layout>
+						</PrivateRoute>
+					}
+				/>
+
+				<Route
+					path='/projects'
+					element={
+						<PrivateRoute>
+							<Layout>
+								<Projects />
 							</Layout>
 						</PrivateRoute>
 					}

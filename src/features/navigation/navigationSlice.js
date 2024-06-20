@@ -23,6 +23,8 @@ const initialState = {
 	currentTask: '',
 	uncroppedTaskImage: '',
 	croppedTaskImage: '',
+	uncroppedProjectImage: '',
+	croppedProjectImage: '',
 	uncroppedProfilePic: '',
 	croppedProfilePic: '',
 }
@@ -74,6 +76,12 @@ const navigationSlice = createSlice({
 		setCroppedTaskImage: (state, action) => {
 			state.croppedTaskImage = action.payload
 		},
+		setUncroppedProjectImage: (state, action) => {
+			state.uncroppedProjectImage = action.payload
+		},
+		setCroppedProjectImage: (state, action) => {
+			state.croppedProjectImage = action.payload
+		},
 		setUncroppedProfilePic: (state, action) => {
 			state.uncroppedProfilePic = action.payload
 		},
@@ -97,6 +105,8 @@ export const {
 	setCurrentTask,
 	setUncroppedTaskImage,
 	setCroppedTaskImage,
+	setUncroppedProjectImage,
+	setCroppedProjectImage,
 	setUncroppedProfilePic,
 	setCroppedProfilePic,
 } = navigationSlice.actions

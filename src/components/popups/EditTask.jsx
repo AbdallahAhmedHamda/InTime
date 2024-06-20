@@ -54,6 +54,7 @@ export default function EditTask({ currentTask, selectZIndex }) {
   })
   const [nameError, setNameError] = useState('')
   const [coverHovered, setCoverHovered] = useState(false)
+  const [apiCallAttempt, setApiCallAttempt] = useState(0)
 
   const imageInputRef = useRef()
 
@@ -128,7 +129,7 @@ export default function EditTask({ currentTask, selectZIndex }) {
     } else if (updateTaskApiError) {
       console.log(updateTaskApiError)
     }
-	}, [updateTaskApiError, dispatch])
+	}, [updateTaskApiError, apiCallAttempt, dispatch])
 
   // handle image selection
   const onImageSelection = (e) => {
@@ -221,6 +222,8 @@ export default function EditTask({ currentTask, selectZIndex }) {
       startAt: values.startAt.toISOString(),
       endAt: values.endAt.toISOString(),
     }, currentTask._id, nameChanged)
+
+    setApiCallAttempt(prevAttempts => prevAttempts + 1)
   }
   
   const today = dayjs()

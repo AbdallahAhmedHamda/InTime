@@ -22,3 +22,7 @@
   gap: 30px;
   transition: margin-left 0.3s ease;
 }
+
+.side-nav > a > svg {
+  width: 30px !important;
+}

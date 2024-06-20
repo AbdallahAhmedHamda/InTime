@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import SideNotificationsIcon from '../../svg/sideNav/SideNotificationsIcon'
 import SettingsIcon from '../../svg/sideNav/SettingsIcon'
+import ProjectsIcon from '../../svg/sideNav/ProjectsIcon'
 import CalendarIcon from '../../svg/sideNav/CalendarIcon'
 import ProfileIcon from '../../svg/sideNav/ProfileIcon'
 import TasksIcon from '../../svg/sideNav/TasksIcon'
@@ -88,6 +89,7 @@ export default function SideNav() {
   const navigationPages = [
     { path: '/home', label: 'Home', icon: <HomeIcon /> },
     { path: '/tasks', label: 'Tasks', icon: <TasksIcon /> },
+    { path: '/projects', label: 'Projects', icon: <ProjectsIcon /> },
     { path: '/calendar', label: 'Calendar', icon: <CalendarIcon /> },
     { path: '/notifications', label: 'Notifications', icon: <SideNotificationsIcon /> },
     { path: `/profile/${id}`, label: 'Profile', icon: <ProfileIcon /> },
