@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux'
 import { setCurrentPage, removeAllPopups, addPopup } from '../features/navigation/navigationSlice'
 import { useEffect, useState } from 'react'
-import { showProjectsApi } from '../apis/dsad'
+import { showProjectsApi } from '../apis/pr'
 import useApi from '../hooks/useApi'
 import AddTaskIcon from '../svg/board/AddTaskIcon'
 import ProjectsProject from '../components/projects/ProjectsProject'
