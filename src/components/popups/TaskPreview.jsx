@@ -129,8 +129,7 @@ export default function TaskPreview({ currentTask }) {
       </div>
 
       {
-        (currentTask.disc ||
-        currentTask.disc !== '') && (
+        (currentTask.disc) && (
           <p className='task-preview-disc'>{currentTask.disc.replace(/\r\n/g, '\n')}</p>
         )
       }

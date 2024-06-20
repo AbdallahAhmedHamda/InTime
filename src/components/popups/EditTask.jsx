@@ -65,30 +65,28 @@ export default function EditTask({ currentTask, selectZIndex }) {
 	} = useApi(updateTaskApi)
 
   const setTagColor = useCallback(() => {
-    return values.tag
-    // if (values.tag.trim() === '') {
-    //   return { name: '', color: '' }
-    // } else {
-    //   const tag = { name: values.tag }
-    //   const tagName = values.tag.toLowerCase()
+    if (values.tag.trim() === '') {
+      return { name: '', color: '' }
+    } else {
+      const tag = { name: values.tag }
+      const tagName = values.tag.toLowerCase()
 
-    //   const tagIndex = allTags.findIndex(arrayTag => arrayTag.name.toLowerCase() === tagName)
+      const tagIndex = allTags.findIndex(arrayTag => arrayTag.name.toLowerCase() === tagName)
 
-    //   if (tagIndex !== -1) {
-    //     tag.color = allTags[tagIndex].color
-    //   } else {
-    //     if (allTags.length !== 0) {
-    //       const lastColor = allTags[allTags.length - 1].color
-    //       console.log(allTags[allTags.length - 1].color)
-    //       const lastColorIndex = colors.findIndex(color => color === lastColor)
-    //       tag.color = colors[(lastColorIndex + 1) % 50]
-    //     } else {
-    //       tag.color = colors[0]
-    //     }
-    //   }
+      if (tagIndex !== -1) {
+        tag.color = allTags[tagIndex].color
+      } else {
+        if (allTags.length !== 0) {
+          const lastColor = allTags[allTags.length - 1].color
+          const lastColorIndex = colors.findIndex(color => color === lastColor)
+          tag.color = colors[(lastColorIndex + 1) % 50]
+        } else {
+          tag.color = colors[0]
+        }
+      }
   
-    //   return tag 
-    // }
+      return tag 
+    }
   }, [values.tag, allTags])
 
   // remove saved images from redux when popup unmounts

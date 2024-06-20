@@ -78,7 +78,7 @@ const processEditTask = async (task, formData, nameChanged) => {
         const image = await convertImage(value)
 
         formData.append('image', image.get('image'))
-      } else if (key !== 'image' && key !== 'startAt' && key !== 'endAt') {
+      } else if (key !== 'image') {
         if ((key === 'name' && nameChanged) || (key !== 'name')) {
           formData.append(key, value.toString())
         }
@@ -116,7 +116,11 @@ export const allTasksApi = async (paramsObject) => {
         (typeof value === 'number') || 
         (typeof value === 'boolean') || 
         (typeof value === 'object' && !Array.isArray(value))) {
-          params[key] = value
+          if (key === 'tag') {
+            params['tag.name'] = value.map((tag) => tag.name)
+          } else {
+            params[key] = value
+          }
         }
       })
     }
