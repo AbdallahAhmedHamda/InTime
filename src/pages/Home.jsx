@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux'
 import { setCurrentPage, removeAllPopups, addPopup } from '../features/navigation/navigationSlice'
 import { useEffect, useState } from 'react'
-import { allTasksApi } from '../apis/TasksApi'
+import { allTasksApi } from '../apis/tasksApi'
 import useApi from '../hooks/useApi'
 import ProgressGraph from '../components/home/ProgressGraph'
 import Leaderboard from '../components/home/Leaderboard'

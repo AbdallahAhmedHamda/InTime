@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux'
 import { incrementRenderCount, removeAllPopups, removePopup } from '../../features/navigation/navigationSlice'
 import { useEffect, useState } from 'react'
-import { completeTaskApi } from '../../apis/TasksApi'
+import { completeTaskApi } from '../../apis/tasksApi'
 import { rankApi } from '../../apis/userApi'
 import useApi from '../../hooks/useApi'
 import CloseIcon from '../../svg/others/CloseIcon'

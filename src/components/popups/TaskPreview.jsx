@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux'
 import { addPopup, removePopup, setCurrentTask, incrementRenderCount } from '../../features/navigation/navigationSlice'
 import { useState, useEffect } from 'react'
-import { toggleStepApi } from '../../apis/TasksApi'
+import { toggleStepApi } from '../../apis/tasksApi'
 import useApi from '../../hooks/useApi'
 import { format } from 'date-fns'
 import CompleteStepIcon from '../../svg/others/CompleteStepIcon'

@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { setCurrentPage, removeAllPopups, addPopup } from '../features/navigation/navigationSlice'
 import { useEffect, useState } from 'react'
-import { allTasksApi } from '../apis/TasksApi'
+import { allTasksApi } from '../apis/tasksApi'
 import useApi from '../hooks/useApi'
 import TasksTask from '../components/tasks/TasksTask'
 import Filters from '../components/tasks/Filters'

@@ -1,11 +1,11 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { addPopup, removePopup, setUncroppedProjectImage, setCroppedProjectImage, incrementRenderCount } from '../../features/navigation/navigationSlice'
 import { useEffect, useState, useRef } from 'react'
-import { createProjectApi } from '../../apis/ProjectsApi'
+import { createProjectApi } from '../../apis/projectsApi'
 import useApi from '../../hooks/useApi'
 import CameraIcon from '../../svg/others/CameraIcon'
 import CloseIcon from '../../svg/others/CloseIcon'
-import '../../css/components/AddProject.css'
+import '../../css/components/AddEditProject.css'
 
 export default function AddProject() {
   const croppedImage = useSelector((state) => state.navigation.croppedProjectImage)
@@ -39,14 +39,14 @@ export default function AddProject() {
     }
   }, [dispatch])
 
-  // set task cover when its cropped
+  // set project cover when its cropped
   useEffect(() => {
     if (croppedImage) {
       setValues(prevState => ({ ...prevState, image: croppedImage }))
     }
   }, [croppedImage])
 
-  // close popup when task is added correctly
+  // close popup when project is added correctly
 	useEffect(() => {
     if (createProjectApiData) {
       dispatch(removePopup('add project'))
@@ -140,7 +140,7 @@ export default function AddProject() {
             required={true}
             pattern='.*\S+.*'
             title='Include other letters than space!'
-            className='task-title-input'
+            className='project-title-input'
             type='text'
             name='name'
             id='name'

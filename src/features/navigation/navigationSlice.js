@@ -21,6 +21,7 @@ const initialState = {
 	renderCount: 1,
 	popups: [],
 	currentTask: '',
+	currentProject: '',
 	uncroppedTaskImage: '',
 	croppedTaskImage: '',
 	uncroppedProjectImage: '',
@@ -70,6 +71,9 @@ const navigationSlice = createSlice({
 		setCurrentTask: (state, action) => {
 			state.currentTask = action.payload
 		},
+		setCurrentProject: (state, action) => {
+			state.currentProject = action.payload
+		},
 		setUncroppedTaskImage: (state, action) => {
 			state.uncroppedTaskImage = action.payload
 		},
@@ -103,6 +107,7 @@ export const {
 	removePopup,
 	removeAllPopups,
 	setCurrentTask,
+	setCurrentProject,
 	setUncroppedTaskImage,
 	setCroppedTaskImage,
 	setUncroppedProjectImage,

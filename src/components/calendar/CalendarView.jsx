@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { allTasksApi } from '../../apis/TasksApi'
+import { allTasksApi } from '../../apis/tasksApi'
 import useApi from '../../hooks/useApi'
 import { format } from 'date-fns'
 import PrevMonthIcon from '../../svg/calendar/PrevMonthIcon'

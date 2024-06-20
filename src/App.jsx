@@ -5,7 +5,7 @@ import { setAllRanks, setIsAuthenticated } from './features/navigation/navigatio
 import { useEffect, useState } from 'react'
 import { userDataApi, rankApi } from './apis/userApi'
 import { refreshTokenApi } from './apis/authApi'
-import { allTasksApi } from './apis/TasksApi'
+import { allTasksApi } from './apis/tasksApi'
 import useApi from './hooks/useApi'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'

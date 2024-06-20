@@ -2,19 +2,22 @@ import { useDispatch, useSelector } from 'react-redux'
 import { removePopup, setCurrentTask } from '../../features/navigation/navigationSlice'
 import { useRef, useEffect } from 'react'
 import { useTransition, animated } from 'react-spring'
+import VerifyProjectDeletionMessage from '../popups/VerifyProjectDeletionMessage'
+import VerifyAccountDeletionMessage from '../popups/VerifyAccountDeletionMessage'
 import VerifyTaskCompletionMessage from '../popups/VerifyTaskCompletionMessage'
 import VerifyTaskDeletionMessage from '../popups/VerifyTaskDeletionMessage'
-import VerifyAccountDeletionMessage from '../popups/VerifyAccountDeletionMessage'
 import ImageCrop from '../popups/ImageCrop'
 import TaskPreview from '../popups/TaskPreview'
+import EditProject from '../popups/EditProject'
+import AddProject from '../popups/AddProject'
 import EditTask from '../popups/EditTask'
 import AddTask from '../popups/AddTask'
-import AddProject from '../popups/AddProject'
 import Message from '../popups/Message'
 
 export default function Popups() {
   const popups = useSelector((state) => state.navigation.popups)
   const currentTask = useSelector((state) => state.navigation.currentTask)
+  const currentProject = useSelector((state) => state.navigation.currentProject)
   
   const dispatch = useDispatch()
 
@@ -146,6 +149,10 @@ export default function Popups() {
                 currentTask={currentTask}
                 selectZIndex={160}
               /> :
+              item === 'edit project' ?
+              <EditProject 
+                currentProject={currentProject}
+              /> :
               item === 'task preview' ?
               <TaskPreview
                 currentTask={currentTask}
@@ -157,6 +164,10 @@ export default function Popups() {
               item === 'verify task deletion' ?
               <VerifyTaskDeletionMessage 
                 task={currentTask}
+              /> :
+              item === 'verify project deletion' ?
+              <VerifyProjectDeletionMessage 
+                project={currentProject}
               /> :
               item === 'verify account deletion' ?
               <VerifyAccountDeletionMessage

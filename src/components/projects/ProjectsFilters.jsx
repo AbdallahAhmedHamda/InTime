@@ -1,49 +1,30 @@
 import Select from 'react-select'
 
-const sortingOptions = [
+const filters = [
   {
-    value: 'name',
-    label: 'Alphabetically'
+    value: '',
+    label: 'All'
   },
   {
-    value: 'priority',
-    label: 'Priority'
+    value: 'admin',
+    label: 'Admin'
   },
   {
-    value: 'createdAt',
-    label: 'Date added'
-  },
-  {
-    value: 'startAt',
-    label: 'Start date'
-  },
-  {
-    value: 'endAt',
-    label: 'End date'
+    value: 'member',
+    label: 'Member'
   }
 ]
 
-const sortingOrder = [
-  {
-    value: '1',
-    label: 'Ascending'
-  },
-  {
-    value: '-1',
-    label: 'Descending'
-  }
-]
-
-export default function Sorting({ sorting, setSorting }) {
+export default function ProjectsFilters({ role, setRole }) {
   return (
-    <div className='tasks-sorting-container'>
+    <div className='projects-filters-container'>
       <Select
-        defaultValue={sortingOptions[2]}
+        defaultValue={filters[0]}
         isSearchable={false}
-        options={sortingOptions}
+        options={filters}
         classNames={{
           option: () =>
-            'task-sort-option'
+            'projects-filter-option'
         }}
         styles={{
           container: (base) => ({ ...base, minWidth: 135}),
@@ -64,49 +45,9 @@ export default function Sorting({ sorting, setSorting }) {
         menuPortalTarget={document.body}
         menuShouldScrollIntoView={false}
         menuPosition='fixed'
-        value={sortingOptions.find((sortBy) => sortBy.value === sorting.sortBy)}
-        onChange={(sortBy) =>
-          setSorting({
-            ...sorting,
-            sortBy: sortBy.value
-          })
-        }
-      >
-      </Select>
-
-      <Select
-        defaultValue={sortingOrder[1]}
-        isSearchable={false}
-        options={sortingOrder}
-        classNames={{
-          option: () =>
-            'task-sort-option'
-        }}
-        styles={{
-          container: (base) => ({ ...base, minWidth: 135}),
-          menuPortal: (base) => ({ ...base, zIndex: 20}),
-          menuList: (base) => ({ ...base, paddingBlock: 0}),
-          singleValue: (base) => ({
-            ...base,
-            color: '#23235F',
-          }),
-          option: (base, state) => ({
-            ...base,
-            cursor: 'pointer',
-            fontFamily: 'Roboto',
-            fontWeight: 500,
-            color: state.isSelected ? 'white' : '#23235F',
-          })
-        }}
-        menuPortalTarget={document.body}
-        menuShouldScrollIntoView={false}
-        menuPosition='fixed'
-        value={sortingOrder.find((sortingType) => sortingType.value === sorting.sortingType)}
-        onChange={(sortingType) =>
-          setSorting({
-            ...sorting,
-            sortingType: sortingType.value
-          })
+        value={filters.find((filter) => filter.value === role)}
+        onChange={(filter) =>
+          setRole(filter.value)
         }
       >
       </Select>

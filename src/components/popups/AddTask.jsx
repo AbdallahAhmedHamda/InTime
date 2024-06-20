@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { addPopup, removePopup, setUncroppedTaskImage, setCroppedTaskImage, incrementRenderCount } from '../../features/navigation/navigationSlice'
 import { useEffect, useState, useRef } from 'react'
-import { createTaskApi } from '../../apis/TasksApi'
+import { createTaskApi } from '../../apis/tasksApi'
 import useApi from '../../hooks/useApi'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker'
@@ -47,33 +47,7 @@ export default function AddTask() {
 
   const dispatch = useDispatch()
 
-  const rawTask = JSON.parse(sessionStorage.getItem('task'))
-  const task =
-    rawTask
-      ? {
-          ...rawTask,
-          priority: options[3 - rawTask.priority.value],
-          startAt: stringDate
-            ? dayjs(stringDate)
-                .startOf('minute')
-                .set('hour', dayjs().hour())
-                .set('minute', dayjs().minute())
-                .add(30 - dayjs().minute() % 30, 'minutes')
-            : dayjs(rawTask.startAt),
-          endAt: stringDate && dayjs(stringDate) > dayjs()
-            ? dayjs(stringDate)
-                .startOf('minute')
-                .set('hour', dayjs().hour())
-                .set('minute', dayjs().minute())
-                .add(90 - dayjs().minute() % 30, 'minutes')
-            : dayjs()
-                .startOf('minute')
-                .add(90 - dayjs().minute() % 30, 'minutes')
-        }
-      : null
-
-  const [values, setValues] = useState(
-    task || {
+  const [values, setValues] = useState({
       name: '',
       disc: '',
       tag: '',
@@ -102,7 +76,6 @@ export default function AddTask() {
   )
   const [nameError, setNameError] = useState('')
   const [coverHovered, setCoverHovered] = useState(false)
-  const [formSubmitted, setFormSubmitted] = useState(null)
   const [apiCallAttempt, setApiCallAttempt] = useState(0)
 
   const imageInputRef = useRef()
@@ -122,14 +95,6 @@ export default function AddTask() {
     }
   }, [dispatch])
 
-  useEffect(() => {
-    if (!formSubmitted) {
-      sessionStorage.setItem('task',JSON.stringify(values))
-    } else {
-      sessionStorage.removeItem('task')
-    }
-  }, [values, formSubmitted])
-
   // set task cover when its cropped
   useEffect(() => {
     if (croppedImage) {
@@ -140,8 +105,6 @@ export default function AddTask() {
   // close popup when task is added correctly
 	useEffect(() => {
     if (createTaskApiData) {
-      setFormSubmitted(true)
-
       dispatch(removePopup('add'))
 
       dispatch(incrementRenderCount())
@@ -250,7 +213,6 @@ export default function AddTask() {
       } else {
         if (allTags.length !== 0) {
           const lastColor = allTags[allTags.length - 1].color
-          console.log(allTags[allTags.length - 1].color)
           const lastColorIndex = colors.findIndex(color => color === lastColor)
           tag.color = colors[(lastColorIndex + 1) % 50]
         } else {

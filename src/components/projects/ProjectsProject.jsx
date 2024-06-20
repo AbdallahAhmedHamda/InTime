@@ -1,60 +1,41 @@
-import { useDispatch } from 'react-redux'
-import { addPopup, setCurrentTask } from '../../features/navigation/navigationSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { addPopup, setCurrentProject } from '../../features/navigation/navigationSlice'
 import { useState } from 'react'
-import { format } from 'date-fns'
-import TasksTaskGroupIcon from '../../svg/tasks/TasksTaskGroupIcon'
-import TasksTaskStepsIcon from '../../svg/tasks/TasksTaskStepsIcon'
+import DeleteProjectIcon from '../../svg/projects/DeleteProjectIcon'
+import EditProjectIcon from '../../svg/projects/EditProjectIcon'
+import AssignTaskIcon from '../../svg/projects/AssignTaskIcon'
+import ChatIcon from '../../svg/projects/ChatIcon'
 
-export default function ProjectsProject({ task, calendarDate }) {
+export default function ProjectsProject({ project }) {
+  const userId = useSelector ((state) => state.user.id)
+
   const dispatch = useDispatch()
 
-  const [image, setImage] = useState(task.image)
+  const [image, setImage] = useState(project.photo)
 
-  const openTaskPreview = () => {
-    dispatch(addPopup('task preview'))
-    dispatch(setCurrentTask(task))
+  const openProjectPreview = () => {
+    dispatch(addPopup('project preview'))
+    dispatch(setCurrentProject(project))
   }
 
-  const tagStyles = {
-    backgroundColor: task?.tag?.name ? task.tag.color : '#585A66'
-  }
-
-  const startDate = new Date(task.startAt).setHours(0, 0, 0, 0)
-  const endDate = new Date(task.endAt).setHours(0, 0, 0, 0)
-  const thisDate = new Date(calendarDate).setHours(0, 0, 0, 0)
+  const userRole = project.members.find((member) => userId === member.memberId)?.role || ''
 
   return (
-    <div className='board-task-container' onClick={openTaskPreview}>
-      <div className='board-task-upper-section'>
-        {
-          startDate === endDate ?
-          <p className='board-task-date'>
-            {format(new Date(task.startAt), "h':'mm a")}  - {format(new Date(task.endAt), "h':'mm a")}
-          </p> :
-          thisDate === startDate ?
-          <p className='board-task-date'>
-            {format(new Date(task.startAt), "h':'mm a")} 
+    <div className='projects-project-container' onClick={openProjectPreview}>
+      <div className='projects-project-upper-section'>
+      <p className='projects-project-title'>{project.name}</p>
 
-            <span>Start</span>
-          </p> :
-          <p className='board-task-date'>
-            {format(new Date(task.endAt), "h':'mm a")}  
-
-            <span>End</span>
-          </p>
-        }
-
-        {
-          task?.projectId && <TasksTaskGroupIcon />
-        }
+      <p className='projects-project-role'>
+        {userRole}
+      </p>
       </div>
 
-      <div className='board-task-middle-section'>
+      <div className='projects-project-middle-section'>
         {
         image && (
             <img
-              className='board-task-cover-image'
-              src={`https://intime-9hga.onrender.com/api/v1/images/${task.image}`}
+              className='projects-project-cover-image'
+              src={`https://intime-9hga.onrender.com/api/v1/images/${project.photo}`}
               alt='cover'
               onError={(e) => {
                 e.target.onerror = null
@@ -63,34 +44,31 @@ export default function ProjectsProject({ task, calendarDate }) {
             />
           )
         }
-
-        <p className='board-task-title'>{task.name}</p>
       </div>
 
-      {
-        (task?.tag?.name || task?.steps.length !== 0) && (
-          <div className='board-task-bottom-section'>
-            {
-              task?.tag?.name && <p style={tagStyles}>{task.tag.name}</p>
-            }
+      <div className='projects-project-bottom-section'>
+        {
+          userRole === 'admin' && (
+            <div className='projects-project-left-bottom-section'>
+              <DeleteProjectIcon openDeleteProject={(e) => {
+                e.stopPropagation()
+                dispatch(addPopup('verify project deletion'))
+                dispatch(setCurrentProject(project))
+              }}/>
 
+              <EditProjectIcon openEditProject={(e) => {
+                e.stopPropagation()
+                dispatch(addPopup('edit project'))
+                dispatch(setCurrentProject(project))
+              }}/>
 
-            { 
-              task?.steps.length !== 0 && (
-                <div className='board-task-steps-container'>
-                  <TasksTaskStepsIcon />
+              <AssignTaskIcon />
+            </div>
+          )
+        }
 
-                  <p className='board-task-steps'>
-                    {
-                      task.steps.filter((step) => step.completed).length + '/' + task.steps.length
-                    }
-                  </p>
-                </div>
-              )
-            }
-          </div>
-        )
-      }
+        <ChatIcon />
+      </div>
     </div>
   )
 }

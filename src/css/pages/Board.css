@@ -44,7 +44,7 @@
   gap: 48px;
   height: fit-content;
   align-items: flex-start;
-  min-width: fit-content;
+  width: fit-content;
   max-width: 1542px;
   justify-content: flex-start;
   margin-top: 16px;

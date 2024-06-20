@@ -1,4 +1,4 @@
-.add-project-popup {
+.edit-project-popup, .add-project-popup {
   position: relative;
   overflow: auto;
   min-height: fit-content;
@@ -9,7 +9,11 @@
   background-color: white;
 }
 
-.add-project-heading {
+.edit-project-popup {
+  background-color: #F3F4F8;
+}
+
+.add-project-heading, .edit-project-heading {
   color: #000;
   font-family: 'Inter';
   font-size: 24px;
@@ -19,42 +23,48 @@
   padding: 20px;
 }
 
-.close-add-project {
+.close-add-project, .close-edit-project {
   width: 25px;
   height: 25px;
   cursor: pointer;
   border-radius: 50%;
 }
 
-.close-add-project:hover {
+.close-add-project:hover, .close-edit-project:hover {
   background-color: rgba(0, 0, 0, 0.3);
 }
 
-.add-project-content {
+.add-project-content,.edit-project-content {
   padding: 5px 20px 25px 20px;
   display: flex;
   flex-direction: column;
   gap: 30px;
 }
 
-.add-project-content > .add-project-input-block {
+.edit-project-content {
+  padding-bottom: 85px;
+}
+
+.add-project-content > .add-project-input-block, .edit-project-content > .edit-project-input-block {
   display: flex;
   flex-direction: column;
   gap: 9px;
 }
 
-.add-project-content > .add-project-input-block.add-project-cover-block-container {
+.add-project-content > .add-project-input-block.add-project-cover-block-container,.edit-project-content > .edit-project-input-block.edit-project-cover-block-container {
   display: flex;
   flex-direction: row;
   gap: 15px;
   align-items: center;
 }
 
-.add-project-content > .add-project-input-block > p, .add-project-content > .add-project-input-block > label {
+.add-project-content > .add-project-input-block > p, .add-project-content > .add-project-input-block > label,
+.edit-project-content > .edit-project-input-block > p, .edit-project-content > .edit-project-input-block > label {
   font-size: 20px;
 }
 
-.add-project-content > .add-project-input-block > input {
+.add-project-content > .add-project-input-block > input,
+.edit-project-content > .edit-project-input-block > input {
   font-family: 'Inter';
   font-size: 18px;
   font-weight: 300;
@@ -65,26 +75,26 @@
   box-sizing: border-box;
 }
 
-.add-project-content > .add-project-input-block > input::placeholder {
+.add-project-content > .add-project-input-block > input::placeholder, .edit-project-content > .edit-project-input-block > input::placeholder {
   color: rgba(0, 0, 0, 0.30);
 }
 
-.add-project-content > .add-project-input-block > input {
+.add-project-content > .add-project-input-block > input,.edit-project-content > .edit-project-input-block > input {
   border-radius: 6px;
 }
 
-.add-project-content > .add-project-input-block > input:focus {
+.add-project-content > .add-project-input-block > input:focus,.edit-project-content > .edit-project-input-block > input:focus  {
   outline: 2px #1976d2 solid;
 }
 
-.add-project-content > .add-project-input-block > .optional-input-wrapper {
+.add-project-content > .add-project-input-block > .optional-input-wrapper, .edit-project-content > .edit-project-input-block > .optional-input-wrapper {
   display: flex;
   align-items: center;
   gap: 5px;
   font-size: 20px;
 }
 
-.add-project-content > .add-project-input-block > .optional-input-wrapper > .optional-input {
+.add-project-content > .add-project-input-block > .optional-input-wrapper > .optional-input, .edit-project-content > .edit-project-input-block > .optional-input-wrapper > .optional-input {
   color: rgba(0, 0, 0, 0.60);
   font-family: 'Roboto';
   font-size: 12px;
@@ -95,7 +105,7 @@
 
 .project-cover-select {
   height: 121px;
-  width: 283px;
+  min-width: 283px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -159,7 +169,7 @@
 
 .project-cover-input {
   height: 121px;
-  width: 283px;
+  min-width: 283px;
   object-fit: cover;
   border-radius: 6px;
 }
@@ -178,4 +188,25 @@
   color: white;
   height: 54px;
   cursor: pointer;
+}
+
+.edit-project-button,
+.cancel-edit-project-button {
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  width: 120px;
+  height: 40px;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  border-radius: 6px;
+  font-family: 'Poppins';
+}
+
+.edit-project-button {
+  background-color: #5468E7;
+  color: white;
+}
+
+.cancel-edit-project-button {
+  background-color: white;
 }

@@ -75,20 +75,91 @@ export const createProjectApi = async (values) => {
   }
 }
 
-export const showProjects = async (params) => {
+export const showProjectsApi = async (params) => {
   try {
     const accessToken = localStorage.getItem('accessToken')
+
+    const config = {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      }
+    }
+
+    if (params) {
+      config.params = { role: params }
+    }
     
-    const response = await axios.post(`${API_URL}/myProjects`,
+    const response = await axios.get(`${API_URL}/myProjects`, config
+    )
+
+    return response.data
+  } catch (error) {
+    if (error.response) {
+      error.message = error.response.data.message || 'Unknown error occurred'
+    }
+    
+    throw error
+  }
+}
+
+export const editProjectApi = async (values, id, nameChanged) => {
+  try {
+    const accessToken = localStorage.getItem('accessToken')
+
+    const formData = new FormData()
+
+    for (const key of Object.keys(values)) {
+      const value = values[key]
+
+      if (key === 'name' && nameChanged) {
+        formData.append(key, value.toString())
+      } else if (typeof value === 'string' &&key === 'image' && value.trim() !== '') {
+        const image = await convertImage(value)
+
+        formData.append('image', image.get('image'))
+      } 
+    }
+    
+    const response = await axios.post(`${API_URL}/editProject/${id}`,
+      formData, 
       {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
         },
-        params
       }
     )
 
-    return response.data
+    if (response.data.success) {
+      return response.data
+    } else {
+      throw new Error(response.data.message || 'Unknown error occurred')
+    }
+  } catch (error) {
+    if (error.response) {
+      error.message = error.response.data.message || 'Unknown error occurred'
+    }
+    
+    throw error
+  }
+}
+
+export const deleteProjectApi = async (id) => {
+  try {
+    const accessToken = localStorage.getItem('accessToken')
+    
+    const response = await axios.delete(`${API_URL}/removeProject/${id}`, 
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      }
+    )
+    
+    if (response.data.success) {
+      return response.data
+    } else {
+      throw new Error(response.data.message || 'Unknown error occurred')
+    }
   } catch (error) {
     if (error.response) {
       error.message = error.response.data.message || 'Unknown error occurred'

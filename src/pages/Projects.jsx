@@ -1,149 +1,90 @@
-import { Link, useParams } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { setCurrentPage, removeAllPopups, addPopup } from '../features/navigation/navigationSlice'
 import { useEffect, useState } from 'react'
-import { allTasksApi } from '../apis/TasksApi'
+import { showProjectsApi } from '../apis/projectsApi'
 import useApi from '../hooks/useApi'
-import PrevMonthIcon from '../svg/board/PrevMonthIcon'
-import NextMonthIcon from '../svg/board/NextMonthIcon'
 import AddTaskIcon from '../svg/board/AddTaskIcon'
 import ProjectsProject from '../components/projects/ProjectsProject'
 import ProjectsFilters from '../components/projects/ProjectsFilters'
-import '../css/pages/Board.css'
+import '../css/pages/Projects.css'
 
 
-export default function Board() {
-  const { stringDate } = useParams()
-  
+export default function Projects() {
   const dispatch = useDispatch()
-
-  const [tasks, setTasks] = useState([])
+  
+  const [role, setRole] = useState('')
+  const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
 
   const {
-		fetchApi : fetchAllTasksApi,
-		apiData: allTasksApiData,
-		apiError: allTasksApiError,
-	} = useApi(allTasksApi)
+		fetchApi : fetchShowProjectsApi,
+		apiData: showProjectsApiData,
+		apiError: showProjectsApiError,
+    apiLoading: showProjectsApiLoading
+	} = useApi(showProjectsApi)
 
   // change the current page so the app can rerender and update sidenav active icon and remove all popups
   useEffect(() => {
-    dispatch(setCurrentPage('board'))
+    dispatch(setCurrentPage('projects'))
     dispatch(removeAllPopups())
   }, [dispatch])
 
-  // load tasks
+  // load projects
 	useEffect(() => {
 		const fetchApis = async () => {	
-      await fetchAllTasksApi({
-        sortingType: -1,
-        sortBy: 'createdAt'
-      })
+      await fetchShowProjectsApi(role)
 
       setLoading(false)
 		}
 	
 		fetchApis()
-	}, [fetchAllTasksApi])
+	}, [fetchShowProjectsApi, role])
 
   // fetch api data
 	useEffect(() => {
-    if (allTasksApiData?.record) {
-      setTasks(allTasksApiData.record)
+    if (showProjectsApiData) {
+      setProjects(showProjectsApiData.reverse())
     }
 
-	}, [allTasksApiData])
-
-  const monthTitle = () => {
-    const options = { month: 'long', day: 'numeric', year: 'numeric' }
-    return new Date(stringDate).toLocaleDateString('en-US', options)
-  }
-
-  const getClickedDay = (type) => {
-    let date = new Date(stringDate)
-
-    if (type === 'next') {
-      date.setDate(date.getDate() + 1)
-
-      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-    } else if (type === 'prev') {
-      date.setDate(date.getDate() - 1)
-
-      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-    } else if (type === 'today') {
-      date = new Date()
-      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-    }
-  }
-
+	}, [showProjectsApiData])
  
-  const thisDay = new Date(stringDate).setHours(0, 0, 0, 0)
-  const tasksInDay = tasks
-    .map((task) => {
-      const taskStartDay = new Date(task.startAt).setHours(0, 0, 0, 0)
-      const taskEndDay = new Date(task.endAt).setHours(0, 0, 0, 0)
 
-      if (thisDay === taskStartDay || thisDay === taskEndDay) { 
-        return task
-      }
-      return null
-    })
-    .filter((task) => task !== null)
-
-  if (loading) {
+  if (loading || showProjectsApiLoading) {
     return (
       <div />
     )
   }
 
-  if (allTasksApiError) {
-    console.log(allTasksApiError)
+  if (showProjectsApiError) {
+    console.log(showProjectsApiError)
   }
 
   return (
     <div className='main-content'>
-      <div className="board-header">
-        <p className='page-name'>Board</p>
-        <div className='board-buttons'>
-          <Link
-            to={`/calendar/${getClickedDay('today')}`}
-            replace={true}
-            className='board-today-button'
-          >
-            Today
-          </Link>
+      <div className="projects-header">
+        <p className='page-name'>Projects</p>
 
-          <Link
-            to={`/calendar/${getClickedDay('prev')}`}
-            replace={true}
-          >
-            <PrevMonthIcon/>
-          </Link>
-
-          <p>{monthTitle()}</p>
-
-          <Link
-            to={`/calendar/${getClickedDay('next')}`}
-            replace={true}
-          >
-            <NextMonthIcon/>
-          </Link>
-        </div>
+        <ProjectsFilters role={role} setRole={setRole}/>
       </div>
 
 
-      <div className='board-tasks-container'>
+      <div className='projects-projects-container'>
         {
-          tasksInDay.length !== 0 ?
-          tasksInDay.map((task) => (
-            <ProjectsProject task={task} calendarDate={stringDate} key={task._id} />
-          )) :
-          <p>There is no Tasks</p>
+          (projects.length !== 0) ?
+          projects.map((project) => (
+            <ProjectsProject project={project} key={project._id} />
+          )) : (role === '') ?
+          <p>There is no Projects</p> :
+          ''
         }
 
-        <div className='board-svg-container'>
-          <AddTaskIcon showPopup={() => dispatch(addPopup('add'))}/>
-        </div>
+        {
+          (role !== 'member') ?
+          <div className='projects-svg-container'>
+            <AddTaskIcon showPopup={() => dispatch(addPopup('add project'))}/>
+          </div> :
+          ''
+        }
       </div>
     </div>
   )

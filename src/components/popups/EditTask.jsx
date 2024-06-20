@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { addPopup, removePopup, setUncroppedTaskImage, setCroppedTaskImage, setCurrentTask, incrementRenderCount } from '../../features/navigation/navigationSlice'
 import { useEffect, useState, useRef, useCallback } from 'react'
-import { updateTaskApi } from '../../apis/TasksApi'
+import { updateTaskApi } from '../../apis/tasksApi'
 import useApi from '../../hooks/useApi'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker'
