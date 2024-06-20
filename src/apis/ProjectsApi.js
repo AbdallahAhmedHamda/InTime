@@ -74,3 +74,26 @@ export const createProjectApi = async (values) => {
     throw error
   }
 }
+
+export const showProjects = async (params) => {
+  try {
+    const accessToken = localStorage.getItem('accessToken')
+    
+    const response = await axios.post(`${API_URL}/myProjects`,
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        params
+      }
+    )
+
+    return response.data
+  } catch (error) {
+    if (error.response) {
+      error.message = error.response.data.message || 'Unknown error occurred'
+    }
+    
+    throw error
+  }
+}
