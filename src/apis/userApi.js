@@ -9,7 +9,7 @@ const convertImage = async (imageSource) => {
     if (imageSource.startsWith('data:')) {
       // Base64 string
       const byteString = atob(imageSource.split(',')[1])
-      const mimeString = imageSource.split(',')[0].split(':')[1].split('')[0]
+      const mimeString = imageSource.split(',')[0].split(':')[1].split(';')[0]
 
       const ab = new ArrayBuffer(byteString.length)
       const ia = new Uint8Array(ab)
@@ -33,7 +33,7 @@ const convertImage = async (imageSource) => {
 
     return formData
   } catch (error) {
-    console.error('Error coverting image:', error)
+    console.error('Error converting image:', error)
 
     return null
   }

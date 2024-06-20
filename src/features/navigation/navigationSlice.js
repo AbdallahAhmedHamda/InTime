@@ -13,27 +13,18 @@ const trimPath = (pathname) => {
 }
 
 const initialState = {
-	allRanks: '',
+	allRanks: {},
 	currentEmail: '',
 	currentPassword: '',
 	currentPage: trimPath(window.location.pathname),
 	isAuthenticated: false,
+	renderCount: 1,
 	popups: [],
 	currentTask: '',
 	uncroppedTaskImage: '',
 	croppedTaskImage: '',
 	uncroppedProfilePic: '',
 	croppedProfilePic: '',
-	filters: {
-		creator: [],
-		status: [],
-		priority: [],
-		tags: []
-	},
-	sorting: {
-		type: '',
-		order: ''
-	},
 }
 
 const navigationSlice = createSlice({
@@ -54,6 +45,12 @@ const navigationSlice = createSlice({
 		},
 		setIsAuthenticated: (state, action) => {
 			state.isAuthenticated = action.payload
+		},
+		incrementRenderCount: (state) => {
+			state.renderCount += 1
+		},
+		resetRenderCount: (state) => {
+			state.renderCount = 1
 		},
 		addPopup: (state, action) => {
 			if (state.popups[state.popups.length - 1] !== action.payload) {
@@ -82,12 +79,6 @@ const navigationSlice = createSlice({
 		},
 		setCroppedProfilePic: (state, action) => {
 			state.croppedProfilePic = action.payload
-		},
-		setFilters: (state, action) => {
-			state.filters = action.payload
-		},
-		setSorting: (state, action) => {
-			state.sorting = action.payload
 		}
 	}
 })
@@ -98,6 +89,8 @@ export const {
 	setCurrentPassword,
 	setCurrentPage,
 	setIsAuthenticated,
+	incrementRenderCount,
+	resetRenderCount,
 	addPopup,
 	removePopup,
 	removeAllPopups,
@@ -106,7 +99,5 @@ export const {
 	setCroppedTaskImage,
 	setUncroppedProfilePic,
 	setCroppedProfilePic,
-	setFilters,
-	setSorting
 } = navigationSlice.actions
 export default navigationSlice.reducer

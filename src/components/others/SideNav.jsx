@@ -11,6 +11,7 @@ import '../../css/components/SideNav.css'
 
 export default function SideNav() {
   const currentPage = useSelector((state) => state.navigation.currentPage)
+  const id = useSelector((state) => state.user.id)
   
   const [scrollPosition, setScrollPosition] = useState(window.scrollY)
   const [hasExceededThreshold, setHasExceededThreshold] = useState(false)
@@ -89,7 +90,7 @@ export default function SideNav() {
     { path: '/tasks', label: 'Tasks', icon: <TasksIcon /> },
     { path: '/calendar', label: 'Calendar', icon: <CalendarIcon /> },
     { path: '/notifications', label: 'Notifications', icon: <SideNotificationsIcon /> },
-    { path: '/profile', label: 'Profile', icon: <ProfileIcon /> },
+    { path: `/profile/${id}`, label: 'Profile', icon: <ProfileIcon /> },
     { path: '/settings', label: 'Settings', icon: <SettingsIcon /> }
   ]
 

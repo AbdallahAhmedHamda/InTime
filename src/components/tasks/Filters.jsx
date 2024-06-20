@@ -1,19 +1,14 @@
-import { useSelector, useDispatch } from 'react-redux'
-import { setFilters } from '../../features/navigation/navigationSlice'
-import { useState, useEffect, useMemo } from 'react'
+import { useSelector } from 'react-redux'
+import { useState, useEffect } from 'react'
 import ShowMoreArrow from'../../svg/others/ShowMoreArrow'
 import ShowLessArrow from'../../svg/others/ShowLessArrow'
 import FlagIcon from '../../svg/others/FlagIcon'
 
-export default function Filters() {
-  const filters = useSelector((state) => state.navigation.filters)
-  const tasks = useSelector((state) => state.user.tasks)
-  const reduxTags = useSelector((state) => state.user.tags)
-  
-  const dispatch = useDispatch()
-
-  const tags = useMemo(() => reduxTags.filter((tag) => tag !== null), [reduxTags])
-  
+export default function Filters({ applyFilters, disabled, filters, setFilters }) {
+  const completedTasks = useSelector((state) => state.user.completedTasks)
+  const inProgressTasks = useSelector((state) => state.user.inProgressTasks)
+  const tags = useSelector((state) => state.user.tags)
+    
   const [showMoreHovered, setShowMoreHovered] = useState(false)
   const [showLessHovered, setShowLessHovered] = useState(false)
   const [tagsSearchValue, setTagsSearchValue] = useState('')
@@ -23,7 +18,7 @@ export default function Filters() {
   // updated shown tags whenever the real tags change
   useEffect(() => {
     if (tagsSearchValue.trim() !== '') {
-      setDisplayedTags(tags.filter(tag => tag.includes(tagsSearchValue.trim())))
+      setDisplayedTags(tags.filter(tag => tag.name.includes(tagsSearchValue.trim())))
     } else {
       setDisplayedTags(tags)
     }
@@ -33,7 +28,7 @@ export default function Filters() {
   // updated shown tags whenever the search changes
   useEffect(() => {
     if (tagsSearchValue.trim() !== '') {
-      setDisplayedTags(tags.filter(tag => tag.includes(tagsSearchValue.trim())))
+      setDisplayedTags(tags.filter(tag => tag.name.includes(tagsSearchValue.trim())))
       setTagsToShow(6)
     } else {
       setDisplayedTags(tags)
@@ -44,11 +39,11 @@ export default function Filters() {
 
   // add tags to the filters if there is space for them
   useEffect(() => {
-    if (displayedTags.length <= 6 || tagsToShow % 3 !== 0 || tagsToShow > displayedTags.length) {
+    if (tags.length !== 0 && (displayedTags.length <= 6 || tagsToShow % 3 !== 0 || tagsToShow > displayedTags.length)) {
       setTagsToShow(displayedTags.length)
     }
     // eslint-disable-next-line
-  }, [displayedTags])
+  }, [displayedTags, tags])
   
   const checkboxChecked = (filter, filterOption) => {
     return filters[filter].includes(filterOption)
@@ -64,7 +59,7 @@ export default function Filters() {
       newFilters[key] = newFilters[key].filter((filter) => filter !== filterOption)
     }
 
-    dispatch(setFilters(newFilters))
+    setFilters(newFilters)
   }
 
   const showMore = () => {
@@ -99,11 +94,18 @@ export default function Filters() {
     }
   )
 
-  const allCompletedTasks = tasks.filter((task) => task.isCompleted).length
-  const allInProgressTasks = tasks.filter((task) => !task.isCompleted && !task.backlog).length
-  const allBacklogTasks = tasks.filter((task) => task.backlog).length
-
-  const sortedTags = [...displayedTags].sort()
+  const sortedTags = [...displayedTags].sort((a, b) => {
+    const tagA = a.name.toLowerCase()
+    const tagB = b.name.toLowerCase()
+  
+    if (tagA < tagB) {
+      return -1
+    }
+    if (tagA > tagB) {
+      return 1
+    }
+    return 0
+  })
 
   return (
     <div className='filters-container'>
@@ -114,30 +116,30 @@ export default function Filters() {
           <label className='filter-option-container'>
             <input
               type='checkbox'
-              name='creator'
-              onChange={(e) => handleCheckboxChange(e, 'personal')}
-              checked={checkboxChecked('creator', 'personal')}
+              name='projectId'
+              onChange={(e) => handleCheckboxChange(e, false)}
+              checked={checkboxChecked('projectId', false)}
             />
 
-            <span className='filter-checkmark' style={checkmarkStyles('creator', 'personal')}/>
+            <span className='filter-checkmark' style={checkmarkStyles('projectId', false)}/>
 
-            <p style={filterNameStyles('creator', 'personal')}>
-              Personal <span>(36)</span>
+            <p style={filterNameStyles('projectId', false)}>
+              Personal
             </p>
           </label>
 
           <label className='filter-option-container'>
             <input
               type='checkbox'
-              name='creator'
-              onChange={(e) => handleCheckboxChange(e, 'groups')}
-              checked={checkboxChecked('creator', 'groups')}
+              name='projectId'
+              onChange={(e) => handleCheckboxChange(e, true)}
+              checked={checkboxChecked('projectId', true)}
             />
 
-            <span className='filter-checkmark' style={checkmarkStyles('creator', 'groups')}/>
+            <span className='filter-checkmark' style={checkmarkStyles('projectId', true)}/>
 
-            <p style={filterNameStyles('creator', 'groups')}>
-              Groups <span>(10)</span>
+            <p style={filterNameStyles('projectId', true)}>
+              Projects
             </p>
           </label>
         </div>
@@ -150,45 +152,30 @@ export default function Filters() {
           <label className='filter-option-container'>
             <input
               type='checkbox'
-              name='status'
-              onChange={(e) => handleCheckboxChange(e, 'completed')}
-              checked={checkboxChecked('status', 'completed')}
+              name='completed'
+              onChange={(e) => handleCheckboxChange(e, true)}
+              checked={checkboxChecked('completed', true)}
             />
 
-            <span className='filter-checkmark' style={checkmarkStyles('status', 'completed')}/>
+            <span className='filter-checkmark' style={checkmarkStyles('completed', true)}/>
 
-            <p style={filterNameStyles('status', 'completed')}>
-              Completed <span>({allCompletedTasks})</span>
+            <p style={filterNameStyles('completed', true)}>
+              Completed <span>({completedTasks})</span>
             </p>
           </label>
 
           <label className='filter-option-container'>
             <input
               type='checkbox'
-              name='status'
-              onChange={(e) => handleCheckboxChange(e, 'in progress')}
-              checked={checkboxChecked('status', 'in progress')}
+              name='completed'
+              onChange={(e) => handleCheckboxChange(e, false)}
+              checked={checkboxChecked('completed', false)}
             />
 
-            <span className='filter-checkmark' style={checkmarkStyles('status', 'in progress')}/>
+            <span className='filter-checkmark' style={checkmarkStyles('completed', false)}/>
 
-            <p style={filterNameStyles('status', 'in progress')}>
-              In Progress <span>({allInProgressTasks})</span>
-            </p>
-          </label>
-
-          <label className='filter-option-container'>
-            <input
-              type='checkbox'
-              name='status'
-              onChange={(e) => handleCheckboxChange(e, 'backlog')}
-              checked={checkboxChecked('status', 'backlog')}
-            />
-
-            <span className='filter-checkmark' style={checkmarkStyles('status', 'backlog')}/>
-
-            <p style={filterNameStyles('status', 'backlog')}>
-              Backlog <span>({allBacklogTasks})</span>
+            <p style={filterNameStyles('completed', false)}>
+              In Progress <span>({inProgressTasks})</span>
             </p>
           </label>
         </div>
@@ -202,24 +189,24 @@ export default function Filters() {
             <input
               type='checkbox'
               name='priority'
-              onChange={(e) => handleCheckboxChange(e, '1')}
-              checked={checkboxChecked('priority', '1')}
+              onChange={(e) => handleCheckboxChange(e, 3)}
+              checked={checkboxChecked('priority', 3)}
             />
 
-            <span className='filter-checkmark' style={checkmarkStyles('priority', '1')}/>
+            <span className='filter-checkmark' style={checkmarkStyles('priority', 3)}/>
 
-            <FlagIcon priority={1} />
+            <FlagIcon priority={3} />
           </label>
 
           <label className='filter-option-container'>
             <input
               type='checkbox'
               name='priority'
-              onChange={(e) => handleCheckboxChange(e, '2')}
-              checked={checkboxChecked('priority', '2')}
+              onChange={(e) => handleCheckboxChange(e, 2)}
+              checked={checkboxChecked('priority', 2)}
             />
 
-            <span className='filter-checkmark' style={checkmarkStyles('priority', '2')}/>
+            <span className='filter-checkmark' style={checkmarkStyles('priority', 2)}/>
 
             <FlagIcon priority={2} />
           </label>
@@ -228,33 +215,33 @@ export default function Filters() {
             <input
               type='checkbox'
               name='priority'
-              onChange={(e) => handleCheckboxChange(e, '3')}
-              checked={checkboxChecked('priority', '3')}
+              onChange={(e) => handleCheckboxChange(e, 1)}
+              checked={checkboxChecked('priority', 1)}
             />
 
-            <span className='filter-checkmark' style={checkmarkStyles('priority', '3')}/>
+            <span className='filter-checkmark' style={checkmarkStyles('priority', 1)}/>
 
-            <FlagIcon priority={3} />
+            <FlagIcon priority={1} />
           </label>
 
           <label className='filter-option-container'>
             <input
               type='checkbox'
               name='priority'
-              onChange={(e) => handleCheckboxChange(e, '4')}
-              checked={checkboxChecked('priority', '4')}
+              onChange={(e) => handleCheckboxChange(e, 0)}
+              checked={checkboxChecked('priority', 0)}
             />
 
-            <span className='filter-checkmark' style={checkmarkStyles('priority', '4')}/>
+            <span className='filter-checkmark' style={checkmarkStyles('priority', 0)}/>
 
-            <FlagIcon priority={3} />
+            <FlagIcon priority={0} />
           </label>
         </div>
       </div>
 
       {
         tags.length !== 0 && (
-          <div className='single-filter-container'>
+          <div className='single-filter-container tags-filter-container'>
             <div className='tag-header-container'>
               <p>Tags</p>
 
@@ -268,69 +255,67 @@ export default function Filters() {
                   onChange={(e) => {
                     setTagsSearchValue(e.target.value)
                   }}
-                  placeholder='search tags...'
+                  placeholder='Search tags...'
                 />
             </div>
 
             <div className='single-filter-options  tags-filter-options'>
               {
                 sortedTags.slice(0, tagsToShow).map((tag) => (
-                  <label className='filter-option-container' key={tag}>
+                  <label className='filter-option-container' key={tag.name}>
                     <input
                       type='checkbox'
-                      name='tags'
+                      name='tag'
                       onChange={(e) => handleCheckboxChange(e, tag)}
-                      checked={checkboxChecked('tags', tag)}
+                      checked={checkboxChecked('tag', tag)}
                     />
 
-                    <span className='filter-checkmark' style={checkmarkStyles('tags', tag)}/>
+                    <span className='filter-checkmark' style={checkmarkStyles('tag', tag)}/>
 
-                    <p style={filterNameStyles('tags', tag)}>
-                      {tag.charAt(0).toUpperCase() + tag.slice(1)}
+                    <p style={filterNameStyles('tag', tag)}>
+                      {tag.name.charAt(0).toUpperCase() + tag.name.slice(1)}
                     </p>
                   </label>
                 ))
+              }
+            </div>
+
+            <div className='tags-show-container'>
+              {
+                tagsToShow > 6 && (
+                  <div 
+                    className='tags-show-less'
+                    onClick={showLess}
+                    onMouseEnter={() => setShowLessHovered(true)}
+                    onMouseLeave={() => setShowLessHovered(false)}
+                  >
+                    <p>Show less</p>
+
+                    <ShowLessArrow isHovered={showLessHovered}/>
+                  </div>
+                )
+              }
+
+              {
+                (displayedTags.length > 6 && displayedTags.length !== tagsToShow) && (
+                  <div 
+                    className='tags-show-more'
+                    onClick={showMore}
+                    onMouseEnter={() => setShowMoreHovered(true)}
+                    onMouseLeave={() => setShowMoreHovered(false)}
+                  >
+                    <p>Show more</p>
+
+                    <ShowMoreArrow isHovered={showMoreHovered}/>
+                  </div>
+                )
               }
             </div>
           </div>
         )
       }
 
-      {
-        tags.length !== 0 && (
-          <div className='tags-show-container'>
-            {
-              tagsToShow > 6 && (
-                <div 
-                  className='tags-show-less'
-                  onClick={showLess}
-                  onMouseEnter={() => setShowLessHovered(true)}
-                  onMouseLeave={() => setShowLessHovered(false)}
-                >
-                  <p>Show less</p>
-
-                  <ShowLessArrow isHovered={showLessHovered}/>
-                </div>
-              )
-            }
-
-            {
-              (displayedTags.length > 6 && displayedTags.length !== tagsToShow) && (
-                <div 
-                  className='tags-show-more'
-                  onClick={showMore}
-                  onMouseEnter={() => setShowMoreHovered(true)}
-                  onMouseLeave={() => setShowMoreHovered(false)}
-                >
-                  <p>Show more</p>
-
-                  <ShowMoreArrow isHovered={showMoreHovered}/>
-                </div>
-              )
-            }
-          </div>
-        )
-      }
+      <button className='apply-filters-button' onClick={applyFilters} disabled={disabled}>Apply Filters</button>
     </div>
   )
 }

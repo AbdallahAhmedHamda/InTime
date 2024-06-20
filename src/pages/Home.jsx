@@ -1,6 +1,8 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { setCurrentPage, removeAllPopups, addPopup } from '../features/navigation/navigationSlice'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { allTasksApi } from '../apis/TasksApi'
+import useApi from '../hooks/useApi'
 import ProgressGraph from '../components/home/ProgressGraph'
 import Leaderboard from '../components/home/Leaderboard'
 import ProgressBar from '../components/home/ProgressBar'
@@ -10,9 +12,17 @@ import PlusIcon from '../svg/home/PlusIcon'
 import '../css/pages/Home.css'
 
 export default function Home() {
-  const tasks = useSelector((state) => state.user.tasks)
-  
+
   const dispatch = useDispatch()
+
+  const [orderedTasks, setOrderedTasks] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  const {
+		fetchApi : fetchAllTasksApi,
+		apiData: allTasksApiData,
+		apiError: allTasksApiError,
+	} = useApi(allTasksApi)
 
   // change the current page so the app can rerender and update sidenav active icon and remove all popups
   useEffect(() => {
@@ -20,19 +30,40 @@ export default function Home() {
     dispatch(removeAllPopups())
   }, [dispatch])
 
-  const orderedTasks = 
-    [...tasks]
-      .filter((task) => !task.isCompleted && !task.backlog)
-      .sort((a, b) => {
-        const aCreatedAt = new Date(a.createdAt)
-        const bCreatedAt = new Date(b.createdAt)
-
-        if (aCreatedAt > bCreatedAt) return -1
-        if (aCreatedAt < bCreatedAt) return 1
-
-        return 0
+  // load tasks
+	useEffect(() => {
+		const fetchApis = async () => {	
+      await fetchAllTasksApi({
+        page: 1,
+        size: 2,
+        sortingType: -1,
+        sortBy: 'createdAt',
+        completed: false
       })
-      .slice(0, 2)
+
+			setLoading(false)
+		}
+	
+		fetchApis()
+	}, [fetchAllTasksApi])
+
+  // fetch api data
+	useEffect(() => {
+    if (allTasksApiData?.record) {
+      setOrderedTasks(allTasksApiData.record)
+    }
+
+	}, [allTasksApiData])
+
+  if (loading) {
+    return (
+      <div />
+    )
+  }
+
+  if (allTasksApiError) {
+    console.log(allTasksApiError)
+  }
 
   return (
     <div className='main-content'>
@@ -50,7 +81,7 @@ export default function Home() {
             <div className='home-recent-tasks'>
               {
                 orderedTasks.map((task) => (
-                  <HomeTask task={task} key={task.id}/>
+                  <HomeTask task={task} key={task._id}/>
                 ))
               }
             </div>

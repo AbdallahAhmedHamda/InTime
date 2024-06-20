@@ -1,6 +1,8 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { setCurrentPage, removeAllPopups, addPopup } from '../features/navigation/navigationSlice'
 import { useEffect, useState } from 'react'
+import { allTasksApi } from '../apis/TasksApi'
+import useApi from '../hooks/useApi'
 import TasksTask from '../components/tasks/TasksTask'
 import Filters from '../components/tasks/Filters'
 import Sorting from '../components/tasks/Sorting'
@@ -10,45 +12,153 @@ import AddTaskIcon from '../svg/board/AddTaskIcon'
 import '../css/pages/Tasks.css'
 
 export default function Tasks() {
-  const tasks = useSelector((state) => state.user.tasks)
+  const completedTasks = useSelector((state) => state.user.completedTasks)
+  const inProgressTasks = useSelector((state) => state.user.inProgressTasks)
+
+  const [filters, setFilters] = useState({
+		projectId: [],
+		completed: [],
+		priority: [],
+		tag: []
+	})
+  const [sorting, setSorting] = useState({
+		sortBy: 'createdAt',
+		sortingType: '-1'
+	})
 
   const dispatch = useDispatch()
 
   const [showMoreHovered, setShowMoreHovered] = useState(false)
   const [showLessHovered, setShowLessHovered] = useState(false)
-  const [tasksToShow, setTasksToShow] = useState(12)
+  const [shownTasks, setShownTasks] = useState(0)
+  const [nextPage, setNextPage] = useState(false)
+  const [tasks, setTasks] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  const {
+		fetchApi: fetchAllTasksApi,
+		apiData: allTasksApiData,
+		apiError: allTasksApiError,
+	} = useApi(allTasksApi)
+
+  const {
+		fetchApi: fetchFiltersApi,
+		apiData: filtersApiData,
+		apiError: filtersApiError,
+		apiLoading: filtersApiLoading,
+	} = useApi(allTasksApi)
+
   // change the current page so the app can rerender and update sidenav active icon and remove all popups
   useEffect(() => {
     dispatch(setCurrentPage('tasks'))
     dispatch(removeAllPopups())
+    
+    setShownTasks(0)
   }, [dispatch])
 
-  // add tasks to the filters if there is space for them
-  useEffect(() => {
-    if (tasks.length <= 12 || tasksToShow % 3 !== 0 || tasksToShow > tasks.length) {
-      setTasksToShow(tasks.length)
+  // load tasks
+	useEffect(() => {
+    const fetchApis = async () => {	
+      await fetchAllTasksApi({
+        page: 1,
+        size: 12,
+        ...sorting,
+        ...filters
+      })
+
+      setLoading(false)
+    }
+  
+    fetchApis()
+    // eslint-disable-next-line
+	}, [fetchAllTasksApi])
+
+  // fetch all tasks api data
+	useEffect(() => {
+    if (allTasksApiData?.record) {
+      if (shownTasks === 0) {
+        setTasks(allTasksApiData.record)
+        
+        setShownTasks(allTasksApiData.record.length)
+      } else {
+        setTasks((prevTasks) => [...prevTasks, ...allTasksApiData.record])
+
+        setShownTasks([...tasks, ...allTasksApiData.record].length)
+      }
+
+      setNextPage(allTasksApiData?.nextPage)
     }
     // eslint-disable-next-line
-  }, [tasks])
+	}, [allTasksApiData])
 
-  const showMore = () => {
-    if (Math.floor(tasks.length / 12) === Math.floor(tasksToShow / 12)) {
-      setTasksToShow(tasksToShow + (tasks.length - tasksToShow))
-    } else {
-      setTasksToShow(tasksToShow + 12)
+
+  // fetch filtered tasks api data
+	useEffect(() => {
+    if (filtersApiData?.record) {
+      if (shownTasks === 0) {
+        setTasks(filtersApiData.record)
+
+        setShownTasks(filtersApiData.record.length)
+      } else {
+        setTasks((prevTasks) => [...prevTasks, ...filtersApiData.record])
+
+        setShownTasks([...tasks, ...filtersApiData.record].length)
+      }
+
+      setNextPage(filtersApiData?.nextPage)
     }
+    // eslint-disable-next-line
+	}, [filtersApiData])
 
+  
+  const applyFilters = async () => {
+    await fetchFiltersApi({
+      page: 1,
+      size: 12,
+      ...sorting,
+      ...filters
+    })
+
+    setShownTasks(0)
+  }
+
+  const showMore = async () => {
     setShowMoreHovered(false)
+
+    if (shownTasks === tasks.length) {
+      await fetchAllTasksApi({
+        page: Math.ceil(shownTasks / 12) + 1,
+        size: 12,
+        ...sorting,
+        ...filters
+      })
+    } else {
+      if (Math.floor(tasks.length / 12) === Math.floor(shownTasks / 12)) {
+        setShownTasks(shownTasks + (tasks.length - shownTasks))
+      } else {
+        setShownTasks(shownTasks + 12)
+      }
+    }
   }
 
   const showLess = () => {
-    if (tasks.length === tasksToShow) {
-      setTasksToShow(tasksToShow - (tasksToShow % 12 === 0 ? 12 : tasksToShow % 12 ))
-    } else {
-      setTasksToShow(tasksToShow - 12)
-    }
-
     setShowLessHovered(false)
+
+    setShownTasks(shownTasks - (shownTasks % 12 === 0 ? 12 : shownTasks % 12 ))
+  }
+  
+  if (loading) {
+    return (
+      <div />
+    )
+  }
+
+  if (allTasksApiError) {
+    console.log(allTasksApiError)
+  }
+
+  if (filtersApiError) {
+    console.log(filtersApiError)
   }
 
   return (
@@ -57,27 +167,30 @@ export default function Tasks() {
         <p className='page-name'>Tasks</p>
         
         {
-          tasks.length !== 0 && (
-            <Sorting />
+          completedTasks + inProgressTasks > 0 && (
+            <Sorting
+              sorting={sorting}
+              setSorting={setSorting}
+            />
           )
         }
       </div>
       {
-        tasks.length !== 0 ? 
+        completedTasks + inProgressTasks > 0 ? 
         (
           <div className='tasks-container'>
             <div className='tasks-left-section'>
               <div className='tasks-left-section-tasks'>
                 {
-                  tasks.slice(0, tasksToShow).map((task) => (
-                    <TasksTask task={task} key={task.id}/>
+                  tasks.slice(0, shownTasks).map((task) => (
+                    <TasksTask task={task} key={task._id}/>
                   ))
                 }
               </div>
 
               <div className='tasks-show-container'>
                 {
-                  tasksToShow > 12 && (
+                  (tasks.length > 12 && shownTasks > 12) && (
                     <div 
                       className='tasks-show-less'
                       onClick={showLess}
@@ -92,7 +205,7 @@ export default function Tasks() {
                 }
 
                 {
-                  (tasks.length > 12 && tasks.length !== tasksToShow )&& (
+                  (nextPage || tasks.length > shownTasks) && (
                     <div 
                       className='tasks-show-more'
                       onClick={showMore}
@@ -109,7 +222,12 @@ export default function Tasks() {
             </div>
 
             <div className='tasks-right-section'>
-              <Filters />
+              <Filters
+                filters={filters}
+                setFilters={setFilters}
+                applyFilters={applyFilters}
+                disabled={filtersApiLoading}
+              />
             </div>
           </div>
         ) : (

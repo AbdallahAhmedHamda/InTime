@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { allTasksApi } from '../../apis/TasksApi'
+import useApi from '../../hooks/useApi'
 import { format } from 'date-fns'
 import PrevMonthIcon from '../../svg/calendar/PrevMonthIcon'
 import NextMonthIcon from '../../svg/calendar/NextMonthIcon'
@@ -8,9 +9,38 @@ import CalendarGroupIcon from '../../svg/calendar/CalendarGroupIcon'
 import '../../css//pages/Calendar.css'
 
 export default function CalendarView() {
-  const tasks = useSelector((state) => state.user.tasks)
-
   const [currentDate, setCurrentDate] = useState(new Date())
+  const [tasks, setTasks] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  const {
+		fetchApi : fetchAllTasksApi,
+		apiData: allTasksApiData,
+		apiError: allTasksApiError,
+	} = useApi(allTasksApi)
+
+  // load tasks
+	useEffect(() => {
+		const fetchApis = async () => {	
+      await fetchAllTasksApi({
+        sortingType: -1,
+        sortBy: 'createdAt'
+      })
+
+      setLoading(false)
+		}
+	
+		fetchApis()
+	}, [fetchAllTasksApi])
+
+  // fetch api data
+	useEffect(() => {
+    if (allTasksApiData?.record) {
+      setTasks(allTasksApiData.record)
+    }
+
+	}, [allTasksApiData])
+
 
   const nextMonth = () => {
     const today = new Date()
@@ -47,10 +77,10 @@ export default function CalendarView() {
     let Totaltasks = 0
 
     tasks.forEach((task) => {
-      const endDate = new Date(task.endDate)
-      const startDate = new Date(task.startDate)
+      const endDate = new Date(task.endAt)
+      const startDate = new Date(task.startAt)
 
-      if(startDate < lastDayOfMonth && endDate > firstDayOfMonth && !task.isCompleted && !task.backlog) {
+      if(startDate < lastDayOfMonth && endDate > firstDayOfMonth && !task.completed && !task?.backlog) {
         Totaltasks += 1
       }
     })
@@ -62,8 +92,8 @@ export default function CalendarView() {
     const thisDay = date.setHours(0, 0, 0, 0)
     const tasksInDay = tasks
     .map((task) => {
-      const taskStartDay = new Date(task.startDate).setHours(0, 0, 0, 0)
-      const taskEndDay = new Date(task.endDate).setHours(0, 0, 0, 0)
+      const taskStartDay = new Date(task.startAt).setHours(0, 0, 0, 0)
+      const taskEndDay = new Date(task.endAt).setHours(0, 0, 0, 0)
 
       if (thisDay === taskStartDay || thisDay === taskEndDay) { 
         return task
@@ -77,23 +107,25 @@ export default function CalendarView() {
       <div className='calendar-day-tasks-container'>
         {
           tasksInDay.map((task, i) => {
-            const taskStartDay = new Date(task.startDate).setHours(0, 0, 0, 0)
-            const taskEndDay = new Date(task.endDate).setHours(0, 0, 0, 0)
+            const taskStartDay = new Date(task.startAt).setHours(0, 0, 0, 0)
+            const taskEndDay = new Date(task.endAt).setHours(0, 0, 0, 0)
 
             return (
               i < 2 ?
-              <div style={{ backgroundColor: task.tag.color }} className='calendar-task-container' key={i}>
-                <p className='calendar-task-tag'>{task.tag.name}</p>
+              <div style={{ backgroundColor: task?.tag?.name ? task.tag.color : '#585A66' }} className='calendar-task-container' key={i}>
+                {
+                  <p className='calendar-task-name'>{task.name}</p>
+                }
 
                 {
                   taskStartDay === taskEndDay ?
                   <div className='calendar-task-date'>
-                    {format(new Date(task.startDate), "h':'mm a")}  - {format(new Date(task.endDate), "h':'mm a")}
+                    {format(new Date(task.startAt), "h':'mm a")}  - {format(new Date(task.endAt), "h':'mm a")}
                   </div> :
                   thisDay === taskStartDay ?
                   <div className='calendar-task-date'>
                     <p>
-                      {format(new Date(task.startDate), "h':'mm a")} 
+                      {format(new Date(task.startAt), "h':'mm a")} 
                     </p>
 
                     <span>Start</span>
@@ -101,7 +133,7 @@ export default function CalendarView() {
                   thisDay === taskEndDay ?
                   <div className='calendar-task-date'>
                     <p>
-                      {format(new Date(task.endDate), "h':'mm a")}  
+                      {format(new Date(task.endAt), "h':'mm a")}  
                     </p>
 
                     <span>End</span>
@@ -110,7 +142,7 @@ export default function CalendarView() {
                 }
 
                 {
-                  task.creator !== 'me' ?
+                  task?.projectId ?
                   <CalendarGroupIcon /> :
                   ''
                 }
@@ -237,6 +269,17 @@ export default function CalendarView() {
   const daysStyles = {
     gridTemplateRows: styleTotalDays > 35 ? 'repeat(6, 1fr)' : 'repeat(5, 1fr)'
   }
+
+  
+  if (loading) {
+    return (
+      <div />
+    )
+  }
+
+  if (allTasksApiError) {
+		console.log(allTasksApiError)
+	}
   
   return (
     <div className="calendar-view">

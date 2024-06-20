@@ -1,10 +1,8 @@
-import { useDispatch, useSelector } from 'react-redux'
-import { setSorting } from '../../features/navigation/navigationSlice'
 import Select from 'react-select'
 
 const sortingOptions = [
   {
-    value: 'alphabetically',
+    value: 'name',
     label: 'Alphabetically'
   },
   {
@@ -12,42 +10,35 @@ const sortingOptions = [
     label: 'Priority'
   },
   {
-    value: 'totalSteps',
-    label: 'Total steps'
-  },
-  {
-    value: 'dateAdded',
+    value: 'createdAt',
     label: 'Date added'
   },
   {
-    value: 'startDate',
+    value: 'startAt',
     label: 'Start date'
   },
   {
-    value: 'endDate',
+    value: 'endAt',
     label: 'End date'
   }
 ]
 
 const sortingOrder = [
   {
-    value: 'ascending',
+    value: '1',
     label: 'Ascending'
   },
   {
-    value: 'descending',
+    value: '-1',
     label: 'Descending'
   }
 ]
 
-export default function Sorting() {
-  const sorting = useSelector((state) => state.navigation.sorting)
-
-  const dispatch = useDispatch()
-
+export default function Sorting({ sorting, setSorting }) {
   return (
     <div className='tasks-sorting-container'>
       <Select
+        defaultValue={sortingOptions[2]}
         isSearchable={false}
         options={sortingOptions}
         classNames={{
@@ -73,17 +64,18 @@ export default function Sorting() {
         menuPortalTarget={document.body}
         menuShouldScrollIntoView={false}
         menuPosition='fixed'
-        value={sortingOptions.find((type) => type.value === sorting.type)}
-        onChange={(type) =>
-          dispatch(setSorting({
+        value={sortingOptions.find((sortBy) => sortBy.value === sorting.sortBy)}
+        onChange={(sortBy) =>
+          setSorting({
             ...sorting,
-            type: type.value
-          }))
+            sortBy: sortBy.value
+          })
         }
       >
       </Select>
 
       <Select
+        defaultValue={sortingOrder[1]}
         isSearchable={false}
         options={sortingOrder}
         classNames={{
@@ -109,12 +101,12 @@ export default function Sorting() {
         menuPortalTarget={document.body}
         menuShouldScrollIntoView={false}
         menuPosition='fixed'
-        value={sortingOrder.find((order) => order.value === sorting.order)}
-        onChange={(order) =>
-          dispatch(setSorting({
+        value={sortingOrder.find((sortingType) => sortingType.value === sorting.sortingType)}
+        onChange={(sortingType) =>
+          setSorting({
             ...sorting,
-            order: order.value
-          }))
+            sortingType: sortingType.value
+          })
         }
       >
       </Select>

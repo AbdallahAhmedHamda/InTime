@@ -1,7 +1,8 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { addPopup, removePopup, setUncroppedTaskImage, setCroppedTaskImage, setCurrentTask } from '../../features/navigation/navigationSlice'
-import { editTask, addTag } from '../../features/user/userSlice'
-import { useEffect, useState, useRef } from 'react'
+import { addPopup, removePopup, setUncroppedTaskImage, setCroppedTaskImage, setCurrentTask, incrementRenderCount } from '../../features/navigation/navigationSlice'
+import { useEffect, useState, useRef, useCallback } from 'react'
+import { updateTaskApi } from '../../apis/TasksApi'
+import useApi from '../../hooks/useApi'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -18,20 +19,20 @@ import '../../css/components/AddEditTask.css'
 
 const options = [
   {
-    value: 1,
-    label: <FlagIcon priority={1} />
+    value: 3,
+    label: <FlagIcon priority={3} />
   },
   {
     value: 2,
     label: <FlagIcon priority={2} />
   },
   {
-    value: 3,
-    label: <FlagIcon priority={3} />
+    value: 1,
+    label: <FlagIcon priority={1} />
   },
   {
-    value: 4,
-    label: <FlagIcon priority={4} />
+    value: 0,
+    label: <FlagIcon priority={0} />
   }
 ]
 
@@ -42,14 +43,53 @@ export default function EditTask({ currentTask, selectZIndex }) {
   const dispatch = useDispatch()
 
   const [values, setValues] = useState({
-    ...currentTask,
-    flag: options[currentTask.flag - 1],
-    startDate: dayjs(currentTask.startDate),
-    endDate: dayjs(currentTask.endDate),
+    name: currentTask.name,
+    disc: currentTask.disc ? currentTask.disc.replace(/\r\n/g, '\n') : currentTask.disc,
+    image: currentTask.image ? `https://intime-9hga.onrender.com/api/v1/images/${currentTask.image}` : currentTask.image,
+    tag: currentTask?.tag?.name ? currentTask.tag.name : '',
+    priority: options[3 - currentTask.priority],
+    startAt: dayjs(currentTask.startAt),
+    endAt: dayjs(currentTask.endAt),
+    steps: currentTask.steps
   })
+  const [nameError, setNameError] = useState('')
   const [coverHovered, setCoverHovered] = useState(false)
 
   const imageInputRef = useRef()
+
+  const {
+		fetchApi : fetchUpdateTaskApi,
+		apiData: updateTaskApiData,
+		apiError: updateTaskApiError,
+		apiLoading: updateTaskApiLoading
+	} = useApi(updateTaskApi)
+
+  const setTagColor = useCallback(() => {
+    return values.tag
+    // if (values.tag.trim() === '') {
+    //   return { name: '', color: '' }
+    // } else {
+    //   const tag = { name: values.tag }
+    //   const tagName = values.tag.toLowerCase()
+
+    //   const tagIndex = allTags.findIndex(arrayTag => arrayTag.name.toLowerCase() === tagName)
+
+    //   if (tagIndex !== -1) {
+    //     tag.color = allTags[tagIndex].color
+    //   } else {
+    //     if (allTags.length !== 0) {
+    //       const lastColor = allTags[allTags.length - 1].color
+    //       console.log(allTags[allTags.length - 1].color)
+    //       const lastColorIndex = colors.findIndex(color => color === lastColor)
+    //       tag.color = colors[(lastColorIndex + 1) % 50]
+    //     } else {
+    //       tag.color = colors[0]
+    //     }
+    //   }
+  
+    //   return tag 
+    // }
+  }, [values.tag, allTags])
 
   // remove saved images from redux when popup unmounts
   useEffect(() => {
@@ -65,6 +105,32 @@ export default function EditTask({ currentTask, selectZIndex }) {
       setValues(prevState => ({ ...prevState, image: croppedImage }))
     }
   }, [croppedImage])
+
+  // close popup when task is added correctly
+	useEffect(() => {
+    if (updateTaskApiData) {
+      dispatch(setCurrentTask({
+        ...values,
+        tag: setTagColor(),
+        priority: values.priority.value,
+        startAt: values.startAt.toISOString(),
+        endAt: values.endAt.toISOString(),
+      }))
+
+      dispatch(removePopup('edit'))
+
+      dispatch(incrementRenderCount())
+    }
+	}, [updateTaskApiData, dispatch, setTagColor, values])
+
+  // handle update api errors
+	useEffect(() => {
+    if (updateTaskApiError === 'you have task with the same name') {
+      setNameError('This task name already exists!')
+    } else if (updateTaskApiError) {
+      console.log(updateTaskApiError)
+    }
+	}, [updateTaskApiError, dispatch])
 
   // handle image selection
   const onImageSelection = (e) => {
@@ -105,43 +171,22 @@ export default function EditTask({ currentTask, selectZIndex }) {
   }
  
   const addStep = () => {
-
-    if (values.steps.length === 0) {
-      setValues({
-        ...values,
-        steps: [
-          {
-            id: nanoid(),
-            content: '',
-            isCompleted: false
-          },
-          {
-            id: nanoid(),
-            content: '',
-            isCompleted: false
-          }
-        ]
-      })
-    } else {
-      setValues({
-        ...values,
-        steps: [
-          ...values.steps,
-          {
-            id: nanoid(),
-            content: '',
-            isCompleted: false
-
-          }
-        ]
-      })
-    }
+    setValues({
+      ...values,
+      steps: [
+        ...values.steps,
+        {
+          stepDisc: '',
+          _id: nanoid()
+        }
+      ]
+    })
   }
 
   const removeStep = (id) => {
     setValues({
       ...values,
-      steps: values.steps.filter((step) => step.id !== id)
+      steps: values.steps.filter((step) => step._id !== id)
     })
   }
   
@@ -151,57 +196,39 @@ export default function EditTask({ currentTask, selectZIndex }) {
 
   const onTextInputChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value })
+
+    if (e.target && e.target.name === 'name') {
+      setNameError('')
+    }
   }
 
   const onKeyDownHandler = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault()
-      if (e.target.classList.contains('disc-input') && values.disc.length < 300) {
+      if (e.target.classList.contains('disc-input') && values?.disc && values.disc.length < 300) {
         setValues({ ...values, [e.target.name]: e.target.value + '\n' })
       }
     }
   }
 
-  const setTagColor = () => {
-    const tag = { ...values.tag }
-    const tagName = values.tag.name.toLowerCase()
-
-    if (allTags.includes(tagName)) {
-      const tagIndex = allTags.indexOf(tagName)
-      tag.color = colors[tagIndex % 50]
-    } else {
-      tag.color = colors[allTags.length]
-    }
-
-    return tag
-  }
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (values.steps.length === 1) {
-      dispatch(addPopup('only one step'))
-    } else {
-      const taskId = currentTask.id
-      const updatedTask = {
-        ...values,
-        tag: setTagColor(),
-        flag: values.flag.value,
-        startDate: values.startDate.toISOString(),
-        endDate: values.endDate.toISOString()
-      }
-
-      dispatch(addTag(values.tag.name))
-      dispatch(editTask({ taskId, updatedTask }))
-      dispatch(setCurrentTask(updatedTask))
-      dispatch(removePopup('edit'))
-    }
+    const nameChanged = currentTask.name !== values.name
+    
+    await fetchUpdateTaskApi({
+      ...values,
+      tag: setTagColor(),
+      priority: values.priority.value,
+      startAt: values.startAt.toISOString(),
+      endAt: values.endAt.toISOString(),
+    }, currentTask._id, nameChanged)
   }
   
   const today = dayjs()
     .startOf('minute')
     .add(30 - dayjs().minute() % 30, 'minutes')
-  const minEndDateTime = today.isAfter(values.startDate) ? today : values.startDate
+  const minEndDateTime = today.isAfter(values.startAt) ? today : values.startAt
     
   return (
     <form
@@ -233,12 +260,14 @@ export default function EditTask({ currentTask, selectZIndex }) {
             title='Include other letters than space!'
             className='task-title-input'
             type='text'
-            name='title'
-            id='title'
-            value={values.title}
+            name='name'
+            id='name'
+            value={values.name}
             onChange={onTextInputChange}
             placeholder='Enter a title....'
           />
+
+          {nameError ? <p className='same-name-error'>{nameError}</p> : ''}
         </div>
 
         <div className='input-block disc-input-block'>
@@ -266,7 +295,7 @@ export default function EditTask({ currentTask, selectZIndex }) {
           />
 
           <p className='disc-max-letters'>
-            {values.disc.length}/300
+            {values?.disc ? values.disc.length : 0}/300
           </p>
         </div>
 
@@ -300,8 +329,15 @@ export default function EditTask({ currentTask, selectZIndex }) {
                 onMouseLeave={() => setCoverHovered(false)}
               >
                 <img 
-                  alt='cover' 
                   src={values.image}
+                  alt='cover' 
+                  onError={(e) => {
+                    e.target.onerror = null
+                    setValues({
+                      ...values,
+                      image: ''
+                    })
+                  }}
                   className='task-cover-input'
                 />
                 {
@@ -327,29 +363,27 @@ export default function EditTask({ currentTask, selectZIndex }) {
           </div>
 
           <div className='input-block'>
-            <label htmlFor='tag'>Tag</label>
+            <label htmlFor='tag' className='optional-input-wrapper'>
+              <p>Tag</p>
+              
+              <p className='optional-input'>(optional)</p>
+            </label>
 
             <input
-              required={true}
               spellCheck='false'
               autoComplete='off'
-              pattern='.*\S+.*'
-              title='Include other letters than space!'
               className='tag-input'
               type='text'
               id='tag'
               name='tag'
-              value={values.tag.name}
-              onChange={(e) => {
-                const updatedTag = { ...values.tag, name: e.target.value }
-                setValues({ ...values, tag: updatedTag })
-              }}
+              value={values.tag}
+              onChange={onTextInputChange}
               placeholder='Add tag...'
             />
           </div>
 
           <div className='input-block'>
-            <p>Flag</p>
+            <p>Priority</p>
 
             <Select
               isSearchable={false}
@@ -366,11 +400,11 @@ export default function EditTask({ currentTask, selectZIndex }) {
               menuPortalTarget={document.body}
               menuShouldScrollIntoView={false}
               menuPosition='fixed'
-              value={values.flag}
+              value={values.priority}
               onChange={(value) =>
                 setValues({
                 ...values,
-                flag: value
+                priority: value
               })}
             >
             </Select>
@@ -386,18 +420,18 @@ export default function EditTask({ currentTask, selectZIndex }) {
                 <MobileDateTimePicker
                   className='start-date'
                   format='MM/D/YYYY [at] h:mm a'
-                  value={values.startDate}
+                  value={values.startAt}
                   disableHighlightToday={true}
                   showDaysOutsideCurrentMonth={true}
                   slotProps={{ field: { shouldRespectLeadingZeros: true } }}
                   onChange={(newStartDate) =>
                     setValues({
                       ...values,
-                      startDate: newStartDate,
-                      endDate:
-                        newStartDate > values.endDate
+                      startAt: newStartDate,
+                      endAt:
+                        newStartDate > values.endAt
                           ? newStartDate.add(60, 'minutes')
-                          : values.endDate
+                          : values.endAt
                     }
                   )}
                 />
@@ -420,14 +454,14 @@ export default function EditTask({ currentTask, selectZIndex }) {
                 <MobileDateTimePicker
                   className='end-date'
                   format='MM/D/YYYY [at] h:mm a'
-                  value={values.endDate}
+                  value={values.endAt}
                   disableHighlightToday={true}
                   showDaysOutsideCurrentMonth={true}
                   minDateTime={minEndDateTime}
                   slotProps={{ field: { shouldRespectLeadingZeros: true } }}
                   onChange={(newEndDate) => setValues({
                     ...values,
-                    endDate: newEndDate
+                    endAt: newEndDate
                   })}
                 />
               </LocalizationProvider>
@@ -444,22 +478,24 @@ export default function EditTask({ currentTask, selectZIndex }) {
 
         {
           values.steps.map((step, i) => (
-            <div key={step.id} className='input-block'>
+            <div key={step._id} className='input-block'>
               <label htmlFor={`step-num-${i + 1}`}>step {i + 1}</label>
 
               <div className='step-wrapper'>
                 <input
                   required={true}
+                  pattern='.*\S+.*'
+                  title='Include other letters than space!'
                   spellCheck='false'
                   autoComplete='off'
                   className='step-input'
                   type='text'
                   name={`step-num-${i + 1}`}
                   id={`step-num-${i + 1}`}
-                  value={values.steps[i].content}
+                  value={values.steps[i].stepDisc}
                   onChange={(e) => {
                     const updatedSteps = [...values.steps]
-                    updatedSteps[i] = { ...updatedSteps[i], content: e.target.value }
+                    updatedSteps[i] = { ...updatedSteps[i], stepDisc: e.target.value }
                     setValues({ ...values, steps: updatedSteps })
                   }}
                   placeholder={`My ${ordinal(i + 1)} step is...`}
@@ -467,7 +503,7 @@ export default function EditTask({ currentTask, selectZIndex }) {
 
                 <CloseIcon
                   className='remove-step'
-                  onClick={() => removeStep(step.id)}
+                  onClick={() => removeStep(step._id)}
                 />
               </div>
             </div>
@@ -475,7 +511,7 @@ export default function EditTask({ currentTask, selectZIndex }) {
         }
 
         <div className='input-block'>
-          {values.steps.length === 0 ? <p>Steps</p> : ''}
+          {values?.steps && values.steps.length === 0 ? <p>Steps</p> : ''}
 
           <button
             type='button'
@@ -487,7 +523,13 @@ export default function EditTask({ currentTask, selectZIndex }) {
         </div>
 
         <div className='popup-button-wrapper'>
-          <button type='submit' className='edit-task-button'>Edit</button>
+          <button
+            type='submit'
+            className='edit-task-button'
+            disabled={updateTaskApiLoading}
+          >
+            Edit
+          </button>
           
           <button
             type='button'

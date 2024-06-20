@@ -85,7 +85,7 @@
 .optional-input-wrapper > .optional-input {
   color: rgba(0, 0, 0, 0.60);
   font-family: 'Roboto';
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 300;
   line-height: normal;}
@@ -358,4 +358,10 @@
 
 .cancel-edit-task-button, .cancel-add-task-button {
   background-color: white;
+}
+
+.same-name-error {
+  font-size: 14px !important;
+  color: red;
+  display: block;
 }

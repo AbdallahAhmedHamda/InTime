@@ -1,7 +1,8 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { addPopup, removePopup, setUncroppedTaskImage, setCroppedTaskImage } from '../../features/navigation/navigationSlice'
-import { addTask, addTag } from '../../features/user/userSlice'
+import { addPopup, removePopup, setUncroppedTaskImage, setCroppedTaskImage, incrementRenderCount } from '../../features/navigation/navigationSlice'
 import { useEffect, useState, useRef } from 'react'
+import { createTaskApi } from '../../apis/TasksApi'
+import useApi from '../../hooks/useApi'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -18,20 +19,20 @@ import '../../css/components/AddEditTask.css'
 
 const options = [
   {
-    value: 1,
-    label: <FlagIcon priority={1} />
+    value: 3,
+    label: <FlagIcon priority={3} />
   },
   {
     value: 2,
     label: <FlagIcon priority={2} />
   },
   {
-    value: 3,
-    label: <FlagIcon priority={3} />
+    value: 1,
+    label: <FlagIcon priority={1} />
   },
   {
-    value: 4,
-    label: <FlagIcon priority={4} />
+    value: 0,
+    label: <FlagIcon priority={0} />
   }
 ]
 
@@ -51,15 +52,15 @@ export default function AddTask() {
     rawTask
       ? {
           ...rawTask,
-          flag: options[rawTask.flag.value - 1],
-          startDate: stringDate
+          priority: options[3 - rawTask.priority.value],
+          startAt: stringDate
             ? dayjs(stringDate)
                 .startOf('minute')
                 .set('hour', dayjs().hour())
                 .set('minute', dayjs().minute())
                 .add(30 - dayjs().minute() % 30, 'minutes')
-            : dayjs(rawTask.startDate),
-          endDate: stringDate && dayjs(stringDate) > dayjs()
+            : dayjs(rawTask.startAt),
+          endAt: stringDate && dayjs(stringDate) > dayjs()
             ? dayjs(stringDate)
                 .startOf('minute')
                 .set('hour', dayjs().hour())
@@ -73,12 +74,12 @@ export default function AddTask() {
 
   const [values, setValues] = useState(
     task || {
-      title: '',
+      name: '',
       disc: '',
-      tag: { name: '', color: ''},
-      flag: options[0],
+      tag: '',
+      priority: options[0],
       image: '',
-      startDate: stringDate
+      startAt: stringDate
       ? dayjs(stringDate)
           .startOf('minute')
           .set('hour', dayjs().hour())
@@ -87,7 +88,7 @@ export default function AddTask() {
       : dayjs()
           .startOf('minute')
           .add(30 - dayjs().minute() % 30, 'minutes'),
-      endDate: stringDate && dayjs(stringDate) > dayjs()
+      endAt: stringDate && dayjs(stringDate) > dayjs()
       ? dayjs(stringDate)
           .startOf('minute')
           .set('hour', dayjs().hour())
@@ -99,10 +100,18 @@ export default function AddTask() {
       steps: []
     }
   )
+  const [nameError, setNameError] = useState('')
   const [coverHovered, setCoverHovered] = useState(false)
   const [formSubmitted, setFormSubmitted] = useState(null)
 
   const imageInputRef = useRef()
+
+  const {
+		fetchApi : fetchCreateTaskApi,
+		apiData: createTaskApiData,
+		apiError: createTaskApiError,
+		apiLoading: createTaskApiLoading
+	} = useApi(createTaskApi)
 
   // remove saved images from redux when popup unmounts
   useEffect(() => {
@@ -126,6 +135,26 @@ export default function AddTask() {
       setValues(prevState => ({ ...prevState, image: croppedImage }))
     }
   }, [croppedImage])
+
+  // close popup when task is added correctly
+	useEffect(() => {
+    if (createTaskApiData) {
+      setFormSubmitted(true)
+
+      dispatch(removePopup('add'))
+
+      dispatch(incrementRenderCount())
+    }
+	}, [createTaskApiData, dispatch])
+
+  // handle create api errors
+	useEffect(() => {
+    if (createTaskApiError === 'there is a task with the same name in this user tasks' ) {
+      setNameError('This task name already exists!')
+    } else if (createTaskApiError) {
+      console.log(createTaskApiError)
+    }
+	}, [createTaskApiError, dispatch])
 
   // handle image selection
   const onImageSelection = (e) => {
@@ -166,42 +195,22 @@ export default function AddTask() {
   }
  
   const addStep = () => {
-    if (values.steps.length === 0) {
-      setValues({
-        ...values,
-        steps: [
-          {
-            id: nanoid(),
-            content: '',
-            isCompleted: false
-          },
-          {
-            id: nanoid(),
-            content: '',
-            isCompleted: false
-          }
-        ]
-      })
-    } else {
-      setValues({
-        ...values,
-        steps: [
-          ...values.steps,
-          {
-            id: nanoid(),
-            content: '',
-            isCompleted: false
-
-          }
-        ]
-      })
-    }
+    setValues({
+      ...values,
+      steps: [
+        ...values.steps,
+        {
+          stepDisc: '',
+          _id: nanoid()
+        }
+      ]
+    })
   }
 
   const removeStep = (id) => {
     setValues({
       ...values,
-      steps: values.steps.filter((step) => step.id !== id)
+      steps: values.steps.filter((step) => step._id !== id)
     })
   }
   
@@ -211,6 +220,10 @@ export default function AddTask() {
 
   const onTextInputChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value })
+
+    if (e.target && e.target.name === 'name') {
+      setNameError('')
+    }
   }
 
   const onKeyDownHandler = (e) => {
@@ -223,50 +236,48 @@ export default function AddTask() {
   }
 
   const setTagColor = () => {
-    const tag = { ...values.tag }
-    const tagName = values.tag.name.toLowerCase()
-
-    if (allTags.includes(tagName)) {
-      const tagIndex = allTags.indexOf(tagName)
-      tag.color = colors[tagIndex % 50]
+    if (values.tag.trim() === '') {
+      return { name: '', color: '' }
     } else {
-      tag.color = colors[allTags.length]
-    }
+      const tag = { name: values.tag }
+      const tagName = values.tag.toLowerCase()
 
-    return tag 
+      const tagIndex = allTags.findIndex(arrayTag => arrayTag.name.toLowerCase() === tagName)
+
+      if (tagIndex !== -1) {
+        tag.color = allTags[tagIndex].color
+      } else {
+        if (allTags.length !== 0) {
+          const lastColor = allTags[allTags.length - 1].color
+          console.log(allTags[allTags.length - 1].color)
+          const lastColorIndex = colors.findIndex(color => color === lastColor)
+          tag.color = colors[(lastColorIndex + 1) % 50]
+        } else {
+          tag.color = colors[0]
+        }
+      }
+  
+      return tag 
+    }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (values.steps.length === 1) {
-      dispatch(addPopup('only one step'))
-    } else {
-      const taskId = nanoid()
-      
-      setFormSubmitted(true)
-
-      dispatch(addTag(values.tag.name))
-      dispatch(addTask({
-        id: taskId,
-        createdAt: dayjs().toISOString(),
-        ...values,
-        tag: setTagColor(),
-        flag: values.flag.value,
-        startDate: values.startDate.toISOString(),
-        endDate: values.endDate.toISOString(),
-        creator: 'me',
-        isCompleted: false,
-        backlog: false
-      }))
-      dispatch(removePopup('add'))
-    }
+    await fetchCreateTaskApi({
+      ...values,
+      tag: setTagColor(),
+      priority: values.priority.value,
+      startAt: values.startAt.toISOString(),
+      endAt: values.endAt.toISOString(),
+      steps: values.steps.map((step) => step.stepDisc)
+    })
   }
 
   const today = dayjs()
     .startOf('minute')
     .add(30 - dayjs().minute() % 30, 'minutes')
-  const minEndDateTime = today.isAfter(values.startDate) ? today : values.startDate
+  const minEndDateTime = today.isAfter(values.startAt) ? today : values.startAt
     
   return (
     <form
@@ -298,12 +309,14 @@ export default function AddTask() {
             title='Include other letters than space!'
             className='task-title-input'
             type='text'
-            name='title'
-            id='title'
-            value={values.title}
+            name='name'
+            id='name'
+            value={values.name}
             onChange={onTextInputChange}
             placeholder='Enter a title....'
           />
+
+          {nameError ? <p className='same-name-error'>{nameError}</p> : ''}
         </div>
         
         <div className='input-block disc-input-block'>
@@ -392,29 +405,27 @@ export default function AddTask() {
           </div>
 
           <div className='input-block'>
-            <label htmlFor='tag'>Tag</label>
+            <label htmlFor='tag' className='optional-input-wrapper'>
+              <p>Tag</p>
+              
+              <p className='optional-input'>(optional)</p>
+            </label>
 
             <input
-              required={true}
               spellCheck='false'
               autoComplete='off'
-              pattern='.*\S+.*'
-              title='Include other letters than space!'
               className='tag-input'
               type='text'
               id='tag'
               name='tag'
-              value={values.tag.name}
-              onChange={(e) => {
-                const updatedTag = { ...values.tag, name: e.target.value }
-                setValues({ ...values, tag: updatedTag })
-              }}
+              value={values.tag}
+              onChange={onTextInputChange}
               placeholder='Add tag...'
             />
           </div>
 
           <div className='input-block'>
-            <p>Flag</p>
+            <p>Priority</p>
 
             <Select
               isSearchable={false}
@@ -431,11 +442,11 @@ export default function AddTask() {
               menuPortalTarget={document.body}
               menuShouldScrollIntoView={false}
               menuPosition='fixed'
-              value={values.flag}
+              value={values.priority}
               onChange={(value) =>
                 setValues({
                 ...values,
-                flag: value
+                priority: value
               })}
             >
             </Select>
@@ -451,18 +462,18 @@ export default function AddTask() {
                 <MobileDateTimePicker
                   className='start-date'
                   format='MM/D/YYYY [at] h:mm a'
-                  value={values.startDate}
+                  value={values.startAt}
                   disableHighlightToday={true}
                   showDaysOutsideCurrentMonth={true}
                   slotProps={{ field: { shouldRespectLeadingZeros: true } }}
                   onChange={(newStartDate) =>
                     setValues({
                       ...values,
-                      startDate: newStartDate,
-                      endDate:
-                        newStartDate > values.endDate
+                      startAt: newStartDate,
+                      endAt:
+                        newStartDate > values.endAt
                           ? newStartDate.add(60, 'minutes')
-                          : values.endDate
+                          : values.endAt
                     }
                   )}
                 />
@@ -485,14 +496,14 @@ export default function AddTask() {
                 <MobileDateTimePicker
                   className='end-date'
                   format='MM/D/YYYY [at] h:mm a'
-                  value={values.endDate}
+                  value={values.endAt}
                   disableHighlightToday={true}
                   showDaysOutsideCurrentMonth={true}
                   minDateTime={minEndDateTime}
                   slotProps={{ field: { shouldRespectLeadingZeros: true } }}
                   onChange={(newEndDate) => setValues({
                     ...values,
-                    endDate: newEndDate
+                    endAt: newEndDate
                   })}
                 />
               </LocalizationProvider>
@@ -509,22 +520,24 @@ export default function AddTask() {
 
         {
           values.steps.map((step, i) => (
-            <div key={step.id} className='input-block'>
+            <div key={step._id} className='input-block'>
               <label htmlFor={`step-num-${i + 1}`}>step {i + 1}</label>
 
               <div className='step-wrapper'>
                 <input
                   required={true}
+                  pattern='.*\S+.*'
+                  title='Include other letters than space!'
                   spellCheck='false'
                   autoComplete='off'
                   className='step-input'
                   type='text'
                   name={`step-num-${i + 1}`}
                   id={`step-num-${i + 1}`}
-                  value={values.steps[i].content}
+                  value={values.steps[i].stepDisc}
                   onChange={(e) => {
                     const updatedSteps = [...values.steps]
-                    updatedSteps[i] = { ...updatedSteps[i], content: e.target.value }
+                    updatedSteps[i] = { ...updatedSteps[i], stepDisc: e.target.value }
                     setValues({ ...values, steps: updatedSteps })
                   }}
                   placeholder={`My ${ordinal(i + 1)} step is...`}
@@ -532,7 +545,7 @@ export default function AddTask() {
 
                 <CloseIcon
                   className='remove-step'
-                  onClick={() => removeStep(step.id)}
+                  onClick={() => removeStep(step._id)}
                 />
               </div>
             </div>
@@ -552,7 +565,13 @@ export default function AddTask() {
         </div>
 
         <div className='popup-button-wrapper'>
-          <button type='submit'className='add-task-button'>Add</button>
+          <button
+            type='submit'
+            className='add-task-button'        
+            disabled={createTaskApiLoading}
+          >
+            Add
+          </button>
           
           <button
             type='button'

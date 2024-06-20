@@ -1,17 +1,39 @@
 import { useDispatch } from 'react-redux'
-import { removeAllPopups, removePopup } from '../../features/navigation/navigationSlice'
-import { removeTask } from '../../features/user/userSlice'
+import { incrementRenderCount, removeAllPopups, removePopup } from '../../features/navigation/navigationSlice'
+import { useEffect } from 'react'
+import { deleteTaskApi } from '../../apis/TasksApi'
+import useApi from '../../hooks/useApi'
 import CloseIcon from '../../svg/others/CloseIcon'
 import '../../css/components/Messages.css'
 
 export default function VerifyTaskDeletionMessage({ task }) {
   const dispatch = useDispatch()
 
-  const deleteTask = () => {
-    dispatch(removeTask({ taskId: task.id, taskTag: task.tag.name}))
-    dispatch(removeAllPopups())  
+  const {
+		fetchApi : fetchDeleteTaskApi,
+		apiData: deleteTaskApiData,
+		apiError: deleteTaskApiError,
+		apiLoading: deleteTaskApiLoading
+	} = useApi(deleteTaskApi)
+
+  // close popups on complete
+  useEffect(() => {
+    if (deleteTaskApiData) {
+      dispatch(removeAllPopups())
+
+      dispatch(incrementRenderCount())
+
+    }
+  }, [deleteTaskApiData, dispatch])
+
+  const deleteTask = async() => {
+    await fetchDeleteTaskApi((task._id))
   }
-    
+
+  if (deleteTaskApiError) {
+    console.log(deleteTaskApiError)
+  }
+  
   return (
     <div className='message-popup'>
       <div  className='message-heading'>
@@ -26,7 +48,7 @@ export default function VerifyTaskDeletionMessage({ task }) {
       <p className='message-content'>Are you sure you want to Delete this task?</p>
 
       <div className='message-button-container'>
-        <button className='message-verify-button red' onClick={deleteTask}>
+        <button className='message-verify-button red' onClick={deleteTask}  disabled={deleteTaskApiLoading}>
           YES
         </button>
 

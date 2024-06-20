@@ -1,5 +1,6 @@
 import { useDispatch } from 'react-redux'
 import { addPopup, setCurrentTask } from '../../features/navigation/navigationSlice'
+import { useState } from 'react'
 import { format } from 'date-fns'
 import TasksTaskDeleteIcon from '../../svg/tasks/TasksTaskDeleteIcon'
 import TasksTaskGroupIcon from '../../svg/tasks/TasksTaskGroupIcon'
@@ -8,6 +9,8 @@ import TasksTaskEditIcon from '../../svg/tasks/TasksTaskEditIcon'
 
 export default function TasksTask({ task }) {
   const dispatch = useDispatch()
+
+  const [image, setImage] = useState(task.image)
 
   const verifyDeletion = (e) => {
     e.stopPropagation()
@@ -27,34 +30,45 @@ export default function TasksTask({ task }) {
   }
 
   const tagStyles = {
-    backgroundColor: task.tag.color
+    backgroundColor: task?.tag?.name ? task.tag.color : '#585A66'
   }
 
-  const startDate = new Date(task.startDate).setHours(0, 0, 0, 0)
-  const endDate = new Date(task.endDate).setHours(0, 0, 0, 0)
+  const startDate = new Date(task.startAt).setHours(0, 0, 0, 0)
+  const endDate = new Date(task.endAt).setHours(0, 0, 0, 0)
 
   return (
     <div className='tasks-task-container' onClick={openTaskPreview}>
-      <div className='tasks-task-upper-section'>
-        <p style={tagStyles}>{task.tag.name}</p>
+      { 
+        (task?.tag?.name || task?.projectId) && (
+          <div className='tasks-task-upper-section'>
+            {
+              task?.tag?.name && <p style={tagStyles}>{task.tag.name}</p>
+            }
 
-        {
-          task.creator !== 'me' && <TasksTaskGroupIcon />
-        }
-      </div>
+            {
+              task?.projectId && <TasksTaskGroupIcon />
+            }
+          </div>
+        )
+      }
+
 
       <div className='tasks-task-middle-section'>
         {
-        task.image && (
+        image && (
             <img
               className='tasks-task-cover-image'
-              src={task.image}
+              src={`https://intime-9hga.onrender.com/api/v1/images/${task.image}`}
               alt='cover' 
+              onError={(e) => {
+                e.target.onerror = null
+                setImage('')
+              }}
             />
           )
         }
 
-        <p className='tasks-task-title'>{task.title}</p>
+        <p className='tasks-task-title'>{task.name}</p>
 
         {
           startDate === endDate ?
@@ -72,7 +86,7 @@ export default function TasksTask({ task }) {
           <TasksTaskDeleteIcon verifyDeletion={verifyDeletion}/>
 
           {
-            (!task.isCompleted && !task.backlog) ? <TasksTaskEditIcon editTask={editTask}/> : ''
+            !task.completed ? <TasksTaskEditIcon editTask={editTask}/> : ''
           }
         </div>
 
@@ -83,7 +97,7 @@ export default function TasksTask({ task }) {
 
               <p className='tasks-task-steps'>
                 {
-                  task.steps.filter((setp) => setp.isCompleted).length + '/' + task.steps.length
+                  task.steps.filter((step) => step.completed).length + '/' + task.steps.length
                 }
               </p>
             </div>

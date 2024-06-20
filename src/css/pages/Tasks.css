@@ -154,6 +154,7 @@
 .tasks-task-group-icon {
   min-width: 23px;
   min-height: 20px;
+  margin-left: auto;
 }
 
 .tasks-task-middle-section {
@@ -245,7 +246,7 @@
   height: fit-content;
   width: 290px;
   box-sizing: border-box;
-  padding :30px 17px 60px 17px;
+  padding :30px 17px 30px 17px;
   border-radius: 16px;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   display: flex;
@@ -257,13 +258,13 @@
 .filters-container {
   display: flex;
   flex-direction: column;
-  gap: 50px;
 }
 
 .single-filter-container {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  margin-bottom: 50px;
 }
 
 .single-filter-container > p {
@@ -328,7 +329,7 @@ letter-spacing: -0.96px;
 .filter-option-container > p > span {
   color: rgba(0, 0, 0, 0.60);
   font-family: 'Roboto';
-  font-size: 8px;
+  font-size: 11px;
 }
 
 .single-filter-options.priority-filter-options {
@@ -391,10 +392,15 @@ letter-spacing: -0.96px;
   overflow: hidden;
 }
 
+.single-filter-container.tags-filter-container {
+  position: relative;
+  margin-bottom: 50px;
+}
+
 .tags-show-container {
   position: absolute;
-  bottom: 25px;
-  right: 17px;
+  top: calc(100% + 20px);
+  right: 0;
   display: flex;
   gap: 20px;
 }
@@ -418,4 +424,18 @@ letter-spacing: -0.96px;
 
 .tags-show-more:hover, .tags-show-less:hover {
   color: #5468E7;
+}
+
+.apply-filters-button {
+  background-color: #5468E7;
+  color: white;
+  border: 1px solid #5468E7;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  height: 40px;
+  cursor: pointer;
+  outline: none;
+  border-radius: 4px;
+  font-family: 'Poppins';
+  box-sizing: border-box;
+  padding: 0;
 }

@@ -1,9 +1,13 @@
+import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import { useState, useRef, useEffect } from 'react'
 import numeral from 'numeral'
 import ShowMoreArrow from'../../svg/others/ShowMoreArrow'
 import ShowLessArrow from'../../svg/others/ShowLessArrow'
 
 export default function Leaderboard() {
+  const ranks = useSelector((state) => state.navigation.allRanks)
+
   const [dataArraySlice, setDataArraySlice] = useState(5)
 
   const [rankWidth, setRankWidth] = useState('auto')
@@ -19,9 +23,16 @@ export default function Leaderboard() {
     tasks: [],
     points: [],
   })
-
-  const data = new Array(18).fill({})
-
+  
+  const data = ranks.map((user, i) => ({
+    id: user._id,
+    rank: i + 1,
+    ProfilePic: `https://intime-9hga.onrender.com/api/v1/images/${user.avatar}`,
+    name: user.name,
+    completedTasks: user.tasks.completedTasks,
+    points: user.points.totalPoints
+  }))
+    
   // calculate each leaderboard column width
   useEffect(() => {
     document.fonts.ready.then(() => {
@@ -92,26 +103,33 @@ export default function Leaderboard() {
 
       <div className='leaderboard'>
         {
-          data.slice(0, dataArraySlice).map((_, i) => (
+          data.slice(0, dataArraySlice).map((user, i) => (
             <div className='leaderboard-row' key={i}>
               <p 
                 className='leaderboard-rank' 
                 ref={el => (leaderboardRefs.current.ranks[i] = el)} style={{width: rankWidth}}
               >
-                {i + 1}
+                {user.rank}
               </p>
 
-              <img 
-                className='leaderboard-pic'
-                src={require('../../assets/images/profile-pic.jpeg')} alt='profile-pic'
-              />
+              <Link to={`/profile/${user.id}`}>
+                <img 
+                  className='leaderboard-pic'
+                  src={user.ProfilePic}
+                  alt='profile-pic'
+                  onError={(e) => {
+                    e.target.onerror = null
+                    e.target.src = require('../../assets/images/profile-pic.jpeg')
+                  }}
+                />
+              </Link>
 
               <p
                 className='leaderboard-name'
                 ref={el => (leaderboardRefs.current.names[i] = el)}
                 style={{width: nameWidth}}
               >
-                Jessica
+                {user.name}
               </p>
 
               <p 
@@ -119,7 +137,7 @@ export default function Leaderboard() {
                 ref={el => (leaderboardRefs.current.tasks[i] = el)}
                 style={{width: tasksWidth}}
               >
-                {numeral(50).format('0.[00]a')} Tasks
+                {numeral(user.completedTasks).format('0.[00]a')} Task{user.completedTasks !== 1 ? 's' : ''}
               </p>
 
               <p
@@ -127,7 +145,7 @@ export default function Leaderboard() {
                 ref={el => (leaderboardRefs.current.points[i] = el)}
                 style={{width: pointsWidth}}
               >
-                {numeral(5000).format('0.[00]a')} Pts
+                {numeral(user.points).format('0.[00]a')} Pts
               </p>
             </div>
           ))

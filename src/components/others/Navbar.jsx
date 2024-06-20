@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { addPopup, setIsAuthenticated } from '../../features/navigation/navigationSlice'
+import { addPopup, setIsAuthenticated, resetRenderCount } from '../../features/navigation/navigationSlice'
 import { useState, useEffect, useRef } from 'react'
 import { useTransition, animated } from 'react-spring'
 import { signOutApi } from '../../apis/authApi'
@@ -17,6 +17,7 @@ export default function Navbar() {
   const { searchValue } = useParams()
 
   const currentPage = useSelector((state) => state.navigation.currentPage)
+  const id = useSelector((state) => state.user.id)
   const name = useSelector((state) => state.user.name)
   const title = useSelector((state) => state.user.title)
   const profilePic = useSelector((state) => state.user.profilePic)
@@ -109,6 +110,7 @@ export default function Navbar() {
       localStorage.removeItem('accessToken')
       
       dispatch(setIsAuthenticated(false))
+      dispatch(resetRenderCount())
       
       navigate('/signin')
     } catch (error) {
@@ -179,7 +181,7 @@ export default function Navbar() {
         </Link>
 
         <div className='navbar-user-info'>
-          <Link to='/profile' >
+          <Link to={`/profile/${id}`} >
             <img
               src={profilePic}
               alt='profile-pic'

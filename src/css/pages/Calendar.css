@@ -172,7 +172,7 @@
   position: relative;
 }
 
-.calendar-task-tag {
+.calendar-task-name {
   color: #FFF;
   overflow: hidden;
   text-wrap: nowrap;

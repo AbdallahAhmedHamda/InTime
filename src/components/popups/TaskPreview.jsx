@@ -1,88 +1,128 @@
 import { useDispatch } from 'react-redux'
-import { addPopup, removePopup, setCurrentTask } from '../../features/navigation/navigationSlice'
-import { toggleStep, unfinishTask } from '../../features/user/userSlice'
+import { addPopup, removePopup, setCurrentTask, incrementRenderCount } from '../../features/navigation/navigationSlice'
+import { useState, useEffect } from 'react'
+import { toggleStepApi } from '../../apis/TasksApi'
+import useApi from '../../hooks/useApi'
 import { format } from 'date-fns'
 import CompleteStepIcon from '../../svg/others/CompleteStepIcon'
 import CloseIcon from '../../svg/others/CloseIcon'
 import FlagIcon from '../../svg/others/FlagIcon'
 import '../../css/components/TaskPreview.css'
 
+function areStepsDifferent(currentSteps, recordSteps) {
+  if (!currentSteps || !recordSteps || currentSteps.length !== recordSteps.length) {
+    return true
+  }
+
+  for (let i = 0; i < currentSteps.length; i++) {
+    const currentStep = currentSteps[i]
+    const recordStep = recordSteps.find(step => step._id === currentStep._id)
+
+    if (!recordStep || recordStep.completed !== currentStep.completed) {
+      return true
+    }
+  }
+
+  return false
+}
+
 export default function TaskPreview({ currentTask }) {
   const dispatch = useDispatch()
 
-  const toggleTaskStep = (step, i) => {
-    const completedSteps = currentTask.steps.filter(step => step.isCompleted).length
+  const [image, setImage] = useState(currentTask.image)
 
-    if (!step.isCompleted && completedSteps === currentTask.steps.length - 1 && !currentTask.backlog) {
-      dispatch(addPopup('verify task completion'))
-    } else {
-      const updatedSteps = [...currentTask.steps]
-      updatedSteps[i] = {
-        ...updatedSteps[i],
-        isCompleted: !updatedSteps[i].isCompleted
-      }
-      if (completedSteps === currentTask.steps.length && !currentTask.backlog) {
-        dispatch(toggleStep({ taskId: currentTask.id, stepId: step.id }))
-        dispatch(unfinishTask(currentTask.id))
-        dispatch(setCurrentTask({
-          ...currentTask,
-          steps: updatedSteps,
-          isCompleted: false
-        }))
-      } else {
-        dispatch(setCurrentTask({ ...currentTask, steps: updatedSteps}))
-        dispatch(toggleStep({ taskId: currentTask.id, stepId: step.id }))
+  const {
+		fetchApi : fetchToggleStepApi,
+		apiData: toggleStepApiData,
+		apiError: toggleStepApiError,
+		apiLoading: toggleStepApiLoading
+	} = useApi(toggleStepApi)
+
+  // close popup when task is added correctly
+	useEffect(() => {
+    if (toggleStepApiData?.record) {
+      if (areStepsDifferent(currentTask.steps, toggleStepApiData.record.steps)) {
+        dispatch(setCurrentTask({ ...currentTask, steps: toggleStepApiData.record.steps }))
       }
     }
+	}, [toggleStepApiData, dispatch, currentTask])
+
+  const toggleTaskStep = async (i) => {
+    const updatedSteps = [...currentTask.steps]
+    updatedSteps[i] = {
+      ...updatedSteps[i],
+      completed: !updatedSteps[i].completed
+    }
+
+    await fetchToggleStepApi(updatedSteps, currentTask._id)
   }
 
   const stepStyles = (step) => {
     return {
-      textDecoration: step.isCompleted ? 'line-through 1px' : 'none',
-      color: step.isCompleted ? '#00FF29' : 'rgba(18, 18, 18, 0.65)',
-      borderColor: step.isCompleted ? '#00FF29' : 'rgba(18, 18, 18, 0.65)'
+      textDecoration: step.completed ? 'line-through 1px' : 'none',
+      color: step.completed ? '#00FF29' : 'rgba(18, 18, 18, 0.65)',
+      borderColor: step.completed ? '#00FF29' : 'rgba(18, 18, 18, 0.65)'
     }
+  }
+
+  if (toggleStepApiError) {
+    console.log(toggleStepApiError)
   }
 
   return (
     <div className='task-preview-popup'>
       <div  className='task-preview-heading'>
-        <p>{currentTask.title}</p>
+        <p>{currentTask.name}</p>
         
         <CloseIcon
           className='close-task-preview'
-          onClick={() => dispatch(removePopup('task preview'))}
+          onClick={() => {
+            dispatch(removePopup('task preview'))
+            
+            if (toggleStepApiData?.record) {
+              dispatch(incrementRenderCount())
+            }
+          }}
         />
       </div>
 
       <div className='task-preview-upper-section'>
         <div className='task-preview-upper-left-section'>
-          <div
-            className='task-preview-tag'
-            style={{ backgroundColor: currentTask.tag.color }}
-          >
-            {currentTask.tag.name}
-          </div>
+          {
+            currentTask?.tag?.name && (
+              <div
+                className='task-preview-tag'
+                style={{ backgroundColor: currentTask.tag.color }}
+              >
+                {currentTask.tag.name}
+              </div>
+            )
+          }
 
-          <FlagIcon priority={currentTask.flag}/>
+
+          <FlagIcon priority={currentTask.priority}/>
 
           <div className='task-preview-date-container'>
             <p>
-              Start date: {format(new Date(currentTask.startDate), "d MMM yyy 'at' h:mm aaa")}
+              Start date: {format(new Date(currentTask.startAt), "d MMM yyy 'at' h:mm aaa")}
             </p>
 
             <p>
-              End date: {format(new Date(currentTask.endDate), "d MMM yyy 'at' h:mm aaa")}
+              End date: {format(new Date(currentTask.endAt), "d MMM yyy 'at' h:mm aaa")}
             </p>
           </div>
         </div>
 
         {
-          currentTask.image && (
+          image && (
             <img
               className='task-preview-cover-image'
-              src={currentTask.image}
-              alt='cover' 
+              src={`https://intime-9hga.onrender.com/api/v1/images/${image}`}
+              alt='cover'
+              onError={(e) => {
+                e.target.onerror = null
+                setImage('')
+              }}
             />
           )
         }
@@ -91,7 +131,7 @@ export default function TaskPreview({ currentTask }) {
       {
         (currentTask.disc ||
         currentTask.disc !== '') && (
-          <p className='task-preview-disc'>{currentTask.disc}</p>
+          <p className='task-preview-disc'>{currentTask.disc.replace(/\r\n/g, '\n')}</p>
         )
       }
 
@@ -101,15 +141,16 @@ export default function TaskPreview({ currentTask }) {
             {
               currentTask.steps.map((step, i) => (
                 <div 
-                  key={step.id}
+                  key={step._id}
                   className='task-preview-step'
                   style={stepStyles(step)}
                 >
-                  <p>{step.content}</p>
+                  <p>{step.stepDisc}</p>
                 
                   <CompleteStepIcon
-                    toggleStep={() => toggleTaskStep(step, i)}
-                    isCompleted={step.isCompleted}
+                    toggleStep={() => toggleTaskStep(i)}
+                    isCompleted={step.completed}
+                    style={{ pointerEvents: toggleStepApiLoading ? 'none' : '', cursor: toggleStepApiLoading ? 'auto' : '' }}
                   />
                   </div>
               ))
@@ -127,7 +168,7 @@ export default function TaskPreview({ currentTask }) {
         </button>
 
         {
-          (!currentTask.backlog && !currentTask.isCompleted) && (
+          (!currentTask.compleleted) && (
             <div className='task-preview-left-button-wrapper-section'>
               <button
                 className='task-preview-button white'

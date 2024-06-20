@@ -18,7 +18,7 @@ export default function HomeTask({ task }) {
     dispatch(setCurrentTask(task))
   }
 
-  const endDate = new Date(task.endDate).toLocaleString('en-US', {
+  const endDate = new Date(task.endAt).toLocaleString('en-US', {
     month: 'short',
     day: 'numeric',
     hour: 'numeric',
@@ -26,13 +26,13 @@ export default function HomeTask({ task }) {
     hour12: true
   })
 
-  const taskPercentage = parseFloat(
-    (task.steps.filter((task) => task.isCompleted).length / task.steps.length * 100)
-    .toFixed(2)
-  )
+  const taskPercentage = task?.steps ? parseFloat(
+    (task.steps.filter((step) => step.completed).length / task.steps.length * 100)
+    .toFixed(2) 
+  ) : ''
 
   const percentageBarStyles = {
-    width: `${task.steps.length !== 0 ? taskPercentage : 0}%`,
+    width: `${task?.steps.length !== 0 ? taskPercentage : 0}%`,
     backgroundColor: 
       taskPercentage <= 25 
         ? '#D20000'
@@ -49,7 +49,7 @@ export default function HomeTask({ task }) {
         <HomeCompleteTaskIcon verifyCompletion={verifyCompletion}/>
 
         <div className='home-task-info'>
-          <p className='home-task-title'>{task.title}</p>
+          <p className='home-task-title'>{task.name}</p>
 
           <div className='home-task-date-container'>
             <HomeTaskTimeIcon />
@@ -67,7 +67,7 @@ export default function HomeTask({ task }) {
         <div className='home-task-percentage-container'>
           <p className='home-task-percentage'>
             {
-              task.steps.length !== 0 ? taskPercentage : 0
+              task?.steps.length !== 0 ? taskPercentage : 0
             }
             % completed
           </p>
@@ -77,14 +77,14 @@ export default function HomeTask({ task }) {
           </div>
         </div>
 
-        <FlagIcon priority={task.flag}/>
+        <FlagIcon priority={task.priority}/>
       </div>
 
       {
-        task.steps.length !== 0 ? 
+        task?.steps.length !== 0 ? 
         <p className='home-task-steps'>
           {
-            task.steps.filter((setp) => setp.isCompleted).length + '/' + task.steps.length
+            task.steps.filter((step) => step.completed).length + '/' + task.steps.length
           }
         </p> :
         ''

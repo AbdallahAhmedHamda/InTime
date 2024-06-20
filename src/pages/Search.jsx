@@ -1,7 +1,9 @@
 import { useParams } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { setCurrentPage, removeAllPopups } from '../features/navigation/navigationSlice'
 import { useEffect, useState } from 'react'
+import { searchTasksApi } from '../apis/TasksApi'
+import useApi from '../hooks/useApi'
 import TasksTask from '../components/tasks/TasksTask'
 import TasksShowMoreArrow from'../svg/tasks/TasksShowMoreArrow'
 import TasksShowLessArrow from'../svg/tasks/TasksShowLessArrow'
@@ -10,28 +12,53 @@ import '../css/pages/Tasks.css'
 export default function Search() {
   const { searchValue } = useParams()
 
-  const tasks = useSelector((state) => state.user.tasks).filter((task) => task.title.includes(searchValue))
-
   const dispatch = useDispatch()
 
   const [showMoreHovered, setShowMoreHovered] = useState(false)
   const [showLessHovered, setShowLessHovered] = useState(false)
   const [tasksToShow, setTasksToShow] = useState(12)
+  const [tasks, setTasks] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  const {
+		fetchApi : fetchSearchTasksApi,
+		apiData: searchTasksApiData,
+		apiError: searchTasksApiError,
+	} = useApi(searchTasksApi)
 
   // change the current page so the app can rerender and update sidenav active icon and remove all popups
   useEffect(() => {
     dispatch(setCurrentPage('search'))
     dispatch(removeAllPopups())
   }, [dispatch])
+  
+  // load tasks
+	useEffect(() => {
+		const fetchApis = async () => {	
+      await fetchSearchTasksApi(searchValue)
+
+      setLoading(false)
+		}
+	
+		fetchApis()
+	}, [fetchSearchTasksApi, searchValue])
+
+  // fetch api data
+	useEffect(() => {
+    if (searchTasksApiData?.record) {
+      setTasks(searchTasksApiData.record.slice().reverse())
+    }
+
+	}, [searchTasksApiData])
 
   // add tasks to the filters if there is space for them
   useEffect(() => {
-    if (tasks.length <= 12 || tasksToShow % 3 !== 0 || tasksToShow > tasks.length) {
+    if (tasks.length !== 0 && (tasks.length <= 12 || tasksToShow % 3 !== 0 || tasksToShow > tasks.length)) {
       setTasksToShow(tasks.length)
     }
     // eslint-disable-next-line
-  }, [tasks])
-
+  }, [tasks, searchTasksApiData])
+  
   const showMore = () => {
     if (Math.floor(tasks.length / 12) === Math.floor(tasksToShow / 12)) {
       setTasksToShow(tasksToShow + (tasks.length - tasksToShow))
@@ -44,13 +71,22 @@ export default function Search() {
 
   const showLess = () => {
     if (tasks.length === tasksToShow) {
-      console.log('here')
       setTasksToShow(tasksToShow - (tasksToShow % 12 === 0 ? 12 : tasksToShow % 12 ))
     } else {
       setTasksToShow(tasksToShow - 12)
     }
 
     setShowLessHovered(false)
+  }
+
+  if (loading) {
+    return (
+      <div />
+    )
+  }
+
+  if (searchTasksApiError) {
+    console.log(searchTasksApiError)
   }
 
   return (
@@ -60,14 +96,16 @@ export default function Search() {
       <div className='tasks-left-section search-page'>
           <div className='tasks-left-section-tasks'>
             {
-              tasks.slice(0, tasksToShow).map((task) => (
-                <TasksTask task={task} key={task.id}/>
-              ))
+              tasks.length !== 0 && (
+                tasks.slice(0, tasksToShow).map((task) => (
+                  <TasksTask task={task} key={task._id}/>
+                ))
+              )
             }
           </div>
 
           {
-            tasks !== 0 && (
+            tasks.length !== 0 && (
               <div className='tasks-show-container search-show'>
                 {
                   tasksToShow > 12 && (
