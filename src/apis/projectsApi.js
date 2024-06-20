@@ -61,7 +61,7 @@ export const createProjectApi = async (values) => {
       }
     )
 
-    if (response.data.success) {
+    if (response.data && response.data?.success) {
       return response.data
     } else {
       throw new Error(response.data.message || 'Unknown error occurred')
@@ -129,7 +129,7 @@ export const editProjectApi = async (values, id, nameChanged) => {
       }
     )
 
-    if (response.data.success) {
+    if (response.data && response.data?.success) {
       return response.data
     } else {
       throw new Error(response.data.message || 'Unknown error occurred')
@@ -155,11 +155,59 @@ export const deleteProjectApi = async (id) => {
       }
     )
     
-    if (response.data.success) {
+    if (response.data && response.data?.success) {
       return response.data
     } else {
       throw new Error(response.data.message || 'Unknown error occurred')
     }
+  } catch (error) {
+    if (error.response) {
+      error.message = error.response.data.message || 'Unknown error occurred'
+    }
+    
+    throw error
+  }
+}
+
+export const joinProjectApi = async (link) => {
+  try {
+    const accessToken = localStorage.getItem('accessToken')
+    
+    const response = await axios.get(link, 
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      }
+    )
+
+    if (response.data && response.data?.success) {
+      return response.data
+    } else {
+      throw new Error(response.data.message || 'Unknown error occurred')
+    }
+  } catch (error) {
+    if (error.response) {
+      error.message = error.response.data.message || 'Unknown error occurred'
+    }
+    
+    throw error
+  }
+}
+
+export const deleteProjectImageApi = async (id) => {
+  try {
+    const accessToken = localStorage.getItem('accessToken')
+    
+    const response = await axios.delete(`${API_URL}/removeProjectImage/${id}`, 
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      }
+    )
+    
+    return response.data
   } catch (error) {
     if (error.response) {
       error.message = error.response.data.message || 'Unknown error occurred'

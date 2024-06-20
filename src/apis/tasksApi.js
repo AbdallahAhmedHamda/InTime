@@ -132,7 +132,7 @@ export const allTasksApi = async (paramsObject) => {
       params
     })
 
-    if (response.data.success) {
+    if (response.data && response.data?.success) {
       return response.data
     } else {
       throw new Error(response.data.message || 'Unknown error occurred')
@@ -156,7 +156,7 @@ export const searchTasksApi = async (searchQuery) => {
       }
     })
 
-    if (response.data.success) {
+    if (response.data && response.data?.success) {
       return response.data
     } else {
       throw new Error(response.data.message || 'Unknown error occurred')
@@ -184,7 +184,7 @@ export const createTaskApi = async (task) => {
       }
     })
 
-    if (response.data.success) {
+    if (response.data && response.data?.success) {
       return response.data
     } else {
       throw new Error(response.data.message || 'Unknown error occurred')
@@ -212,7 +212,7 @@ export const updateTaskApi = async (task, id, nameChanged) => {
       }
     })
 
-    if (response.data.success) {
+    if (response.data && response.data?.success) {
       return response.data
     } else {
       throw new Error(response.data.message || 'Unknown error occurred')
@@ -244,7 +244,7 @@ export const toggleStepApi = async (steps, id) => {
       }
     })
 
-    if (response.data.success) {
+    if (response.data && response.data?.success) {
       return response.data
     } else {
       throw new Error(response.data.message || 'Unknown error occurred')
@@ -268,7 +268,7 @@ export const completeTaskApi = async (id) => {
       }
     })
 
-    if (response.data.success) {
+    if (response.data && response.data?.success) {
       return response.data
     } else {
       throw new Error(response.data.message || 'Unknown error occurred')
@@ -292,11 +292,33 @@ export const deleteTaskApi = async (id) => {
       }
     })
 
-    if (response.data.success) {
+    if (response.data && response.data?.success) {
       return response.data
     } else {
       throw new Error(response.data.message || 'Unknown error occurred')
     }
+  } catch (error) {
+    if (error.response) {
+      error.message = error.response.data.message || 'Unknown error occurred'
+    }
+    
+    throw error
+  }
+}
+
+export const deleteTaskImageApi = async (id) => {
+  try {
+    const accessToken = localStorage.getItem('accessToken')
+    
+    const response = await axios.delete(`${API_URL}/removeTaskImage/${id}`, 
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      }
+    )
+    
+    return response.data
   } catch (error) {
     if (error.response) {
       error.message = error.response.data.message || 'Unknown error occurred'

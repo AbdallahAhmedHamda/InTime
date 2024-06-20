@@ -18,6 +18,10 @@ export default function ProjectsProject({ project }) {
     dispatch(setCurrentProject(project))
   }
 
+  const openMembers = () => {
+    console.log('open')
+  }
+
   const userRole = project.members.find((member) => userId === member.memberId)?.role || ''
 
   return (
@@ -26,7 +30,7 @@ export default function ProjectsProject({ project }) {
       <p className='projects-project-title'>{project.name}</p>
 
       <p className='projects-project-role'>
-        {userRole}
+        {userRole === 'admin' ? userRole : 'member'}
       </p>
       </div>
 
@@ -67,7 +71,13 @@ export default function ProjectsProject({ project }) {
           )
         }
 
-        <ChatIcon />
+        <div className='projects-project-right-bottom-section'>
+          <ChatIcon />
+
+          <p onClick={openMembers}>
+            View members
+          </p>
+        </div>
       </div>
     </div>
   )

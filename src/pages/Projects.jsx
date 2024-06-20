@@ -61,30 +61,33 @@ export default function Projects() {
 
   return (
     <div className='main-content'>
-      <div className="projects-header">
-        <p className='page-name'>Projects</p>
+      <div className='projects-page-wrapper'>
+        <div className="projects-header">
+          <p className='page-name'>Projects</p>
 
-        <ProjectsFilters role={role} setRole={setRole}/>
-      </div>
+          <p className='projects-join-project-button' onClick={() => dispatch(addPopup('join project'))}>Join Project</p>
+          
+          <ProjectsFilters role={role} setRole={setRole}/>
+        </div>
 
+        <div className='projects-projects-container'>
+          {
+            (projects.length !== 0) ?
+            projects.map((project) => (
+              <ProjectsProject project={project} key={project._id} />
+            )) : (role === '') ?
+            <p>There is no Projects</p> :
+            ''
+          }
 
-      <div className='projects-projects-container'>
-        {
-          (projects.length !== 0) ?
-          projects.map((project) => (
-            <ProjectsProject project={project} key={project._id} />
-          )) : (role === '') ?
-          <p>There is no Projects</p> :
-          ''
-        }
-
-        {
-          (role !== 'member') ?
-          <div className='projects-svg-container'>
-            <AddTaskIcon showPopup={() => dispatch(addPopup('add project'))}/>
-          </div> :
-          ''
-        }
+          {
+            (role !== 'member') ?
+            <div className='projects-svg-container'>
+              <AddTaskIcon showPopup={() => dispatch(addPopup('add project'))}/>
+            </div> :
+            ''
+          }
+        </div>
       </div>
     </div>
   )

@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { addPopup, removePopup, setUncroppedTaskImage, setCroppedTaskImage, setCurrentTask, incrementRenderCount } from '../../features/navigation/navigationSlice'
 import { useEffect, useState, useRef, useCallback } from 'react'
-import { updateTaskApi } from '../../apis/tasksApi'
+import { updateTaskApi, deleteTaskImageApi } from '../../apis/tasksApi'
 import useApi from '../../hooks/useApi'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker'
@@ -64,6 +64,11 @@ export default function EditTask({ currentTask, selectZIndex }) {
 		apiError: updateTaskApiError,
 		apiLoading: updateTaskApiLoading
 	} = useApi(updateTaskApi)
+
+  const {
+		fetchApi : fetchDeleteTaskImageApi,
+		apiError: deleteTaskImageApiError
+	} = useApi(deleteTaskImageApi)
 
   const setTagColor = useCallback(() => {
     if (values.tag.trim() === '') {
@@ -214,6 +219,10 @@ export default function EditTask({ currentTask, selectZIndex }) {
     e.preventDefault()
 
     const nameChanged = currentTask.name !== values.name
+
+    if (values.image === '') {
+      await fetchDeleteTaskImageApi(currentTask._id)
+    }
     
     await fetchUpdateTaskApi({
       ...values,
@@ -225,6 +234,10 @@ export default function EditTask({ currentTask, selectZIndex }) {
 
     setApiCallAttempt(prevAttempts => prevAttempts + 1)
   }
+
+  if (deleteTaskImageApiError) {
+		console.log(deleteTaskImageApiError)
+	}
   
   const today = dayjs()
     .startOf('minute')

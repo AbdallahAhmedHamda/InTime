@@ -16,7 +16,7 @@ export default function Tasks() {
   const inProgressTasks = useSelector((state) => state.user.inProgressTasks)
 
   const [filters, setFilters] = useState({
-		projectId: [],
+		projectTask: [],
 		completed: [],
 		priority: [],
 		tag: []

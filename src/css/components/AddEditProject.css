@@ -84,7 +84,7 @@
 }
 
 .add-project-content > .add-project-input-block > input:focus,.edit-project-content > .edit-project-input-block > input:focus  {
-  outline: 2px #1976d2 solid;
+  outline: 2px #1976d2 solid !important;
 }
 
 .add-project-content > .add-project-input-block > .optional-input-wrapper, .edit-project-content > .edit-project-input-block > .optional-input-wrapper {

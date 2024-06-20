@@ -49,7 +49,7 @@ export const userDataApi = async () => {
       },
     })
 
-    if (response.data.success) {
+    if (response.data &&response.data?.success) {
       return response.data
     } else {
       throw new Error(response.data.message || 'Unknown error occurred')

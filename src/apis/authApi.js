@@ -52,7 +52,7 @@ export const resendActivationApi = async (email) => {
   try {
     const response = await axios.post(`${API_URL}/resendactivationcode`, { email })
 
-    if (response.data.success) {
+    if (response.data && response.data?.success) {
       return response.data
     } else {
       throw new Error(response.data.message || 'Unknown error occurred')
@@ -90,7 +90,7 @@ export const refreshTokenApi = async (refreshToken) => {
   try {
     const response = await axios.post(`${API_URL}/refreshToken`, { refreshToken })
 
-    if (response.data.success) {
+    if (response.data && response.data?.success) {
       return response.data
     } else {
       throw new Error(response.data.message || 'Unknown error occurred')

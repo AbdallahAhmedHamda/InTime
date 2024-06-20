@@ -7,6 +7,7 @@ import VerifyAccountDeletionMessage from '../popups/VerifyAccountDeletionMessage
 import VerifyTaskCompletionMessage from '../popups/VerifyTaskCompletionMessage'
 import VerifyTaskDeletionMessage from '../popups/VerifyTaskDeletionMessage'
 import ImageCrop from '../popups/ImageCrop'
+import JoinProject from '../popups/JoinProject'
 import TaskPreview from '../popups/TaskPreview'
 import EditProject from '../popups/EditProject'
 import AddProject from '../popups/AddProject'
@@ -171,6 +172,9 @@ export default function Popups() {
               /> :
               item === 'verify account deletion' ?
               <VerifyAccountDeletionMessage
+              /> :
+              item === 'join project' ?
+              <JoinProject
               /> :
               item === 'not image' ?
               <Message 

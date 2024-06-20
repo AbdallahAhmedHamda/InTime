@@ -10,7 +10,7 @@ const filters = [
     label: 'Admin'
   },
   {
-    value: 'member',
+    value: 'user',
     label: 'Member'
   }
 ]

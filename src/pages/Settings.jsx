@@ -140,7 +140,7 @@ export default function Settings() {
     if (validate()) {
       const fetchApis = async () => {
 
-        if (!values.profilePic) {
+        if (values.profilePic === '') {
           await fetchDeleteProfilePicApi()
         }
 

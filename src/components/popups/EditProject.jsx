@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { addPopup, removePopup, setUncroppedProjectImage, setCroppedProjectImage, setCurrentProject, incrementRenderCount } from '../../features/navigation/navigationSlice'
 import { useEffect, useState, useRef } from 'react'
-import { editProjectApi } from '../../apis/projectsApi'
+import { editProjectApi, deleteProjectImageApi } from '../../apis/projectsApi'
 import useApi from '../../hooks/useApi'
 import CameraIcon from '../../svg/others/CameraIcon'
 import CloseIcon from '../../svg/others/CloseIcon'
@@ -28,6 +28,11 @@ export default function EditProject({ currentProject }) {
 		apiError: editProjectApiError,
 		apiLoading: editProjectApiLoading
 	} = useApi(editProjectApi)
+
+  const {
+		fetchApi : fetchDeleteProjectImageApi,
+		apiError: deleteProjectImageApiError
+	} = useApi(deleteProjectImageApi)
 
   // remove saved images from redux when popup unmounts
   useEffect(() => {
@@ -119,10 +124,19 @@ export default function EditProject({ currentProject }) {
 
     const nameChanged = currentProject.name !== values.name
     
+    if (values.image === '') {
+      await fetchDeleteProjectImageApi(currentProject._id)
+    }
+    
     await fetchEditProjectApi(values, currentProject._id, nameChanged)
 
     setApiCallAttempt(prevAttempts => prevAttempts + 1)
   }
+
+  
+  if (deleteProjectImageApiError) {
+		console.log(deleteProjectImageApiError)
+	}
     
   return (
     <form

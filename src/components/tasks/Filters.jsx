@@ -116,14 +116,14 @@ export default function Filters({ applyFilters, disabled, filters, setFilters })
           <label className='filter-option-container'>
             <input
               type='checkbox'
-              name='projectId'
+              name='projectTask'
               onChange={(e) => handleCheckboxChange(e, false)}
-              checked={checkboxChecked('projectId', false)}
+              checked={checkboxChecked('projectTask', false)}
             />
 
-            <span className='filter-checkmark' style={checkmarkStyles('projectId', false)}/>
+            <span className='filter-checkmark' style={checkmarkStyles('projectTask', false)}/>
 
-            <p style={filterNameStyles('projectId', false)}>
+            <p style={filterNameStyles('projectTask', false)}>
               Personal
             </p>
           </label>
@@ -131,14 +131,14 @@ export default function Filters({ applyFilters, disabled, filters, setFilters })
           <label className='filter-option-container'>
             <input
               type='checkbox'
-              name='projectId'
+              name='projectTask'
               onChange={(e) => handleCheckboxChange(e, true)}
-              checked={checkboxChecked('projectId', true)}
+              checked={checkboxChecked('projectTask', true)}
             />
 
-            <span className='filter-checkmark' style={checkmarkStyles('projectId', true)}/>
+            <span className='filter-checkmark' style={checkmarkStyles('projectTask', true)}/>
 
-            <p style={filterNameStyles('projectId', true)}>
+            <p style={filterNameStyles('projectTask', true)}>
               Projects
             </p>
           </label>
