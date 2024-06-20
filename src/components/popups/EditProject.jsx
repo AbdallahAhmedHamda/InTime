@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { addPopup, removePopup, setUncroppedProjectImage, setCroppedProjectImage, setCurrentProject, incrementRenderCount } from '../../features/navigation/navigationSlice'
 import { useEffect, useState, useRef } from 'react'
-import { editProjectApi } from '../../apis/pr'
+import { editProjectApi } from '../../apis/projectsApi'
 import useApi from '../../hooks/useApi'
 import CameraIcon from '../../svg/others/CameraIcon'
 import CloseIcon from '../../svg/others/CloseIcon'

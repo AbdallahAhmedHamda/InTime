@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux'
 import { incrementRenderCount, removeAllPopups, removePopup } from '../../features/navigation/navigationSlice'
 import { useEffect } from 'react'
-import { deleteProjectApi } from '../../apis/pr'
+import { deleteProjectApi } from '../../apis/projectsApi'
 import useApi from '../../hooks/useApi'
 import CloseIcon from '../../svg/others/CloseIcon'
 import '../../css/components/Messages.css'
