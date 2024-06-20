@@ -78,7 +78,7 @@ export default function SideNav() {
   const sideNavContainerStyles = {
     top: scrollPosition < 79 ? 79 - scrollPosition : 0,
     width: sideNavActive ? 180 : 78,
-    height: scrollPosition < 79 ? `calc(100vh - 79px + ${scrollPosition}px)` : '100vh',
+    height: scrollPosition < 79 ? `calc(100% - 79px + ${scrollPosition}px)` : '100%',
   }
 
   const sideNavStyles = {
