@@ -10,6 +10,7 @@ import VerifyMemberRemovalMessage from '../popups/VerifyMemberRemovalMessage'
 import AdminTaskPreview from '../popups/AdminTaskPreview'
 import ProjectMembers from '../popups/ProjectMembers'
 import MemberEditTask from '../popups/MemberEditTask'
+import AdminEditTask from '../popups/AdminEditTask'
 import JoinProject from '../popups/JoinProject'
 import TaskPreview from '../popups/TaskPreview'
 import EditProject from '../popups/EditProject'
@@ -269,6 +270,11 @@ export default function Popups() {
                 currentTask={currentTask}
                 selectZIndex={260}
               /> :
+              item === 'admin edit project task' ?
+              <AdminEditTask 
+                currentTask={currentTask}
+                currentProject={currentProject}
+              /> :
               item === 'verify task completion' ?
               <VerifyTaskCompletionMessage 
                 task={currentTask}
@@ -277,6 +283,11 @@ export default function Popups() {
               <VerifyTaskDeletionMessage 
                 task={currentTask}
               /> :
+              // item === 'verify project task deletion' ?
+              // <VerifyProjectTaskDeletion
+              //   currentProject={currentProject}
+              //   currentTask={currentTask}
+              // /> :
               item === 'confirm member removal' ?
               <VerifyMemberRemovalMessage
                 currentProject={currentProject}
