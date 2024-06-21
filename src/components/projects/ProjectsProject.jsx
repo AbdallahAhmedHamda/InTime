@@ -1,3 +1,4 @@
+import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { addPopup, setCurrentProject, setCurrentMembers } from '../../features/navigation/navigationSlice'
 import { useState, useEffect } from 'react'
@@ -5,10 +6,11 @@ import { getProjectMembersApi } from '../../apis/projectsApi'
 import useApi from '../../hooks/useApi'
 import DeleteProjectIcon from '../../svg/projects/DeleteProjectIcon'
 import EditProjectIcon from '../../svg/projects/EditProjectIcon'
-import AssignTaskIcon from '../../svg/projects/AssignTaskIcon'
 import ChatIcon from '../../svg/projects/ChatIcon'
 
 export default function ProjectsProject({ project }) {
+  const navigate = useNavigate()
+
   const userId = useSelector ((state) => state.user.id)
 
   const dispatch = useDispatch()
@@ -33,15 +35,18 @@ export default function ProjectsProject({ project }) {
     }
 	}, [getProjectMembersApiData, project, dispatch])
 
-  const openProjectPreview = () => {
-    dispatch(addPopup('project preview'))
-    dispatch(setCurrentProject(project))
-  }
-
   const openMembers = async (e) => {
     e.stopPropagation()
+    e.preventDefault()
 
     await fetchGetProjectMembersApi(project._id)
+  }
+
+  const goToChat = (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    
+    navigate(`${project._id}/chat`)
   }
 
   if (getProjectMembersApiError) {
@@ -50,9 +55,9 @@ export default function ProjectsProject({ project }) {
 
   const userRole = project.members.find((member) => userId === member.memberId)?.role || ''
   return (
-    <div
+    <Link
+      to={`${project._id}`}
       className='projects-project-container'
-      onClick={openProjectPreview}
       style={{ pointerEvents: getProjectMembersApiLoading ? 'none' : '', cursor: getProjectMembersApiLoading ? 'auto' : 'pointer' }}
     >
       <div className='projects-project-upper-section'>
@@ -85,29 +90,29 @@ export default function ProjectsProject({ project }) {
             <div className='projects-project-left-bottom-section'>
               <DeleteProjectIcon openDeleteProject={(e) => {
                 e.stopPropagation()
+                e.preventDefault()
                 dispatch(addPopup('verify project deletion'))
                 dispatch(setCurrentProject(project))
               }}/>
 
               <EditProjectIcon openEditProject={(e) => {
                 e.stopPropagation()
+                e.preventDefault()
                 dispatch(addPopup('edit project'))
                 dispatch(setCurrentProject(project))
               }}/>
-
-              <AssignTaskIcon />
             </div>
           )
         }
 
         <div className='projects-project-right-bottom-section'>
-          <ChatIcon />
+          <ChatIcon goToChat={goToChat}/>
 
           <p onClick={openMembers}>
             View members
           </p>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }

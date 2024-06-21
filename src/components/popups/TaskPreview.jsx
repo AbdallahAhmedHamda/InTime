@@ -1,4 +1,4 @@
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { addPopup, removePopup, setCurrentTask, incrementRenderCount } from '../../features/navigation/navigationSlice'
 import { useState, useEffect } from 'react'
 import { toggleStepApi } from '../../apis/tasksApi'
@@ -27,6 +27,8 @@ function areStepsDifferent(currentSteps, recordSteps) {
 }
 
 export default function TaskPreview({ currentTask }) {
+  const myId = useSelector((state)=> state.user.id)
+
   const dispatch = useDispatch()
 
   const [image, setImage] = useState(currentTask.image)
@@ -100,7 +102,9 @@ export default function TaskPreview({ currentTask }) {
           }
 
 
-          <FlagIcon priority={currentTask.priority}/>
+          {
+            currentTask?.priority ? <FlagIcon priority={currentTask.priority}/> : ''
+          }
 
           <div className='task-preview-date-container'>
             <p>
@@ -158,34 +162,38 @@ export default function TaskPreview({ currentTask }) {
         )
       }
 
-      <div className='task-preview-button-wrapper'>
-        <button
-          className='task-preview-button red'
-          onClick={() => dispatch(addPopup('verify task deletion'))}
-        >
-          Delete
-        </button>
+      {
+        myId === currentTask.userId && (
+          <div className='task-preview-button-wrapper'>
+            <button
+              className='task-preview-button red'
+              onClick={() => dispatch(addPopup('verify task deletion'))}
+            >
+              Delete
+            </button>
 
-        {
-          (!currentTask.completed) && (
-            <div className='task-preview-left-button-wrapper-section'>
-              <button
-                className='task-preview-button white'
-                onClick={() => dispatch(addPopup('edit'))}
-              >
-                Edit
-              </button>
+            {
+              (!currentTask.completed) && (
+                <div className='task-preview-left-button-wrapper-section'>
+                  <button
+                    className='task-preview-button white'
+                    onClick={() => dispatch(addPopup('edit'))}
+                  >
+                    Edit
+                  </button>
 
-              <button
-                className='task-preview-button blue'
-                onClick={() => dispatch(addPopup('verify task completion'))}
-              >
-                Finish
-              </button>
-            </div>
-          )
-        }
-      </div>
+                  <button
+                    className='task-preview-button blue'
+                    onClick={() => dispatch(addPopup('verify task completion'))}
+                  >
+                    Finish
+                  </button>
+                </div>
+              )
+            }
+          </div>  
+        )
+      }
     </div>
   )
 }

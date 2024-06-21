@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 
 export default function ProjectsIcon() {
   const currentPage = useSelector((state) => state.navigation.currentPage)
-  const color = (currentPage === 'projects' || currentPage === 'project') ? '#5468E7' : 'black'
+  const color = (currentPage === 'projects' || currentPage === 'project' || currentPage === 'chat') ? '#5468E7' : 'black'
   
   return (
     <svg width="25" height="25" viewBox="0 0 18 15" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -18,6 +18,7 @@ import Settings from './pages/Settings'
 import Calendar from './pages/Calendar'
 import Projects from './pages/Projects'
 import NotFound from './pages/NotFound'
+import Project from './pages/Project'
 import SendOTP from './pages/SendOTP'
 import Profile from './pages/Profile'
 import Search from './pages/Search'
@@ -27,6 +28,7 @@ import Intro from './pages/Intro'
 import Board from './pages/Board'
 import Tasks from './pages/Tasks'
 import Home from './pages/Home'
+import Chat from './pages/Chat'
 
 const fillDaily = (data) => {
   const result = []
@@ -496,16 +498,43 @@ export default function App() {
 					}
 				/>
 
-				<Route
-					path='/projects'
-					element={
-						<PrivateRoute>
-							<Layout>
-								<Projects />
-							</Layout>
-						</PrivateRoute>
-					}
-				/>
+				<Route path='/projects'>
+					<Route
+						index
+						element={
+							<PrivateRoute>
+								<Layout>
+									<Projects />
+								</Layout>
+							</PrivateRoute>
+						}
+					/>
+
+					<Route path=':projectId'>
+						<Route
+							index
+							element={
+								<PrivateRoute>
+									<Layout>
+										<Project />
+									</Layout>
+								</PrivateRoute>
+							}
+						/>
+
+						<Route
+							path='chat'
+							element={
+								<PrivateRoute>
+									<Layout>
+										<Chat />
+									</Layout>
+								</PrivateRoute>
+							}
+						/>
+					</Route>
+				</Route>
+
 
 				<Route path='/calendar'>
 					<Route
