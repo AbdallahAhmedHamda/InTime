@@ -14,21 +14,11 @@ export default function Filters({ applyFilters, disabled, filters, setFilters })
   const [tagsSearchValue, setTagsSearchValue] = useState('')
   const [displayedTags, setDisplayedTags] = useState(tags)
   const [tagsToShow, setTagsToShow] = useState(6)
-  
-  // updated shown tags whenever the real tags change
-  useEffect(() => {
-    if (tagsSearchValue.trim() !== '') {
-      setDisplayedTags(tags.filter(tag => tag.name.includes(tagsSearchValue.trim())))
-    } else {
-      setDisplayedTags(tags)
-    }
-    // eslint-disable-next-line
-  }, [tags])
 
   // updated shown tags whenever the search changes
   useEffect(() => {
     if (tagsSearchValue.trim() !== '') {
-      setDisplayedTags(tags.filter(tag => tag.name.includes(tagsSearchValue.trim())))
+      setDisplayedTags(tags.filter(tag => tag.name.toLowerCase().includes(tagsSearchValue.toLowerCase().trim())))
       setTagsToShow(6)
     } else {
       setDisplayedTags(tags)
@@ -246,17 +236,17 @@ export default function Filters({ applyFilters, disabled, filters, setFilters })
               <p>Tags</p>
 
               <input
-                  className='tags-search'
-                  type='text'
-                  id='tagsSearch'
-                  autoComplete='on'
-                  spellCheck='false'
-                  value={tagsSearchValue}
-                  onChange={(e) => {
-                    setTagsSearchValue(e.target.value)
-                  }}
-                  placeholder='Search tags...'
-                />
+                className='tags-search'
+                type='text'
+                id='tagsSearch'
+                autoComplete='on'
+                spellCheck='false'
+                value={tagsSearchValue}
+                onChange={(e) => {
+                  setTagsSearchValue(e.target.value)
+                }}
+                placeholder='Search tags...'
+              />
             </div>
 
             <div className='single-filter-options  tags-filter-options'>

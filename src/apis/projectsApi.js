@@ -216,3 +216,29 @@ export const deleteProjectImageApi = async (id) => {
     throw error
   }
 }
+
+export const getProjectMembersApi = async (id) => {
+  try {
+    const accessToken = localStorage.getItem('accessToken')
+    
+    const response = await axios.get(`${API_URL}/projectMembers/${id}`, 
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      }
+    )
+
+    if (response.data && response.data?.success) {
+      return response.data
+    } else {
+      throw new Error(response.data.message || 'Unknown error occurred')
+    }
+  } catch (error) {
+    if (error.response) {
+      error.message = error.response.data.message || 'Unknown error occurred'
+    }
+    
+    throw error
+  }
+}

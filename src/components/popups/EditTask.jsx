@@ -129,7 +129,7 @@ export default function EditTask({ currentTask, selectZIndex }) {
 
   // handle update api errors
 	useEffect(() => {
-    if (updateTaskApiError === 'you have task with the same name') {
+    if (updateTaskApiError === 'there is a task with the same name in this user tasks') {
       setNameError('This task name already exists!')
     } else if (updateTaskApiError) {
       console.log(updateTaskApiError)

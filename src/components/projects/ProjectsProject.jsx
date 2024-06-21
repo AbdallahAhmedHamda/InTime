@@ -1,6 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { addPopup, setCurrentProject } from '../../features/navigation/navigationSlice'
-import { useState } from 'react'
+import { addPopup, setCurrentProject, setCurrentMembers } from '../../features/navigation/navigationSlice'
+import { useState, useEffect } from 'react'
+import { getProjectMembersApi } from '../../apis/projectsApi'
+import useApi from '../../hooks/useApi'
 import DeleteProjectIcon from '../../svg/projects/DeleteProjectIcon'
 import EditProjectIcon from '../../svg/projects/EditProjectIcon'
 import AssignTaskIcon from '../../svg/projects/AssignTaskIcon'
@@ -13,17 +15,39 @@ export default function ProjectsProject({ project }) {
 
   const [image, setImage] = useState(project.photo)
 
+  const {
+		fetchApi : fetchGetProjectMembersApi,
+		apiData: getProjectMembersApiData,
+		apiError: getProjectMembersApiError,
+	} = useApi(getProjectMembersApi)
+
+  // load members when i click on a project
+	useEffect(() => {
+    if (getProjectMembersApiData?.record) {
+      dispatch(setCurrentMembers(getProjectMembersApiData.record))
+
+      dispatch(addPopup('project members'))
+
+      dispatch(setCurrentProject(project))
+    }
+	}, [getProjectMembersApiData, project, dispatch])
+
   const openProjectPreview = () => {
     dispatch(addPopup('project preview'))
     dispatch(setCurrentProject(project))
   }
 
-  const openMembers = () => {
-    console.log('open')
+  const openMembers = async (e) => {
+    e.stopPropagation()
+
+    await fetchGetProjectMembersApi(project._id)
+  }
+
+  if (getProjectMembersApiError) {
+    console.log(getProjectMembersApiError)
   }
 
   const userRole = project.members.find((member) => userId === member.memberId)?.role || ''
-
   return (
     <div className='projects-project-container' onClick={openProjectPreview}>
       <div className='projects-project-upper-section'>

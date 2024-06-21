@@ -6,11 +6,12 @@ import VerifyProjectDeletionMessage from '../popups/VerifyProjectDeletionMessage
 import VerifyAccountDeletionMessage from '../popups/VerifyAccountDeletionMessage'
 import VerifyTaskCompletionMessage from '../popups/VerifyTaskCompletionMessage'
 import VerifyTaskDeletionMessage from '../popups/VerifyTaskDeletionMessage'
-import ImageCrop from '../popups/ImageCrop'
+import ProjectMembers from '../popups/ProjectMembers'
 import JoinProject from '../popups/JoinProject'
 import TaskPreview from '../popups/TaskPreview'
 import EditProject from '../popups/EditProject'
 import AddProject from '../popups/AddProject'
+import ImageCrop from '../popups/ImageCrop'
 import EditTask from '../popups/EditTask'
 import AddTask from '../popups/AddTask'
 import Message from '../popups/Message'
@@ -19,6 +20,7 @@ export default function Popups() {
   const popups = useSelector((state) => state.navigation.popups)
   const currentTask = useSelector((state) => state.navigation.currentTask)
   const currentProject = useSelector((state) => state.navigation.currentProject)
+  const currentMembers = useSelector((state) => state.navigation.currentMembers)
   
   const dispatch = useDispatch()
 
@@ -157,6 +159,11 @@ export default function Popups() {
               item === 'task preview' ?
               <TaskPreview
                 currentTask={currentTask}
+              /> :
+              item === 'project members' ?
+              <ProjectMembers
+                currentProject={currentProject}
+                currentMembers={currentMembers}
               /> :
               item === 'verify task completion' ?
               <VerifyTaskCompletionMessage 
