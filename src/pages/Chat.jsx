@@ -1,11 +1,11 @@
-// import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { setCurrentPage, removeAllPopups } from '../features/navigation/navigationSlice'
 import { useEffect } from 'react'
 
 
 export default function Project() {
-  // const { projectId } = useParams()
+  const { projectId } = useParams()
   
   const dispatch = useDispatch()
 
