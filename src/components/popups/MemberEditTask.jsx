@@ -45,7 +45,7 @@ export default function MemberEditTask({ currentTask, selectZIndex }) {
 
   const [values, setValues] = useState({
     disc: currentTask.disc ? currentTask.disc.replace(/\r\n/g, '\n') : currentTask.disc,
-    image: currentTask.image ? `https://intime-9hga.onrender.com/api/v1/images/${currentTask.image}` : currentTask.image,
+    image: currentTask.image ? `https://intime-9hga.onrender.com/api/v1/imagess/${currentTask.image}` : currentTask.image,
     tag: currentTask?.tag?.name ? currentTask.tag.name : '',
     priority: currentTask.priority !== undefined ? options[3 - currentTask.priority] : options[0],
     steps: currentTask.steps
