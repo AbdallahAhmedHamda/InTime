@@ -160,3 +160,143 @@ font-weight: 500;
   border-radius: 4px;
   color: white;
 }
+
+.project-page-left-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 48px;
+  height: fit-content;
+  width: fit-content;
+  max-width: 948px;
+}
+
+@media (max-width: 1460px) {
+  .project-page-left-section  {
+    max-width: 450px;
+  }
+}
+
+.project-page-single-task-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  background-color: white;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-width: 1px;
+  border-style: solid;
+  height: fit-content;
+  width: 450px;
+  border-radius: 10px;
+  padding: 15px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.project-page-single-task-upper-section {
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+  align-items: center;
+}
+
+.project-page-single-task-upper-left-section, .project-page-single-task-upper-right-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.project-page-single-task-tag {
+  color: #FFF;
+  font-size: 10px;
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 3px 12px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 100px;
+}
+
+.project-page-single-task-date {
+  color: #232360;
+  font-family: "DM Sans";
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  text-wrap: nowrap;
+}
+
+.project-page-single-task-member-profile-pic {
+  width: 25px;
+  height: 25px;
+  object-fit:cover;
+  border-radius: 50%;
+}
+
+.project-page-single-task-member-name {
+  font-size: 11px;
+  font-weight: 300;
+  max-width: 200px;
+  text-wrap: nowrap;
+}
+
+.project-page-single-task-title {
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.tasks-task-bottom-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.project-page-single-task-bottom-section {
+  display: flex;
+  justify-content: space-between;
+}
+
+.project-page-single-task-your-task {
+  display: flex;
+  padding: 4px 8px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+  border: 1px solid #5468E7;
+  font-family: 'Inter';
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 300;
+  color: #5468E7;
+}
+
+.project-page-single-task-state-finished,
+.project-page-single-task-state-waiting,
+.project-page-single-task-state-in-progress {
+  display: flex;
+  padding: 4px 8px;
+  justify-content: center;
+  align-items: center;
+  color: #F6F8FF;
+  font-family: 'Inter';
+  font-size: 10px;
+  font-weight: 300;
+  margin-left: auto;
+  border-radius: 3px;
+}
+
+.project-page-single-task-state-finished {
+  background-color: #00FF29;
+}
+
+.project-page-single-task-state-waiting {
+  background-color: #5468E7;
+
+}
+
+.project-page-single-task-state-in-progress {
+  background-color: #585A66 ;
+}

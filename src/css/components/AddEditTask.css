@@ -35,7 +35,7 @@
   border-radius: 50%;
 }
 
-.close-add:hover {
+.close-add:hover, .close-edit:hover {
   background-color: rgba(0, 0, 0, 0.3);
 }
 
@@ -66,11 +66,16 @@
   font-weight: 300;
 }
 
+.input-block > input:read-only, .input-block > textarea:read-only {
+  color: rgba(0, 0, 0, 0.40) !important;
+  cursor: auto;
+}
+
 .input-block > input, .step-wrapper > input {
   border-radius: 6px;
 }
 
-.input-block > input:focus, .input-block > textarea:focus, .step-wrapper > input:focus {
+.input-block > input:not(:read-only):focus, .input-block > textarea:not(:read-only):focus, .step-wrapper > input:not(:read-only):focus {
   outline: 
   2px #1976d2 solid;
 }
@@ -249,6 +254,30 @@
   transform: translateY(-50%);
   cursor: pointer;
   user-select: none;
+}
+
+.edit-popup.member-edit-task .MuiInputBase-input {
+  color: rgba(0, 0, 0, 0.40)  !important;
+}
+
+.edit-popup.member-edit-task .css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root input {
+  cursor: default !important;
+}
+
+.edit-popup.member-edit-task .date-time-container {
+  cursor: default !important;
+}
+
+.edit-popup.member-edit-task .date-time-icon {
+  filter: contrast(10%) !important;
+}
+
+.edit-popup.member-edit-task .MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: white !important;
+}
+
+.edit-popup.member-edit-task .date-time-icon {
+  cursor: default;
 }
 
 .MuiFormControl-root {

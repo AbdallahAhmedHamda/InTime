@@ -183,11 +183,11 @@ export default function TaskPreview({ currentTask }) {
                   <button
                     className='task-preview-button white'
                     onClick={() => {
-                      if (currentTask.projectTask) {
-                        dispatch(addPopup('member edit project task'))
-                      } else {
-                        dispatch(addPopup('edit'))
-                      }
+                        if (currentTask.projectTask) {
+                          dispatch(addPopup('member edit project task'))
+                        } else {
+                          dispatch(addPopup('edit'))
+                        }
                     }}
                   >
                     Edit

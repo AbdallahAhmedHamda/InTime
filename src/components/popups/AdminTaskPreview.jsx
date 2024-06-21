@@ -26,7 +26,7 @@ function areStepsDifferent(currentSteps, recordSteps) {
   return false
 }
 
-export default function ProjectTaskPreview({ currentTask, currentProject }) {
+export default function AdminTaskPreview({ currentTask, currentProject }) {
   const myId = useSelector((state)=> state.user.id)
 
   const dispatch = useDispatch()

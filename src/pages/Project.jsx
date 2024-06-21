@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { getProjectMembersApi, getProjectTasksApi, getProjectByIdApi, inviteLinkApi } from '../apis/projectsApi'
 import useApi from '../hooks/useApi'
 import ProjectProgressBar from '../components/projects/ProjectProgressBar'
+import ProjectTask from '../components/projects/ProjectTask'
 import AssignTaskIcon from '../svg/projects/AssignTaskIcon'
 import RemoveMember from '../svg/projects/RemoveMember'
 import ArrowIcon from '../svg/projects/ArrowIcon'
@@ -102,7 +103,7 @@ export default function Project() {
   // fetch tasks api data
 	useEffect(() => {
     if (getProjectTasksApiData?.record) {
-      setTasks(getProjectTasksApiData.record)
+      setTasks((getProjectTasksApiData.record).reverse())
     }
 	}, [getProjectTasksApiData])
 
@@ -164,7 +165,13 @@ export default function Project() {
       </div>
 
       <div className='project-page-container'>
-        <p>p</p>
+        <div className='project-page-left-section'>
+          {
+            tasks.map((task) => (
+              <ProjectTask task={task} project={project} key={task._id} user={members.find((member) => member._id === task.userId)}/>
+            ))
+          }
+        </div>
 
         <div className='project-page-right-section'>
           <div className='project-page-right-top-section'>

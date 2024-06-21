@@ -385,23 +385,25 @@ export const assignTaskApi = async (projectId, userId, task) => {
   }
 }
 
-export const editProjectTaskApi = async (projectId, userId, task) => {
+export const editProjectTaskApi = async (projectId, taskId, task, nameChanged) => {
   try {
     const accessToken = localStorage.getItem('accessToken')
 
     const formData = new FormData()
-
+    
     for (const key of Object.keys(task)) {
       const value = task[key]
-  
+
       if ((typeof value === 'string' && value.trim() !== '') ||
           (typeof value === 'number') || 
           (typeof value === 'boolean')) {
-        formData.append(key, value.toString())
+        if ((key === 'name' && nameChanged) || (key !== 'name')) {
+          formData.append(key, value.toString())
+        }
       }
     }
 
-    const response = await axios.post(`${API_URL}/editProjectTask/${projectId}/${userId}`, formData, {
+    const response = await axios.post(`${API_URL}/editProjectTask/${projectId}/${taskId}`, formData, {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
       }
