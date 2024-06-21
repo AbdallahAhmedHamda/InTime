@@ -27,7 +27,7 @@ export default function VerifyTaskDeletionMessage({ task }) {
   }, [deleteTaskApiData, dispatch])
 
   const deleteTask = async() => {
-    await fetchDeleteTaskApi((task._id))
+    await fetchDeleteTaskApi(task._id)
   }
 
   if (deleteTaskApiError) {

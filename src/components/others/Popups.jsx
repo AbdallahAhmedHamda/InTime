@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { removePopup, setCurrentTask } from '../../features/navigation/navigationSlice'
 import { useRef, useEffect } from 'react'
 import { useTransition, animated } from 'react-spring'
+import VerifyProjectTaskDeletionMessage from '../popups/VerifyProjectTaskDeletionMessage'
 import VerifyProjectDeletionMessage from '../popups/VerifyProjectDeletionMessage'
 import VerifyAccountDeletionMessage from '../popups/VerifyAccountDeletionMessage'
 import VerifyTaskCompletionMessage from '../popups/VerifyTaskCompletionMessage'
@@ -272,8 +273,8 @@ export default function Popups() {
               /> :
               item === 'admin edit project task' ?
               <AdminEditTask 
+              currentProject={currentProject}
                 currentTask={currentTask}
-                currentProject={currentProject}
               /> :
               item === 'verify task completion' ?
               <VerifyTaskCompletionMessage 
@@ -283,11 +284,11 @@ export default function Popups() {
               <VerifyTaskDeletionMessage 
                 task={currentTask}
               /> :
-              // item === 'verify project task deletion' ?
-              // <VerifyProjectTaskDeletion
-              //   currentProject={currentProject}
-              //   currentTask={currentTask}
-              // /> :
+              item === 'verify project task deletion' ?
+              <VerifyProjectTaskDeletionMessage
+                currentProject={currentProject}
+                currentTask={currentTask}
+              /> :
               item === 'confirm member removal' ?
               <VerifyMemberRemovalMessage
                 currentProject={currentProject}

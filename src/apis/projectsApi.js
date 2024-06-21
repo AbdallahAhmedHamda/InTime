@@ -390,7 +390,7 @@ export const editProjectTaskApi = async (projectId, taskId, task, nameChanged) =
     const accessToken = localStorage.getItem('accessToken')
 
     const formData = new FormData()
-    
+
     for (const key of Object.keys(task)) {
       const value = task[key]
 
@@ -404,6 +404,30 @@ export const editProjectTaskApi = async (projectId, taskId, task, nameChanged) =
     }
 
     const response = await axios.post(`${API_URL}/editProjectTask/${projectId}/${taskId}`, formData, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      }
+    })
+
+    if (response.data && response.data?.success) {
+      return response.data
+    } else {
+      throw new Error(response.data.message || 'Unknown error occurred')
+    }
+  } catch (error) {
+    if (error.response) {
+      error.message = error.response.data.message || 'Unknown error occurred'
+    }
+    
+    throw error
+  }
+}
+
+export const deleteProjectTaskApi = async (projectId, taskId) => {
+  try {
+    const accessToken = localStorage.getItem('accessToken')
+
+    const response = await axios.delete(`${API_URL}/deleteProjectTask/${projectId}/${taskId}`, {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
       }
