@@ -21,7 +21,7 @@ export default function TasksTask({ task }) {
   const editTask = (e) => {
     e.stopPropagation()
     dispatch(setCurrentTask(task))
-
+    
     if (task.projectTask) {
       dispatch(addPopup('member edit project task'))
     } else {

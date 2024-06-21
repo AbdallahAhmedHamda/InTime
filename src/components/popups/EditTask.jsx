@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { addPopup, removePopup, setUncroppedTaskImage, setCroppedTaskImage, setCurrentTask, incrementRenderCount } from '../../features/navigation/navigationSlice'
+import { addPopup, removePopup, setUncroppedTaskImage, setCroppedTaskImage, incrementRenderCount } from '../../features/navigation/navigationSlice'
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { updateTaskApi, deleteTaskImageApi } from '../../apis/tasksApi'
 import useApi from '../../hooks/useApi'
@@ -70,31 +70,6 @@ export default function EditTask({ currentTask, selectZIndex }) {
 		apiError: deleteTaskImageApiError
 	} = useApi(deleteTaskImageApi)
 
-  const setTagColor = useCallback(() => {
-    if (values.tag.trim() === '') {
-      return { name: '', color: '' }
-    } else {
-      const tag = { name: values.tag }
-      const tagName = values.tag.toLowerCase()
-
-      const tagIndex = allTags.findIndex(arrayTag => arrayTag.name.toLowerCase() === tagName)
-
-      if (tagIndex !== -1) {
-        tag.color = allTags[tagIndex].color
-      } else {
-        if (allTags.length !== 0) {
-          const lastColor = allTags[allTags.length - 1].color
-          const lastColorIndex = colors.findIndex(color => color === lastColor)
-          tag.color = colors[(lastColorIndex + 1) % 50]
-        } else {
-          tag.color = colors[0]
-        }
-      }
-  
-      return tag 
-    }
-  }, [values.tag, allTags])
-
   // remove saved images from redux when popup unmounts
   useEffect(() => {
     return () => {
@@ -110,22 +85,14 @@ export default function EditTask({ currentTask, selectZIndex }) {
     }
   }, [croppedImage])
 
-  // close popup when task is added correctly
+  // close popup when task is edited correctly
 	useEffect(() => {
     if (updateTaskApiData) {
-      dispatch(setCurrentTask({
-        ...values,
-        tag: setTagColor(),
-        priority: values.priority.value,
-        startAt: values.startAt.toISOString(),
-        endAt: values.endAt.toISOString(),
-      }))
-
       dispatch(removePopup('edit'))
 
       dispatch(incrementRenderCount())
     }
-	}, [updateTaskApiData, dispatch, setTagColor, values])
+	}, [updateTaskApiData, dispatch])
 
   // handle update api errors
 	useEffect(() => {
@@ -214,6 +181,31 @@ export default function EditTask({ currentTask, selectZIndex }) {
       }
     }
   }
+
+  const setTagColor = useCallback(() => {
+    if (values.tag.trim() === '') {
+      return { name: '', color: '' }
+    } else {
+      const tag = { name: values.tag }
+      const tagName = values.tag.toLowerCase()
+
+      const tagIndex = allTags.findIndex(arrayTag => arrayTag.name.toLowerCase() === tagName)
+
+      if (tagIndex !== -1) {
+        tag.color = allTags[tagIndex].color
+      } else {
+        if (allTags.length !== 0) {
+          const lastColor = allTags[allTags.length - 1].color
+          const lastColorIndex = colors.findIndex(color => color === lastColor)
+          tag.color = colors[(lastColorIndex + 1) % 50]
+        } else {
+          tag.color = colors[0]
+        }
+      }
+  
+      return tag 
+    }
+  }, [values.tag, allTags])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
