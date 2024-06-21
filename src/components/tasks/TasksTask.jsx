@@ -20,8 +20,13 @@ export default function TasksTask({ task }) {
 
   const editTask = (e) => {
     e.stopPropagation()
-    dispatch(addPopup('edit'))
     dispatch(setCurrentTask(task))
+
+    if (task.projectTask) {
+      dispatch(addPopup('member edit project task'))
+    } else {
+      dispatch(addPopup('edit'))
+    }
   }
 
   const openTaskPreview = () => {

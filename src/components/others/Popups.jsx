@@ -12,6 +12,7 @@ import JoinProject from '../popups/JoinProject'
 import TaskPreview from '../popups/TaskPreview'
 import EditProject from '../popups/EditProject'
 import InviteLink from '../popups/InviteLink'
+import AssignTask from '../popups/AssignTask'
 import AddProject from '../popups/AddProject'
 import ImageCrop from '../popups/ImageCrop'
 import EditTask from '../popups/EditTask'
@@ -151,6 +152,11 @@ export default function Popups() {
               <AddTask /> :
               item === 'add project' ?
               <AddProject /> :
+              item === 'assign task' ?
+              <AssignTask 
+                currentProject={currentProject}
+                currentMember={currentMember}
+              /> :
               item === 'edit' ?
               <EditTask 
                 currentTask={currentTask}
@@ -186,6 +192,10 @@ export default function Popups() {
               /> :
               item === 'join project' ?
               <JoinProject
+              /> :
+              item === 'invite link' ?
+              <InviteLink
+                currentInviteLink={currentInviteLink}
               /> :
               item === 'not image' ?
               <Message 

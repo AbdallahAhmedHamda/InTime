@@ -1,6 +1,7 @@
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { addPopup, setIsAuthenticated, resetRenderCount } from '../../features/navigation/navigationSlice'
+import { addPopup, setIsAuthenticated, resetNavigationState } from '../../features/navigation/navigationSlice'
+import { resetUserState } from '../../features/user/userSlice'
 import { useState, useEffect, useRef } from 'react'
 import { useTransition, animated } from 'react-spring'
 import { signOutApi } from '../../apis/authApi'
@@ -110,7 +111,8 @@ export default function Navbar() {
       localStorage.removeItem('accessToken')
       
       dispatch(setIsAuthenticated(false))
-      dispatch(resetRenderCount())
+      dispatch(resetNavigationState())
+      dispatch(resetUserState())
       
       navigate('/signin')
     } catch (error) {

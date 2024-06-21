@@ -33,17 +33,8 @@
   font-weight: 400;
 }
 
-.sign-form-input > .form-input-container.eye-container > input:read-only, .sign-form-input > .form-input-container.eye-container > textarea:read-only {
-  color: rgba(0, 0, 0, 0.40) !important;
-  cursor: auto;
-}
-
 .sign-form-input > .form-input-container.eye-container > .form-password-input {
   padding-right: 55px;
-}
-
-.sign-form-input > .form-input-container.eye-container > input:not(:read-only):focus, .sign-form-input > .form-input-container.eye-container > textarea:not(:read-only):focus {
-  border: 1px #1976d2 solid;
 }
 
 .form-input-container.eye-container > svg {

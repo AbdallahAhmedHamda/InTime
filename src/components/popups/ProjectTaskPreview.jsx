@@ -26,7 +26,7 @@ function areStepsDifferent(currentSteps, recordSteps) {
   return false
 }
 
-export default function TaskPreview({ currentTask }) {
+export default function ProjectTaskPreview({ currentTask, currentProject }) {
   const myId = useSelector((state)=> state.user.id)
 
   const dispatch = useDispatch()
@@ -139,7 +139,7 @@ export default function TaskPreview({ currentTask }) {
       }
 
       {
-        currentTask.steps.length !== 0 && (
+        (currentTask.steps.length !== 0 && myId === currentTask.userId) && (
           <div className='task-preview-steps-container'>
             {
               currentTask.steps.map((step, i) => (
@@ -184,7 +184,7 @@ export default function TaskPreview({ currentTask }) {
                     className='task-preview-button white'
                     onClick={() => {
                       if (currentTask.projectTask) {
-                        dispatch(addPopup('member edit project task'))
+                        dispatch(addPopup('edit project task'))
                       } else {
                         dispatch(addPopup('edit'))
                       }

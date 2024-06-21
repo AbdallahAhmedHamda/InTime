@@ -43,7 +43,6 @@ export default function TaskPreview({ currentProject, currentMembers }) {
 
   const openInvite = async () => {
     await fetchInviteLinkApi(currentProject._id)
-
   }
 
   const confirmRemoval = (member) => {

@@ -322,3 +322,101 @@ export const inviteLinkApi = async (projectId) => {
     throw error
   }
 }
+
+export const getProjectByIdApi = async (projectId) => {
+  try {
+    const accessToken = localStorage.getItem('accessToken')
+    
+    const response = await axios.get(`${API_URL}/${projectId}`, 
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      }
+    )
+
+    if (response.data && response.data?.success) {
+      return response.data
+    } else {
+      throw new Error(response.data.message || 'Unknown error occurred')
+    }
+  } catch (error) {
+    if (error.response) {
+      error.message = error.response.data.message || 'Unknown error occurred'
+    }
+    
+    throw error
+  }
+}
+
+export const assignTaskApi = async (projectId, userId, task) => {
+  try {
+    const accessToken = localStorage.getItem('accessToken')
+
+    const formData = new FormData()
+
+    for (const key of Object.keys(task)) {
+      const value = task[key]
+  
+      if ((typeof value === 'string' && value.trim() !== '') ||
+          (typeof value === 'number') || 
+          (typeof value === 'boolean')) {
+        formData.append(key, value.toString())
+      }
+    }
+
+    const response = await axios.post(`${API_URL}/assignTask/${projectId}/${userId}`, formData, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      }
+    })
+
+    if (response.data && response.data?.success) {
+      return response.data
+    } else {
+      throw new Error(response.data.message || 'Unknown error occurred')
+    }
+  } catch (error) {
+    if (error.response) {
+      error.message = error.response.data.message || 'Unknown error occurred'
+    }
+    
+    throw error
+  }
+}
+
+export const editProjectTaskApi = async (projectId, userId, task) => {
+  try {
+    const accessToken = localStorage.getItem('accessToken')
+
+    const formData = new FormData()
+
+    for (const key of Object.keys(task)) {
+      const value = task[key]
+  
+      if ((typeof value === 'string' && value.trim() !== '') ||
+          (typeof value === 'number') || 
+          (typeof value === 'boolean')) {
+        formData.append(key, value.toString())
+      }
+    }
+
+    const response = await axios.post(`${API_URL}/editProjectTask/${projectId}/${userId}`, formData, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      }
+    })
+
+    if (response.data && response.data?.success) {
+      return response.data
+    } else {
+      throw new Error(response.data.message || 'Unknown error occurred')
+    }
+  } catch (error) {
+    if (error.response) {
+      error.message = error.response.data.message || 'Unknown error occurred'
+    }
+    
+    throw error
+  }
+}

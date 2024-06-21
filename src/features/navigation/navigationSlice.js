@@ -55,9 +55,6 @@ const navigationSlice = createSlice({
 		incrementRenderCount: (state) => {
 			state.renderCount += 1
 		},
-		resetRenderCount: (state) => {
-			state.renderCount = 1
-		},
 		addPopup: (state, action) => {
 			if (state.popups[state.popups.length - 1] !== action.payload) {
 				state.popups.push(action.payload)
@@ -103,7 +100,8 @@ const navigationSlice = createSlice({
 		},
 		setCroppedProfilePic: (state, action) => {
 			state.croppedProfilePic = action.payload
-		}
+		},
+		resetNavigationState: (_) => initialState
 	}
 })
 
@@ -114,7 +112,6 @@ export const {
 	setCurrentPage,
 	setIsAuthenticated,
 	incrementRenderCount,
-	resetRenderCount,
 	addPopup,
 	removePopup,
 	removeAllPopups,
@@ -129,5 +126,6 @@ export const {
 	setCroppedProjectImage,
 	setUncroppedProfilePic,
 	setCroppedProfilePic,
+	resetNavigationState
 } = navigationSlice.actions
 export default navigationSlice.reducer

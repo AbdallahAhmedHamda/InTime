@@ -9,14 +9,14 @@ const initialState = {
   about: '',
   rank: '',
   profilePic: '',
-  unreadNotifications: 2,
   points: {},
   totalPoints: {},
   level: '',
   tasks: [],
   completedTasks: '',
   inProgressTasks: '',
-  tags: []
+  tags: [],
+  unreadNotifications: 2
 }
 
 const userSlice = createSlice({
@@ -65,6 +65,7 @@ const userSlice = createSlice({
     setTags: (state, action) => {
       state.tags = action.payload
     },
+    resetUserState: (_) => initialState,
     removeUnread: (state) => {
       state.unreadNotifications = 0
     }
@@ -86,6 +87,7 @@ export const {
   setCompletedTasks,
   setInProgressTasks,
   setTags,
+  resetUserState,
   removeUnread
 } = userSlice.actions
 

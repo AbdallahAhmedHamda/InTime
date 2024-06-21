@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { setCurrentPage, removeAllPopups, setIsAuthenticated, resetRenderCount } from '../features/navigation/navigationSlice'
+import { setCurrentPage, removeAllPopups, setIsAuthenticated, resetNavigationState } from '../features/navigation/navigationSlice'
+import { resetUserState } from '../features/user/userSlice'
 import { useEffect, useState,useMemo } from 'react'
 import { signOutApi } from '../apis/authApi'
 
@@ -82,7 +83,8 @@ export default function Profile() {
       localStorage.removeItem('accessToken')
       
       dispatch(setIsAuthenticated(false))
-      dispatch(resetRenderCount())
+      dispatch(resetNavigationState())
+      dispatch(resetUserState())
       
       navigate('/signin')
     } catch (error) {
