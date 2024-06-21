@@ -1,101 +1,87 @@
-import { useParams } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-import { setCurrentPage, removeAllPopups, setIsAuthenticated } from '../features/navigation/navigationSlice'
-import { refreshTokenApi } from '../apis/authApi'
-import { useEffect, useState, useRef } from 'react'
-import io from 'socket.io-client'
+// src/Chat.js
+import React, { useState, useEffect } from 'react';
+import io from 'socket.io-client';
 
-export default function Project() {
-  const { projectId } = useParams()
-  
-  const dispatch = useDispatch()
+const Chat = () => {
+  const [messages, setMessages] = useState([]);
+  const [message, setMessage] = useState('');
+  const [socket, setSocket] = useState(null);
 
-  const [messages, setMessages] = useState([])
-  const [input, setInput] = useState('')
-  const [error, setError] = useState('')
+  console.log(messages)
 
-  const socket = useRef(null)
+  // Function to get token (this can be from localStorage, a cookie, or any other method)
+  const getToken = () => {
+    const accessToken = localStorage.getItem('accessToken')
+    return accessToken; // Replace with your method to get the token
+  };
 
-  // change the current page so the app can rerender and update sidenav active icon and remove all popups
+  console.log(socket)
+
   useEffect(() => {
-    dispatch(setCurrentPage('chat'))
-    dispatch(removeAllPopups())
-  }, [dispatch])
+    // Initialize socket connection
+    const token = getToken();
+    const newSocket = io('https://intime-9hga.onrender.com/', {
+      extraHeaders: {
+        accesstoken: token
+      }
+    });
 
-  const initializeSocket = async () => {
-    try {
-        const refreshToken = localStorage.getItem('refreshToken')
-        const data = await refreshTokenApi(refreshToken)
-        
-        localStorage.setItem('accessToken', data.newAccessToken)
-        localStorage.setItem('refreshToken', data.newRefreshToken)
+    setSocket(newSocket);
 
-        const accessToken = data.newAccessToken
+    // Handle connection
+    newSocket.on('connect', () => {
+      console.log('Connected to server');
+      // Example of joining a project chat
+      const projectId = 'exampleProjectId'; // Replace with actual project ID
+      newSocket.emit('joinProjectChat', { projectId: '666f98c51116a0c7809d687d' });
 
-        socket.current = io.connect('https://intime-9hga.onrender.com/', {
-          headers: {
-            'accesstoken': accessToken
-          }
-        })
+      // Load old messages
+      newSocket.on('loadOldMessages', (messages) => {
+        setMessages(messages);
+      });
+    });
 
-        socket.current.emit('joinProjectChat', {
-          projectId: '666f98c51116a0c7809d687d'
-        })
+    // Handle incoming chat messages
+    newSocket.on('chatMessage', (data) => {
+      setMessages((prevMessages) => [...prevMessages, data]);
+    });
 
-        socket.current.on('chatMessage', (message) => {
-            setMessages((prevMessages) => [...prevMessages, message])
-        })
+    // Handle errors
+    newSocket.on('error', (error) => {
+      console.error('Error:', error);
+    });
 
-        socket.current.on('loadOldMessages', (history) => {
-          console.log('here')
-          if (messages.length === 0) {
-            setMessages(history)
-          }
-        })
+    // Cleanup on unmount
+    return () => newSocket.close();
+  }, []);
 
-        socket.current.on('error', async (err) => {
-          console.error('Socket error:', err)
-        })
-
-        console.log(socket.current)
-        // return () => {
-        //     socket.current.disconnect()
-        // }
-    } catch (error) {
-        console.error('Failed refreshing token:', error)
-
-        // setIsAuthenticated(false)
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (message) {
+      const projectId = '666f98c51116a0c7809d687d'; // Replace with actual project ID
+      socket.emit('message', { message, projectId });
+      setMessage('');
     }
-  }
-
-
-  // apply socket
-  useEffect(() => {
-    initializeSocket()
-  }, [])
-
-  const sendMessage = () => {
-    if (input.trim() === '') return 
-
-    if (socket.current) {
-        socket.current.emit('message', {
-          projectId: projectId,
-          message: input
-        }) 
-        
-        setInput('')
-    }
-}
-
-  if (error) {
-    console.log(error)
-  }
+  };
 
   return (
-    <div className='main-content'>
-      <div className="board-header">
-        <p className='page-name'>Chat</p>
-      </div>
+    <div>
+      <ul id="messages">
+        {messages.map((msg, index) => (
+          <li key={index}>{`${msg.user.name}: ${msg.message}`}</li>
+        ))}
+      </ul>
+      <form id="form" onSubmit={handleSubmit}>
+        <input
+          id="input"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          autoComplete="off"
+        />
+        <button type="submit">Send</button>
+      </form>
     </div>
-  )
-}
+  );
+};
+
+export default Chat;
