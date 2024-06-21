@@ -40,7 +40,7 @@ export default function TaskPreview({ currentTask }) {
 		apiLoading: toggleStepApiLoading
 	} = useApi(toggleStepApi)
 
-  // close popup when task is added correctly
+  // close popup when steps are changed correctly
 	useEffect(() => {
     if (toggleStepApiData?.record) {
       if (areStepsDifferent(currentTask.steps, toggleStepApiData.record.steps)) {

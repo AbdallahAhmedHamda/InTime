@@ -7,9 +7,14 @@ export default function ProjectTask({ task, project, user }) {
   const dispatch = useDispatch()
 
   const openTaskPreview = () => {
-    dispatch(addPopup('admin task preview'))
-    dispatch(setCurrentTask(task))
-    dispatch(setCurrentProject(project))
+    if (myId === project.members.find((projectMember) => projectMember.role === 'admin')?.memberId) {
+      dispatch(addPopup('admin task preview'))
+      dispatch(setCurrentTask(task))
+      dispatch(setCurrentProject(project))
+    } else {
+      dispatch(addPopup('task preview'))
+      dispatch(setCurrentTask(task))
+    }
   }
 
   const tagStyles = {
@@ -31,7 +36,7 @@ export default function ProjectTask({ task, project, user }) {
       <div className='project-page-single-task-upper-section'>
         <div className='project-page-single-task-upper-left-section'>
           {
-            task?.tag?.name && <p style={tagStyles} className='project-page-single-task-tag'>dsd{task.tag.name}dsdsdssddssdsd</p>
+            task?.tag?.name && <p style={tagStyles} className='project-page-single-task-tag'>{task.tag.name}</p>
           }
 
           <p className='project-page-single-task-date'>

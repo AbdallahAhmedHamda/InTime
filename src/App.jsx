@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { setEmail, setName, setPhone, setProfilePic, setTitle, setAbout, setId, setRank, setTotalPoints, setLevel, setCompletedTasks, setInProgressTasks, setPoints, setTags } from './features/user/userSlice'
-import { setAllRanks, setIsAuthenticated } from './features/navigation/navigationSlice'
+import { setEmail, setName, setPhone, setProfilePic, setTitle, setAbout, setId, setRank, setTotalPoints, setLevel, setCompletedTasks, setInProgressTasks, setPoints, setTags, resetUserState } from './features/user/userSlice'
+import { resetNavigationState, setAllRanks, setIsAuthenticated } from './features/navigation/navigationSlice'
 import { useEffect, useState } from 'react'
 import { userDataApi, rankApi } from './apis/userApi'
 import { refreshTokenApi } from './apis/authApi'
@@ -266,11 +266,14 @@ export default function App() {
 					size: 0,
 					sortingType: 1
 				})
+			} else {
+				dispatch(resetNavigationState())
+				dispatch(resetUserState())
 			}
 		}
 	
 		fetchApis()
-	}, [isAuthenticated, fetchUserDataApi, fetchRankApi, fetchTagsApi, renderCount])
+	}, [isAuthenticated, fetchUserDataApi, fetchRankApi, fetchTagsApi, renderCount, dispatch])
 
 	// change the account data when the api loads
 	useEffect(() => {
