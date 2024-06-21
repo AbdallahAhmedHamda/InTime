@@ -109,7 +109,7 @@
   margin-top: 16px;
 }
 
-.single-member-data > div:first-child{
+.single-member-data > div{
   display: flex;
   max-width: 550px;
   gap: 8px;

@@ -6,10 +6,12 @@ import VerifyProjectDeletionMessage from '../popups/VerifyProjectDeletionMessage
 import VerifyAccountDeletionMessage from '../popups/VerifyAccountDeletionMessage'
 import VerifyTaskCompletionMessage from '../popups/VerifyTaskCompletionMessage'
 import VerifyTaskDeletionMessage from '../popups/VerifyTaskDeletionMessage'
+import VerifyMemberRemovalMessage from '../popups/VerifyMemberRemovalMessage'
 import ProjectMembers from '../popups/ProjectMembers'
 import JoinProject from '../popups/JoinProject'
 import TaskPreview from '../popups/TaskPreview'
 import EditProject from '../popups/EditProject'
+import InviteLink from '../popups/InviteLink'
 import AddProject from '../popups/AddProject'
 import ImageCrop from '../popups/ImageCrop'
 import EditTask from '../popups/EditTask'
@@ -19,8 +21,10 @@ import Message from '../popups/Message'
 export default function Popups() {
   const popups = useSelector((state) => state.navigation.popups)
   const currentTask = useSelector((state) => state.navigation.currentTask)
+  const currentInviteLink = useSelector((state) => state.navigation.currentInviteLink)
   const currentProject = useSelector((state) => state.navigation.currentProject)
   const currentMembers = useSelector((state) => state.navigation.currentMembers)
+  const currentMember = useSelector((state) => state.navigation.currentMember)
   
   const dispatch = useDispatch()
 
@@ -244,6 +248,15 @@ export default function Popups() {
               item === 'verify task deletion' ?
               <VerifyTaskDeletionMessage 
                 task={currentTask}
+              /> :
+              item === 'confirm member removal' ?
+              <VerifyMemberRemovalMessage
+                currentProject={currentProject}
+                currentMember={currentMember}
+              /> :
+              item === 'invite link' ?
+              <InviteLink
+                currentInviteLink={currentInviteLink}
               /> :
               item === 'not image' ?
               <Message 

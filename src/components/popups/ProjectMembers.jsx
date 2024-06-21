@@ -1,15 +1,27 @@
-import { useDispatch } from 'react-redux'
-import { addPopup, removePopup } from '../../features/navigation/navigationSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { addPopup, removePopup, setCurrentMember, setCurrentInviteLink } from '../../features/navigation/navigationSlice'
 import { useEffect, useState } from 'react'
+import { inviteLinkApi } from '../../apis/projectsApi'
+import useApi from '../../hooks/useApi'
+import RemoveMember from '../../svg/projects/RemoveMember'
 import CloseIcon from '../../svg/others/CloseIcon'
 import PlusIcon from '../../svg/projects/PlusIcon'
 import '../../css/components/ProjectMembers.css'
 
 export default function TaskPreview({ currentProject, currentMembers }) {
+  const myId = useSelector((state) => state.user.id)
+
   const dispatch = useDispatch()
 
   const [membersSearchValue, setMembersSearchValue] = useState('')
   const [displayedMembers, setDisplayedMembers] = useState(currentMembers)
+
+  const {
+		fetchApi : fetchInviteLinkApi,
+		apiData: inviteLinkApiData,
+		apiError: inviteLinkApiError,
+		apiLoading: inviteLinkApiLoading,
+	} = useApi(inviteLinkApi)
 
   // updated shown members whenever the search changes
   useEffect(() => {
@@ -20,8 +32,27 @@ export default function TaskPreview({ currentProject, currentMembers }) {
     }
   }, [membersSearchValue, currentMembers])
 
-  const openInvite = () => {
-    dispatch(addPopup('invite link'))
+  // load link when its generated
+	useEffect(() => {
+    if (inviteLinkApiData) {
+      dispatch(setCurrentInviteLink(inviteLinkApiData.link))
+
+      dispatch(addPopup('invite link'))
+    }
+	}, [inviteLinkApiData, dispatch])
+
+  const openInvite = async () => {
+    await fetchInviteLinkApi(currentProject._id)
+
+  }
+
+  const confirmRemoval = (member) => {
+    dispatch(addPopup('confirm member removal'))
+    dispatch(setCurrentMember(member))
+  }
+
+  if (inviteLinkApiError) {
+    console.log(inviteLinkApiError)
   }
 
   return (
@@ -54,7 +85,11 @@ export default function TaskPreview({ currentProject, currentMembers }) {
           placeholder='Search members...'
         />
 
-        <div className='invite-members-button' onClick={openInvite}>
+        <div
+          className='invite-members-button'
+          onClick={openInvite}
+          style={{ pointerEvents: inviteLinkApiLoading ? 'none' : '', cursor: inviteLinkApiLoading ? 'auto' : 'pointer' }}
+        >
           <PlusIcon />
 
           <p>Invite Members</p>
@@ -88,7 +123,18 @@ export default function TaskPreview({ currentProject, currentMembers }) {
                     <p className='single-member-email'>{member.email}</p>
                   </div>
 
-                  <p className='single-member-role'>{currentProject.members.find((projectMember) => projectMember.memberId === member._id)?.role === 'admin' ? 'admin' : 'member'}</p>
+                  <div>
+                    <p className='single-member-role'>{currentProject.members.find((projectMember) => projectMember.memberId === member._id)?.role === 'admin' ? 'admin' : 'member'}</p>
+
+                    {
+                    currentProject.members.find((projectMember) => projectMember.memberId === myId)?.role === 'admin'  ?
+                    currentProject.members.find((projectMember) => projectMember.memberId === member._id)?.role !== 'admin' ?
+                    <RemoveMember confirmRemoval={() => confirmRemoval(member)} /> :
+                    '' :
+                    ''
+                    }
+
+                  </div>
                 </div>
 
                 <div className="horizontal-dashed-line"></div>

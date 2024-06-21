@@ -19,6 +19,7 @@ export default function ProjectsProject({ project }) {
 		fetchApi : fetchGetProjectMembersApi,
 		apiData: getProjectMembersApiData,
 		apiError: getProjectMembersApiError,
+		apiLoading: getProjectMembersApiLoading,
 	} = useApi(getProjectMembersApi)
 
   // load members when i click on a project
@@ -49,7 +50,11 @@ export default function ProjectsProject({ project }) {
 
   const userRole = project.members.find((member) => userId === member.memberId)?.role || ''
   return (
-    <div className='projects-project-container' onClick={openProjectPreview}>
+    <div
+      className='projects-project-container'
+      onClick={openProjectPreview}
+      style={{ pointerEvents: getProjectMembersApiLoading ? 'none' : '', cursor: getProjectMembersApiLoading ? 'auto' : 'pointer' }}
+    >
       <div className='projects-project-upper-section'>
       <p className='projects-project-title'>{project.name}</p>
 

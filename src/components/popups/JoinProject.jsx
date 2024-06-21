@@ -63,26 +63,26 @@ export default function JoinProject() {
       </div>
 
       <div className='join-input-block'>
-          <input
-            autoFocus
-            spellCheck='false'
-            autoComplete='off'
-            required={true}
-            pattern='.*\S+.*'
-            title='Include other letters than space!'
-            className='project-join-link-input'
-            type='text'
-            name='link'
-            id='link'
-            value={link}
-            onChange={(e) => {
-              setLink(e.target.value)
-              setLinkError('')
-            }}
-            placeholder='Project Link'
-          />
+        <input
+          autoFocus
+          spellCheck='false'
+          autoComplete='off'
+          required={true}
+          pattern='.*\S+.*'
+          title='Include other letters than space!'
+          className='project-join-link-input'
+          type='text'
+          name='link'
+          id='link'
+          value={link}
+          onChange={(e) => {
+            setLink(e.target.value)
+            setLinkError('')
+          }}
+          placeholder='Project Link'
+        />
 
-          {linkError ? <p className='link-error'>{linkError}</p> : ''}
+        {linkError ? <p className='link-error'>{linkError}</p> : ''}
         </div>
 
         <button className='join-project-button' type='submit'  disabled={joinProjectApiLoading}>

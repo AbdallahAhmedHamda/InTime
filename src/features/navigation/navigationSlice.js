@@ -21,8 +21,10 @@ const initialState = {
 	renderCount: 1,
 	popups: [],
 	currentTask: '',
+	currentInviteLink: '',
 	currentProject: '',
 	currentMembers: '',
+	currentMember: '',
 	uncroppedTaskImage: '',
 	croppedTaskImage: '',
 	uncroppedProjectImage: '',
@@ -72,11 +74,17 @@ const navigationSlice = createSlice({
 		setCurrentTask: (state, action) => {
 			state.currentTask = action.payload
 		},
+		setCurrentInviteLink: (state, action) => {
+			state.currentInviteLink = action.payload
+		},
 		setCurrentProject: (state, action) => {
 			state.currentProject = action.payload
 		},
 		setCurrentMembers: (state, action) => {
 			state.currentMembers = action.payload
+		},
+		setCurrentMember: (state, action) => {
+			state.currentMember = action.payload
 		},
 		setUncroppedTaskImage: (state, action) => {
 			state.uncroppedTaskImage = action.payload
@@ -111,8 +119,10 @@ export const {
 	removePopup,
 	removeAllPopups,
 	setCurrentTask,
+	setCurrentInviteLink,
 	setCurrentProject,
 	setCurrentMembers,
+	setCurrentMember,
 	setUncroppedTaskImage,
 	setCroppedTaskImage,
 	setUncroppedProjectImage,

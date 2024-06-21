@@ -83,7 +83,10 @@ export default function TasksTask({ task }) {
 
       <div className='tasks-task-bottom-section'>
         <div className='tasks-task-button-container'>
-          <TasksTaskDeleteIcon verifyDeletion={verifyDeletion}/>
+          {
+            !task.projectTask ? <TasksTaskDeleteIcon verifyDeletion={verifyDeletion}/>
+            : ''
+          }
 
           {
             !task.completed ? <TasksTaskEditIcon editTask={editTask}/> : ''
