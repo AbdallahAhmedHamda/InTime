@@ -171,7 +171,33 @@ export const deleteProfilePicApi = async () => {
   try {
     const accessToken = localStorage.getItem('accessToken')
     
-    const response = await axios.delete(`${API_URL}/deleteProfilePhoto`, 
+    const response = await axios.post(`${API_URL}/deleteProfilePhoto`, 
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      }
+    )
+    
+    return response.data
+  } catch (error) {
+    if (error.response) {
+      error.message = error.response.data.message || 'Unknown error occurred'
+    }
+    
+    throw error
+  }
+}
+
+export const pushNotificationApi = async (subscription) => {
+  try {
+    const accessToken = localStorage.getItem('accessToken')
+    
+    console.log(subscription)
+    const response = await axios.post(`${API_URL}/subscribe`,
+      {
+        subscription: JSON.stringify(subscription)
+      },
       {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
