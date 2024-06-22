@@ -43,7 +43,7 @@ export default function Projects() {
   // fetch api data
 	useEffect(() => {
     if (showProjectsApiData) {
-      setProjects(showProjectsApiData.reverse())
+      setProjects(showProjectsApiData.slice().reverse())
     }
 
 	}, [showProjectsApiData])

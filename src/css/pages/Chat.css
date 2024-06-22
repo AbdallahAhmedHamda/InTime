@@ -234,7 +234,7 @@
   padding: 12px;
   box-sizing: border-box;
   font-family: 'DM Sans';
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 500;
   color: #768396;
   background-color: white;
@@ -309,7 +309,7 @@
 .chat-input-svg-container {
   position: absolute;
   right: 15px;
-  bottom: 12.5px;
+  bottom: 15.25px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -346,7 +346,7 @@
   z-index: 1;
   outline: 0;
   color: #23235F;
-  font-size: 14px;
+  font-size: 17px;
   line-height: 1.5;
 }
 
