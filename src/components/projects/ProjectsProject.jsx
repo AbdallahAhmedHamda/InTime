@@ -56,7 +56,7 @@ export default function ProjectsProject({ project }) {
   const userRole = project.members.find((member) => userId === member.memberId)?.role || ''
   return (
     <Link
-      to={`${project._id}`}
+      to={`/projects/${project._id}`}
       className='projects-project-container'
       style={{ pointerEvents: getProjectMembersApiLoading ? 'none' : '', cursor: getProjectMembersApiLoading ? 'auto' : 'pointer' }}
     >

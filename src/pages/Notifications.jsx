@@ -1,6 +1,5 @@
 import { useDispatch, } from 'react-redux'
 import { setCurrentPage, removeAllPopups } from '../features/navigation/navigationSlice'
-import { removeUnread } from '../features/user/userSlice'
 import { useEffect } from 'react'
 import '../css/pages/Notifications.css'
 
@@ -11,7 +10,6 @@ export default function Notifications() {
   useEffect(() => {
     dispatch(setCurrentPage('notifications'))
     dispatch(removeAllPopups())
-    dispatch(removeUnread())
   }, [dispatch])
 
   return (

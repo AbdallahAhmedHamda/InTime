@@ -5,7 +5,6 @@ import { resetUserState } from '../../features/user/userSlice'
 import { useState, useEffect, useRef } from 'react'
 import { useTransition, animated } from 'react-spring'
 import { signOutApi } from '../../apis/authApi'
-import NavNotificationsIcon from '../../svg/navbar/NavNotificationsIcon'
 import DownArrowIcon from '../../svg/navbar/DownArrowIcon'
 import AddTaskIcon from '../../svg/navbar/AddTaskIcon'
 import LogoutIcon from '../../svg/navbar/LogoutIcon'
@@ -23,7 +22,6 @@ export default function Navbar() {
   const title = useSelector((state) => state.user.title)
   const profilePic = useSelector((state) => state.user.profilePic)
   const level = useSelector((state) => state.user.level)
-  const unreadNotifications = useSelector((state) => state.user.unreadNotifications)
 
   const dispatch = useDispatch()
   
@@ -169,19 +167,7 @@ export default function Navbar() {
         <AddTaskIcon showPopup={() => dispatch(addPopup('add'))}/>
 
         <p className='navbar-level'>Level {level}</p>
-
-        <Link to='/notifications' >
-          <div className='navbar-notifications'>
-            <NavNotificationsIcon />
-
-            {
-              unreadNotifications > 0 && (
-                <div className='notification-number'>{unreadNotifications}</div>
-              )
-            }
-          </div>
-        </Link>
-
+        
         <div className='navbar-user-info'>
           <Link to={`/profile/${id}`} >
             <img

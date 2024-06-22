@@ -6,6 +6,7 @@ import { searchTasksApi } from '../apis/tasksApi'
 import { showProjectsApi } from '../apis/projectsApi'
 import useApi from '../hooks/useApi'
 import TasksTask from '../components/tasks/TasksTask'
+import ProjectsProject from '../components/projects/ProjectsProject'
 import TasksShowMoreArrow from'../svg/tasks/TasksShowMoreArrow'
 import TasksShowLessArrow from'../svg/tasks/TasksShowLessArrow'
 import '../css/pages/Tasks.css'
@@ -50,6 +51,9 @@ export default function Search() {
 
       await fetchShowProjectsApi()
 
+      setProjectsToShow(12)
+      setTasksToShow(12)
+
       setLoading(false)
 		}
 	
@@ -66,15 +70,15 @@ export default function Search() {
 
   // fetch projects api data
 	useEffect(() => {
-    if (showProjectsApiData?.record) {
-      setProjects(showProjectsApiData.record.slice().reverse())
+    if (showProjectsApiData) {
+      setProjects(showProjectsApiData.slice().reverse().filter((project) => project.name.trim().toLowerCase().includes(searchValue.toLowerCase())))
     }
 
 	}, [showProjectsApiData])
 
   // add tasks to the filters if there is space for them
   useEffect(() => {
-    if (tasks.length !== 0 && (tasks.length <= 12 || tasksToShow % 3 !== 0 || tasksToShow > tasks.length)) {
+    if (tasks.length !== 0 && (tasks.length <= 12 || tasksToShow % 4 !== 0 || tasksToShow > tasks.length)) {
       setTasksToShow(tasks.length)
     }
     // eslint-disable-next-line
@@ -146,9 +150,9 @@ export default function Search() {
     <div className='main-content'>
       <p className='page-name'>Search results</p>
 
-      <p className='search-page-task-header'>Tasks</p>
+      <p className='search-page-header'>{tasks.length === 0 ? 'No tasks found!' : 'Tasks'}</p>
 
-      <div className='tasks-left-section search-page'>
+      <div className='tasks-left-section  tasks-search-page'>
         <div className='tasks-left-section-tasks'>
           {
             tasks.length !== 0 && (
@@ -188,6 +192,56 @@ export default function Search() {
                     <p>Show more</p>
 
                     <TasksShowMoreArrow isHovered={showMoreTasksHovered}/>
+                  </div>
+                )
+              }
+            </div>
+          )
+        }
+      </div>
+
+      <p className='search-page-header'>{projects.length === 0 ? 'No projects found!' : 'Projects'}</p>
+
+      <div className='tasks-left-section projects-search-page'>
+        <div className='projects-projects-container'>
+          {
+            projects.length !== 0 && (
+              projects.slice(0, projectsToShow).map((project) => (
+                <ProjectsProject project={project} key={project._id} />
+              ))
+            )
+          }
+        </div>
+
+        {
+          projects.length !== 0 && (
+            <div className='tasks-show-container search-show'>
+              {
+                projectsToShow > 12 && (
+                  <div 
+                    className='tasks-show-less'
+                    onClick={showLessProjects}
+                    onMouseEnter={() => setShowLessProjectsHovered(true)}
+                    onMouseLeave={() => setShowLessProjectsHovered(false)}
+                  >
+                    <p>Show less</p>
+
+                    <TasksShowLessArrow isHovered={showLessProjectsHovered}/>
+                  </div>
+                )
+              }
+
+              {
+                (projects.length > 12 && projects.length !== projectsToShow) && (
+                  <div 
+                    className='tasks-show-more'
+                    onClick={showMoreProjects}
+                    onMouseEnter={() => setShowMoreProjectsHovered(true)}
+                    onMouseLeave={() => setShowMoreProjectsHovered(false)}
+                  >
+                    <p>Show more</p>
+
+                    <TasksShowMoreArrow isHovered={showMoreProjectsHovered}/>
                   </div>
                 )
               }
