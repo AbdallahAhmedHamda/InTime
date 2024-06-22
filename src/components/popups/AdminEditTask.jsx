@@ -12,7 +12,7 @@ import calendarIcon from '../../assets/images/calendar-icon.png'
 import CloseIcon from '../../svg/others/CloseIcon'
 import '../../css/components/AssignTask.css'
 
-export default function AdminEditTask({ currentProject, currentTask }) {
+export default function AdminEditTask({ currentProject, currentTask, currentMember }) {
   const dispatch = useDispatch()
 
   const [values, setValues] = useState({
@@ -44,11 +44,11 @@ export default function AdminEditTask({ currentProject, currentTask }) {
   // handle edit api errors
 	useEffect(() => {
     if (editProjectTaskApiError === 'there is a task with the same name in this user tasks' ) {
-      setNameError(`This task's owner already has a task with the same name!`)
+      setNameError(`${currentMember.name} already has a task with the same name!`)
     } else if (editProjectTaskApiError) {
       console.log(editProjectTaskApiError)
     }
-	}, [editProjectTaskApiError, apiCallAttempt, dispatch])
+	}, [editProjectTaskApiError, apiCallAttempt, dispatch, currentMember])
 
   // handle clicking on date and time icons so each can open it corresponding picker
   const handleIconClick = (position) => {

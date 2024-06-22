@@ -182,7 +182,6 @@ export default function Popups() {
               /> :
               item === 'admin task preview' ?
               <AdminTaskPreview
-                currentProject={currentProject}
                 currentTask={currentTask}
               /> :
               item === 'project members' ?
@@ -279,7 +278,8 @@ export default function Popups() {
               item === 'admin edit project task' ?
               <AdminEditTask 
               currentProject={currentProject}
-                currentTask={currentTask}
+              currentTask={currentTask}
+              currentMember={currentMember}
               /> :
               item === 'verify task completion' ?
               <VerifyTaskCompletionMessage 

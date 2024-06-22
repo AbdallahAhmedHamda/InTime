@@ -6,7 +6,7 @@ import CloseIcon from '../../svg/others/CloseIcon'
 import FlagIcon from '../../svg/others/FlagIcon'
 import '../../css/components/TaskPreview.css'
 
-export default function AdminTaskPreview({ currentTask, currentProject }) {
+export default function AdminTaskPreview({ currentTask }) {
   const dispatch = useDispatch()
 
   const [image, setImage] = useState(currentTask.image)

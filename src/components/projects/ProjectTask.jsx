@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { addPopup, setCurrentTask, setCurrentProject } from '../../features/navigation/navigationSlice'
+import { addPopup, setCurrentTask, setCurrentProject, setCurrentMember } from '../../features/navigation/navigationSlice'
 import { format } from 'date-fns'
 
 export default function ProjectTask({ task, project, user }) {
@@ -11,6 +11,7 @@ export default function ProjectTask({ task, project, user }) {
       dispatch(addPopup('admin task preview'))
       dispatch(setCurrentTask(task))
       dispatch(setCurrentProject(project))
+      dispatch(setCurrentMember(user))
     } else {
       dispatch(addPopup('task preview'))
       dispatch(setCurrentTask(task))
