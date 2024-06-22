@@ -218,6 +218,7 @@
   color: #1A1D1F;
   font-family: 'DM Sans';
   font-weight: 700;
+  font-size: 17px;
 }
 
 .chat-single-message-time {
@@ -235,7 +236,7 @@
   box-sizing: border-box;
   font-family: 'DM Sans';
   font-size: 17px;
-  font-weight: 500;
+  font-weight: 600;
   color: #768396;
   background-color: white;
   border-radius: 12px;

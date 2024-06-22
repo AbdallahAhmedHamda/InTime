@@ -452,7 +452,7 @@ export default function Project() {
               </div>
 
               {showEmojiPicker && (
-                <Picker data={data} onEmojiSelect={handleSelectEmoji} theme={'light'} icons={'solid'} emojiSize={18} autoFocus={true} previewPosition={'none'} />
+                <Picker data={data} onEmojiSelect={handleSelectEmoji} theme={'light'} icons={'solid'} emojiSize={24} autoFocus={true} previewPosition={'none'} />
               )}
             </div>
           </div>
