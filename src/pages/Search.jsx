@@ -74,7 +74,7 @@ export default function Search() {
       setProjects(showProjectsApiData.slice().reverse().filter((project) => project.name.trim().toLowerCase().includes(searchValue.toLowerCase())))
     }
 
-	}, [showProjectsApiData])
+	}, [showProjectsApiData, searchValue])
 
   // add tasks to the filters if there is space for them
   useEffect(() => {

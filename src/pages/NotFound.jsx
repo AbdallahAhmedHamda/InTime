@@ -19,7 +19,7 @@ export default function NotFound() {
 
         <p>Oops! The page you are looking for could not be found.</p>
 
-        <Link to='/home' >Go back to homepage</Link>
+        <Link to='/home' >Go to homepage</Link>
     </div>
   )
 }

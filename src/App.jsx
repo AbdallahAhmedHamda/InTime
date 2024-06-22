@@ -3,13 +3,15 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setEmail, setName, setPhone, setProfilePic, setTitle, setAbout, setId, setRank, setTotalPoints, setLevel, setCompletedTasks, setInProgressTasks, setPoints, setTags, resetUserState } from './features/user/userSlice'
 import { resetNavigationState, setAllRanks, setIsAuthenticated } from './features/navigation/navigationSlice'
 import { useEffect, useState } from 'react'
+import { isDesktop } from 'react-device-detect'
 import { userDataApi, rankApi } from './apis/userApi'
 import { refreshTokenApi } from './apis/authApi'
 import { allTasksApi } from './apis/tasksApi'
 import useApi from './hooks/useApi'
+import MobileRedirect from './pages/MobileRedirect'
 import ForgotPassword from './pages/ForgotPassword'
-import ResetPassword from './pages/ResetPassword'
 import ChangePassword from './pages/ChangePassword'
+import ResetPassword from './pages/ResetPassword'
 import Notifications from './pages/Notifications'
 import SideNav from './components/others/SideNav'
 import Popups from './components/others/Popups'
@@ -366,17 +368,26 @@ export default function App() {
 		</>
 	)
 
-  const PrivateRoute = ({ children }) => {
-    return isAuthenticated ? children : <Navigate to="/signin" />
-  }
-
-  const PublicRoute = ({ children }) => {
-    return isAuthenticated ? <Navigate to="/home" /> : children
-  }
-
+	const PrivateRoute = ({ children }) => {
+		if (!isDesktop) {
+			return <Navigate to={'/mobileRedirect'} />
+		}
+		return isAuthenticated ? children : <Navigate to='/signin' />
+	}
+	
+	const PublicRoute = ({ children }) => {
+		if (!isDesktop) {
+			return <Navigate to={'/mobileRedirect'} />
+		}
+		return isAuthenticated ? <Navigate to='/home' /> : children
+	}
+	
 	const EmailCheck = ({ children }) => {
-    return currentEmail ? children : <Navigate to="/signin" />
-  }
+		if (!isDesktop) {
+			return <Navigate to={'/mobileRedirect'} />
+		}
+		return currentEmail ? children : <Navigate to='/signin' />
+	}
 
 	if (renderCount === 1 && (loading || userDataApiLoading || rankApiLoading || tagsApiLoading)) {
 		return (
@@ -605,6 +616,11 @@ export default function App() {
 							</Layout>
 						</PrivateRoute>
 					}
+				/>
+
+				<Route
+					path='/mobileRedirect'
+					element={<MobileRedirect />}
 				/>
 				
 				<Route

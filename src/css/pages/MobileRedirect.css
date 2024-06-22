@@ -1,0 +1,40 @@
+.mobile-redirect-page {
+  width: 100vw;
+  height: 100vh;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-redirect-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.mobile-redirect-logo {
+  width: 180px;
+  height: 180px;
+}
+
+.mobile-redirect-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  width: 180px;
+  background-color: #5468E7;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+  text-wrap: nowrap;
+  border: none;
+  cursor: pointer;
+}
+
+.mobile-redirect-button:hover {
+  background-color: #0056b3;
+}
