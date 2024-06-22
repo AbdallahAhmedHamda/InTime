@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setEmail, setName, setPhone, setProfilePic, setTitle, setAbout, setId, setRank, setTotalPoints, setLevel, setCompletedTasks, setInProgressTasks, setPoints, setTags, resetUserState } from './features/user/userSlice'
 import { resetNavigationState, setAllRanks, setIsAuthenticated } from './features/navigation/navigationSlice'
 import { useEffect, useState } from 'react'
-import { isDesktop } from 'react-device-detect'
+import { isMobile, isTablet } from 'react-device-detect'
 import { userDataApi, rankApi } from './apis/userApi'
 import { refreshTokenApi } from './apis/authApi'
 import { allTasksApi } from './apis/tasksApi'
@@ -369,21 +369,21 @@ export default function App() {
 	)
 
 	const PrivateRoute = ({ children }) => {
-		if (!isDesktop) {
+		if (isMobile || isTablet) {
 			return <Navigate to={'/mobileRedirect'} />
 		}
 		return isAuthenticated ? children : <Navigate to='/signin' />
 	}
 	
 	const PublicRoute = ({ children }) => {
-		if (!isDesktop) {
+		if (isMobile || isTablet) {
 			return <Navigate to={'/mobileRedirect'} />
 		}
 		return isAuthenticated ? <Navigate to='/home' /> : children
 	}
 	
 	const EmailCheck = ({ children }) => {
-		if (!isDesktop) {
+		if (isMobile || isTablet) {
 			return <Navigate to={'/mobileRedirect'} />
 		}
 		return currentEmail ? children : <Navigate to='/signin' />

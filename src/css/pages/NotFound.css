@@ -4,7 +4,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
+  height: fit-content;
   background-image:url('../../assets/images/not-found-background.jpg');
   background-repeat: no-repeat;
   background-size: cover;
