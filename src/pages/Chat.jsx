@@ -262,9 +262,7 @@ export default function Project() {
   }
 
   const handleSelectEmoji = (emoji) => {
-    if (inputRef.current) {
-      setShowEmojiPicker(!showEmojiPicker)
-      
+    if (inputRef.current) {      
       inputRef.current.innerHTML += emoji.native
 
       handleInput()
