@@ -71,7 +71,7 @@ export default function ProjectTask({ task, project, user }) {
           )
         }
 
-{
+        {
           task.completed ? (
             <div className='project-page-single-task-state-finished'>
               Finished

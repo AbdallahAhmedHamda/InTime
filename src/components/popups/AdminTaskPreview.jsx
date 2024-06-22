@@ -1,4 +1,4 @@
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { addPopup, removePopup } from '../../features/navigation/navigationSlice'
 import { useState } from 'react'
 import { format } from 'date-fns'
@@ -7,6 +7,7 @@ import FlagIcon from '../../svg/others/FlagIcon'
 import '../../css/components/TaskPreview.css'
 
 export default function AdminTaskPreview({ currentTask }) {
+  const myId = useSelector((state) => state.user.id)
   const dispatch = useDispatch()
 
   const [image, setImage] = useState(currentTask.image)
@@ -93,6 +94,17 @@ export default function AdminTaskPreview({ currentTask }) {
               >
                 Edit
               </button>
+
+              {
+                myId === currentTask.userId && (
+                  <button
+                    className='task-preview-button blue'
+                    onClick={() => dispatch(addPopup('verify task completion'))}
+                  >
+                    Finish
+                  </button>
+                )
+              }
             </div>
           )
         }

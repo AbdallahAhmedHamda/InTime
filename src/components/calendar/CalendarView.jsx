@@ -80,7 +80,7 @@ export default function CalendarView() {
       const endDate = new Date(task.endAt)
       const startDate = new Date(task.startAt)
 
-      if(startDate < lastDayOfMonth && endDate > firstDayOfMonth && !task.completed && !task?.backlog) {
+      if(startDate < lastDayOfMonth && endDate > firstDayOfMonth && !task.completed) {
         Totaltasks += 1
       }
     })
