@@ -130,6 +130,7 @@ export default function Project() {
   const confirmRemoval = (member) => {
     dispatch(addPopup('confirm member removal'))
     dispatch(setCurrentMember(member))
+    dispatch(setCurrentProject(project))
   }
 
   const openAssignTask = (member) => {
