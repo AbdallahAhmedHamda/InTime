@@ -83,7 +83,7 @@ export default function Projects() {
           }
 
           {
-            (role !== 'member') ?
+            (role !== 'user') ?
             <div className='projects-svg-container'>
               <AddTaskIcon showPopup={() => dispatch(addPopup('add project'))}/>
             </div> :
