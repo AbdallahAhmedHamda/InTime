@@ -168,6 +168,21 @@ export default function Filters({ applyFilters, disabled, filters, setFilters })
               In Progress <span>({inProgressTasks})</span>
             </p>
           </label>
+
+          <label className='filter-option-container'>
+            <input
+              type='checkbox'
+              name='backlog'
+              onChange={(e) => handleCheckboxChange(e, true)}
+              checked={checkboxChecked('backlog', true)}
+            />
+
+            <span className='filter-checkmark' style={checkmarkStyles('backlog', true)}/>
+
+            <p style={filterNameStyles('backlog', true)}>
+              Backlog
+            </p>
+          </label>
         </div>
       </div>
 

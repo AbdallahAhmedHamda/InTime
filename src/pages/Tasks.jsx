@@ -17,6 +17,7 @@ export default function Tasks() {
 
   const [filters, setFilters] = useState({
 		projectTask: [],
+    backlog: [],
 		completed: [],
 		priority: [],
 		tag: []
