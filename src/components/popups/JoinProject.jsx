@@ -33,7 +33,7 @@ export default function JoinProject() {
 	useEffect(() => {
     if (joinProjectApiError === 'user already a member of the project') {
       setLinkError('You are already a member of this project!')
-    } else if (joinProjectApiError === 'Invalid OTP') {
+    } else if (joinProjectApiError === 'Invalid OTP' || joinProjectApiError === 'OTP not found') {
       setLinkError('Incorrect Link!')
     } else if (joinProjectApiError) {
       console.log(joinProjectApiError)

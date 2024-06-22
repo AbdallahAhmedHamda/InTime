@@ -255,39 +255,40 @@ export default function Project() {
               }
             </div>
 
-            {
-              projectMembers.map((member) => (
-                <div className='project-page-right-member' key={member._id}>
-                  <div className='project-page-right-member-left'>
-                    <Link to={`/profile/${member._id}`}>
-                      <img
-                        src={`https://intime-9hga.onrender.com/api/v1/images/${member.avatar}`}
-                        alt='profile-pic'
-                        className='project-page-right-member-profile-pic'
-                        onError={(e) => {
-                          e.target.onerror = null
-                          e.target.src = require('../assets/images/profile-pic.jpeg')
-                        }}
-                      />
-                    </Link>
+            <div className='project-page-right-members-container'>
+              {
+                projectMembers.map((member) => (
+                  <div className='project-page-right-member' key={member._id}>
+                    <div className='project-page-right-member-left'>
+                      <Link to={`/profile/${member._id}`}>
+                        <img
+                          src={`https://intime-9hga.onrender.com/api/v1/images/${member.avatar}`}
+                          alt='profile-pic'
+                          className='project-page-right-member-profile-pic'
+                          onError={(e) => {
+                            e.target.onerror = null
+                            e.target.src = require('../assets/images/profile-pic.jpeg')
+                          }}
+                        />
+                      </Link>
 
-                    <p className='project-page-right-member-name'>{member.name}</p>
+                      <p className='project-page-right-member-name'>{member.name}</p>
+                    </div>
+
+                    {
+                      myId === adminId && (
+                        <div className='project-page-right-member-control'>
+                          <AssignTaskIcon openAssignTask={() => openAssignTask(member)}/>
+
+                          <RemoveMember confirmRemoval={() => confirmRemoval(member)} />
+                        </div>
+                      )
+                    }
                   </div>
-
-                  {
-                    myId === adminId && (
-                      <div className='project-page-right-member-control'>
-                        <AssignTaskIcon openAssignTask={() => openAssignTask(member)}/>
-
-                        <RemoveMember confirmRemoval={() => confirmRemoval(member)} />
-                      </div>
-                    )
-                  }
-                </div>
-              ))
-            }
+                ))
+              }
+            </div>
           </div>
-
         </div>
       </div>
     </div>

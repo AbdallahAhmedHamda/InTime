@@ -78,7 +78,7 @@ export default function HomeTask({ task }) {
         </div>
 
         {
-          task?.priority ? <FlagIcon priority={task.priority}/> : ''
+          task?.priority !== undefined ? <FlagIcon priority={task.priority}/> : ''
         }
       </div>
 

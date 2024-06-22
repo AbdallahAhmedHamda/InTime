@@ -103,7 +103,7 @@ export default function TaskPreview({ currentTask }) {
 
 
           {
-            currentTask?.priority ? <FlagIcon priority={currentTask.priority}/> : ''
+            currentTask?.priority !== undefined ? <FlagIcon priority={currentTask.priority}/> : ''
           }
 
           <div className='task-preview-date-container'>

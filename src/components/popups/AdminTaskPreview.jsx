@@ -39,7 +39,7 @@ export default function AdminTaskPreview({ currentTask, currentProject }) {
 
 
           {
-            currentTask?.priority ? <FlagIcon priority={currentTask.priority}/> : ''
+            currentTask?.priority !== undefined ? <FlagIcon priority={currentTask.priority}/> : ''
           }
 
           <div className='task-preview-date-container'>
