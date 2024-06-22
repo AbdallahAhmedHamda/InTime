@@ -17,6 +17,7 @@ export default function AssignTask({ currentProject, currentMember }) {
 
   const [values, setValues] = useState({
       name: '',
+      disc: '',
       startAt: dayjs()
           .startOf('minute')
           .add(30 - dayjs().minute() % 30, 'minutes'),
@@ -66,6 +67,15 @@ export default function AssignTask({ currentProject, currentMember }) {
     }
   }
 
+  const onKeyDownHandler = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      if (e.target.classList.contains('disc-input') && values.disc.length < 300) {
+        setValues({ ...values, [e.target.name]: e.target.value + '\n' })
+      }
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -87,6 +97,7 @@ export default function AssignTask({ currentProject, currentMember }) {
     <form
       className='assign-task-popup'
       onSubmit={handleSubmit}
+      onKeyDown={onKeyDownHandler}
     >
       <div className='popup-blue-heading' />
 
@@ -120,6 +131,35 @@ export default function AssignTask({ currentProject, currentMember }) {
           />
 
           {nameError ? <p className='same-name-error'>{nameError}</p> : ''}
+        </div>
+
+        <div className='input-block disc-input-block'>
+          <label htmlFor='disc' className='optional-input-wrapper'>
+            <p>Description</p>
+            
+            <p className='optional-input'>(optional)</p>
+          </label>
+
+          <textarea
+            className='disc-input'
+            name='disc'
+            id='disc'
+            value={values.disc}
+            onChange={onTextInputChange}
+            placeholder='Add description....'
+            maxLength='300'
+            autoComplete='off'
+            autoCorrect='off'
+            autoCapitalize='off'
+            spellCheck='false'
+            data-gramm='false'
+            data-gramm_editor='false'
+            data-enable-grammarly='false'
+          />
+
+          <p className='disc-max-letters'>
+            {values.disc.length}/300
+          </p>
         </div>
 
         <div className='assign-line-wrapper'>
