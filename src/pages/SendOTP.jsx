@@ -147,8 +147,10 @@ export default function SendOTP() {
     } catch (error) {
       if (error.message === 'cant find this page') {
         setError('Please enter an OTP!')
-      } else if (error.message === 'Invalid OTP') {
+      } else if (error.message === 'Invalid OTP' || error.message === 'OTP not found') {
         setError('Invalid OTP!')
+        
+        console.error('Error in resetting password:', error.message)
       } else {
         console.error('Error in activating:', error.message)
       }

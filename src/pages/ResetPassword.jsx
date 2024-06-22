@@ -161,8 +161,10 @@ export default function ResetPassword() {
       } catch (error) {
         if (error.message === 'cant find this page') {
           setApiError('Please enter an OTP!')
-        } else if (error.message === 'Invalid OTP') {
+        } else if (error.message === 'Invalid OTP' || error.message === 'OTP not found') {
           setApiError('Invalid OTP!')
+          
+          console.error('Error in resetting password:', error.message)
         } else if (error.message === 'password must be unique') {
           setInputErrors(prevErrors => ({...prevErrors, password: 'Please enter a different password than your already existing one!'}))
         } else {

@@ -35,6 +35,8 @@ export default function JoinProject() {
       setLinkError('You are already a member of this project!')
     } else if (joinProjectApiError === 'Invalid OTP' || joinProjectApiError === 'OTP not found') {
       setLinkError('Incorrect Link!')
+
+      console.log('Error in resetting password:', joinProjectApiError)
     } else if (joinProjectApiError) {
       console.log(joinProjectApiError)
     }
