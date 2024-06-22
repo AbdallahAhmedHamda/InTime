@@ -40,6 +40,8 @@ export default function Projects() {
 		fetchApis()
 	}, [fetchShowProjectsApi, role])
 
+  console.log(projects)
+
   // fetch api data
 	useEffect(() => {
     if (showProjectsApiData) {

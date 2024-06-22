@@ -202,6 +202,11 @@ export default function Popups() {
               <VerifyProjectDeletionMessage 
                 project={currentProject}
               /> :
+              item === 'confirm member removal' ?
+              <VerifyMemberRemovalMessage
+                currentProject={currentProject}
+                currentMember={currentMember}
+              /> :
               item === 'verify account deletion' ?
               <VerifyAccountDeletionMessage
               /> :
