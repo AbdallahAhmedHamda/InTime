@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { setEmail, setName, setPhone, setProfilePic, setTitle, setAbout, setId, setRank, setTotalPoints, setLevel, setCompletedTasks, setInProgressTasks, setPoints, setTags, resetUserState } from './features/user/userSlice'
+import { setEmail, setName, setPhone, setProfilePic, setTitle, setAbout, setId, setRank, setTotalPoints, setLevel, setCompletedTasks, setInProgressTasks, setPoints, setTags, setNotifications, resetUserState } from './features/user/userSlice'
 import { resetNavigationState, setAllRanks, setIsAuthenticated } from './features/navigation/navigationSlice'
 import { useEffect, useState } from 'react'
 import { isMobile, isTablet } from 'react-device-detect'
-import { userDataApi, rankApi } from './apis/userApi'
+import { userDataApi, rankApi, getNotificationsApi } from './apis/userApi'
 import { refreshTokenApi } from './apis/authApi'
 import { allTasksApi } from './apis/tasksApi'
 import useApi from './hooks/useApi'
@@ -191,7 +191,7 @@ export default function App() {
 	const currentEmail = useSelector((state) => state.navigation.currentEmail)
 	const isAuthenticated = useSelector((state) => state.navigation.isAuthenticated)
 	const renderCount = useSelector((state) => state.navigation.renderCount)
-
+	
 	const dispatch = useDispatch()
 	
 	const [loading, setLoading] = useState(true)
@@ -216,6 +216,12 @@ export default function App() {
 		apiError: tagsApiError,
 		apiLoading: tagsApiLoading
 	} = useApi(allTasksApi)
+
+	const {
+		fetchApi : fetchGetNotificationsApi,
+		apiData: getNotificationsApiData,
+		apiError: getNotificationsApiError,
+	} = useApi(getNotificationsApi)
 	
 	// check if user is authenticated or not
 	useEffect(() => {
@@ -250,6 +256,21 @@ export default function App() {
     }
 	}, [dispatch])
 		
+	useEffect(() => {
+    const handleMessage = async (e) => {
+			console.log('here')
+      const { type } = e.data
+      if (type === 'PUSH_NOTIFICATION_RECEIVED') {
+				await fetchGetNotificationsApi()
+      }
+    }
+
+    navigator.serviceWorker.addEventListener('message', handleMessage)
+
+    return () => {
+      navigator.serviceWorker.removeEventListener('message', handleMessage)
+    }
+  }, [dispatch])
 		
 	// load account data when the user is authenticated
 	useEffect(() => {
@@ -268,6 +289,8 @@ export default function App() {
 					size: 0,
 					sortingType: 1
 				})
+
+				await fetchGetNotificationsApi()
 			} else {
 				dispatch(resetNavigationState())
 				dispatch(resetUserState())
@@ -343,6 +366,15 @@ export default function App() {
 		}
 	}, [tagsApiData, isAuthenticated, dispatch])
 
+	// change the tags data when the api loads
+	useEffect(() => {
+		if (isAuthenticated) {
+			if (getNotificationsApiData?.record) {
+				dispatch(setNotifications(getNotificationsApiData.record.notifications))
+			}
+		}
+	}, [getNotificationsApiData, isAuthenticated, dispatch])
+
 	// disable enter button when a button is focused
 	useEffect(() => {
     const handleKeyDown = (e) => {
@@ -416,6 +448,12 @@ export default function App() {
 
 	if (tagsApiError) {
 		console.log(tagsApiError)
+
+		setLoading(false)
+	}
+
+	if (getNotificationsApiError) {
+		console.log(getNotificationsApiError)
 
 		setLoading(false)
 	}

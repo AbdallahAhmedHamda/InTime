@@ -15,7 +15,8 @@ const initialState = {
   tasks: [],
   completedTasks: '',
   inProgressTasks: '',
-  tags: []
+  tags: [],
+  notifications: []
 }
 
 const userSlice = createSlice({
@@ -64,6 +65,10 @@ const userSlice = createSlice({
     setTags: (state, action) => {
       state.tags = action.payload
     },
+    setNotifications: (state, action) => {
+      state.notifications = action.payload
+
+    },
     resetUserState: (_) => initialState
   }
 })
@@ -83,6 +88,7 @@ export const {
   setCompletedTasks,
   setInProgressTasks,
   setTags,
+  setNotifications,
   resetUserState
 } = userSlice.actions
 
