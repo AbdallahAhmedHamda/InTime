@@ -97,16 +97,18 @@ export default function App() {
 		const fetchApis = async () => {
 			if (isAuthenticated) {
 				setLoading(true)
-	
-				await fetchUserDataApi()
+				
+				if (loading) {
+					await fetchUserDataApi()
 
-				await fetchRankApi()
+					await fetchRankApi()
 
-				await fetchTagsApi({
-					page: 1,
-					size: 0,
-					sortingType: 1
-				})
+					await fetchTagsApi({
+						page: 1,
+						size: 0,
+						sortingType: 1
+					})				
+				}
 			} else {
 				dispatch(resetNavigationState())
 				dispatch(resetUserState())
@@ -114,7 +116,7 @@ export default function App() {
 		}
 	
 		fetchApis()
-	}, [isAuthenticated, fetchUserDataApi, fetchRankApi, fetchTagsApi, dispatch])
+	}, [isAuthenticated, loading, fetchUserDataApi, fetchRankApi, fetchTagsApi, dispatch])
 
 	// change the account data when the api loads
 	useEffect(() => {
