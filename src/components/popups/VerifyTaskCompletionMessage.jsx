@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux'
-import { incrementRenderCount, removeAllPopups, removePopup } from '../../features/navigation/navigationSlice'
+import { setActionDone, removeAllPopups, removePopup } from '../../features/navigation/navigationSlice'
 import { useEffect, useState } from 'react'
 import { completeTaskApi } from '../../apis/tasksApi'
 import { rankApi } from '../../apis/userApi'
@@ -31,7 +31,7 @@ export default function VerifyTaskCompletionMessage({ task }) {
     if (rankApiData) {
       dispatch(removeAllPopups())
 
-      dispatch(incrementRenderCount())
+      dispatch(setActionDone('complete task'))
 
     }
   }, [rankApiData, dispatch])

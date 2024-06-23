@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { addPopup, removePopup, setUncroppedTaskImage, setCroppedTaskImage, incrementRenderCount } from '../../features/navigation/navigationSlice'
+import { addPopup, removePopup, setUncroppedTaskImage, setCroppedTaskImage, setActionDone, removeAllPopups } from '../../features/navigation/navigationSlice'
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { updateTaskApi, deleteTaskImageApi } from '../../apis/tasksApi'
 import useApi from '../../hooks/useApi'
@@ -88,9 +88,9 @@ export default function EditTask({ currentTask, selectZIndex }) {
   // close popup when task is edited correctly
 	useEffect(() => {
     if (updateTaskApiData) {
-      dispatch(removePopup('edit'))
+      dispatch(removeAllPopups())
 
-      dispatch(incrementRenderCount())
+      dispatch(setActionDone('edit task'))
     }
 	}, [updateTaskApiData, dispatch])
 
@@ -248,7 +248,7 @@ export default function EditTask({ currentTask, selectZIndex }) {
       }))
     }
     // eslint-disable-next-line
-  }, [minEndDateTime])
+  }, [values.startAt])
     
   return (
     <form
@@ -272,7 +272,6 @@ export default function EditTask({ currentTask, selectZIndex }) {
           <label htmlFor='title'>Title</label>
 
           <input
-            autoFocus
             spellCheck='false'
             autoComplete='off'
             required={true}
@@ -449,7 +448,7 @@ export default function EditTask({ currentTask, selectZIndex }) {
                       ...values,
                       startAt: newStartDate,
                       endAt:
-                        newStartDate > values.endAt
+                        newStartDate >= values.endAt
                           ? newStartDate.add(60, 'minutes')
                           : values.endAt
                     }
@@ -481,7 +480,7 @@ export default function EditTask({ currentTask, selectZIndex }) {
                   slotProps={{ field: { shouldRespectLeadingZeros: true } }}
                   onChange={(newEndDate) => setValues({
                     ...values,
-                    endAt: newEndDate
+                    endAt: newEndDate < minEndDateTime ? minEndDateTime : newEndDate
                   })}
                 />
               </LocalizationProvider>

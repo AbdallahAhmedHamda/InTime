@@ -18,6 +18,7 @@ export default function ProjectsProject({ project }) {
   const [image, setImage] = useState(project.photo)
 
   const {
+    setApiData : setProjectMembersApiData,
 		fetchApi : fetchGetProjectMembersApi,
 		apiData: getProjectMembersApiData,
 		apiError: getProjectMembersApiError,
@@ -32,8 +33,10 @@ export default function ProjectsProject({ project }) {
       dispatch(addPopup('project members'))
 
       dispatch(setCurrentProject(project))
+
+      setProjectMembersApiData(null)
     }
-	}, [getProjectMembersApiData, project, dispatch])
+	}, [getProjectMembersApiData, setProjectMembersApiData, project, dispatch])
 
   const openMembers = async (e) => {
     e.stopPropagation()

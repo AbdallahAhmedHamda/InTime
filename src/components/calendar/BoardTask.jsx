@@ -24,7 +24,7 @@ export default function BoardTask({ task, calendarDate }) {
   const thisDate = new Date(calendarDate).setHours(0, 0, 0, 0)
 
   return (
-    <div className='board-task-container' onClick={openTaskPreview}>
+    <div className='board-task-container' onClick={openTaskPreview}  style={{ outline: task.completed ? '2px solid #00FF29' : 'none'}}>
       <div className='board-task-upper-section'>
         {
           startDate === endDate ?

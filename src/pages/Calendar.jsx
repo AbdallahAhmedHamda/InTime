@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux'
-import { setCurrentPage, removeAllPopups } from '../features/navigation/navigationSlice'
+import { setCurrentPage, removeAllPopups, setActionDone } from '../features/navigation/navigationSlice'
 import { useEffect } from 'react'
 import CalendarView from '../components/calendar/CalendarView'
 import '../css/pages/Calendar.css'
@@ -11,6 +11,10 @@ export default function Calendar() {
   useEffect(() => {
     dispatch(setCurrentPage('calendar'))
     dispatch(removeAllPopups())
+
+    return () => {
+      dispatch(setActionDone(''))
+    }
   }, [dispatch])
 
   return (

@@ -296,7 +296,8 @@ font-weight: 500;
 
 .project-page-single-task-state-finished,
 .project-page-single-task-state-waiting,
-.project-page-single-task-state-in-progress {
+.project-page-single-task-state-in-progress,
+.project-page-single-task-state-backlog {
   display: flex;
   padding: 4px 8px;
   justify-content: center;
@@ -320,4 +321,8 @@ font-weight: 500;
 
 .project-page-single-task-state-in-progress {
   background-color: #585A66 ;
+}
+
+.project-page-single-task-state-backlog {
+  background-color: #D20000 ;
 }

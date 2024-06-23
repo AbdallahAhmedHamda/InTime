@@ -1,13 +1,14 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { setEmail, setName, setPhone, setProfilePic, setTitle, setAbout, setId, setRank, setTotalPoints, setLevel, setCompletedTasks, setInProgressTasks, setPoints, setTags, setNotifications, resetUserState } from './features/user/userSlice'
+import { setEmail, setName, setPhone, setProfilePic, setTitle, setAbout, setId, setRank, setTotalPoints, setLevel, setCompletedTasks, setInProgressTasks, setPoints, setTags, resetUserState } from './features/user/userSlice'
 import { resetNavigationState, setAllRanks, setIsAuthenticated } from './features/navigation/navigationSlice'
 import { useEffect, useState } from 'react'
 import { isMobile, isTablet } from 'react-device-detect'
-import { userDataApi, rankApi, getNotificationsApi } from './apis/userApi'
+import { userDataApi, rankApi } from './apis/userApi'
 import { refreshTokenApi } from './apis/authApi'
 import { allTasksApi } from './apis/tasksApi'
 import useApi from './hooks/useApi'
+import { fillDaily, fillMonthly, fillYearly } from './functions/pointsFunctions'
 import MobileRedirect from './pages/MobileRedirect'
 import ForgotPassword from './pages/ForgotPassword'
 import ChangePassword from './pages/ChangePassword'
@@ -32,161 +33,6 @@ import Tasks from './pages/Tasks'
 import Home from './pages/Home'
 import Chat from './pages/Chat'
 
-const fillDaily = (data) => {
-  const result = []
-
-	const today = new Date()
-
-  if (data.every(item => new Date(item.date).setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0))) {
-		data.push({ date: today.toISOString(), formattedDate: today.toLocaleString('en-US', { weekday: 'short' }), value: 0 })
-  }
-
-  const dates = data.map(item => new Date(item.date))
-
-  let currentDate = new Date(dates[dates.length - 1])
-
-	const datesAreEqual = (date1, date2) => {
-    return date1.getFullYear() === date2.getFullYear() &&
-           date1.getMonth() === date2.getMonth() &&
-           date1.getDate() === date2.getDate()
-	}
-
-  for (let i = dates.length - 1; i >= 0; i--) {
-    while (!datesAreEqual(currentDate, dates[i])) {
-      result.unshift({ date: currentDate, formattedDate: currentDate.toLocaleString('en-US', { weekday: 'short' }), value: 0 })
-
-      currentDate.setDate(currentDate.getDate() - 1)
-
-      if (result.length >= 7) return formatResult(result, 'daily')
-    }
-
-    result.unshift({ date: dates[i], formattedDate: new Date(data[i].date).toLocaleString('en-US', { weekday: 'short' }), value: data[i].value })
-
-    currentDate.setDate(currentDate.getDate() - 1)
-
-    if (result.length >= 7) return formatResult(result, 'daily')
-  }
-
-  if (result.length < 7) {
-    const firstDate = new Date(result[0].date)
-
-    firstDate.setDate(firstDate.getDate() - 1)
-
-    result.unshift({ date: firstDate, formattedDate: firstDate.toLocaleString('en-US', { weekday: 'short' }), value: 0 })
-  }
-
-  return formatResult(result, 'daily')
-}
-
-const fillMonthly = (data) => {
-  const result = []
-
-	const today = new Date()
-	if (data.every(item => (item.year < today.getFullYear() || (item.year === today.getFullYear() && item.month < today.getMonth() + 1)))){
-		data.push({ month: today.getMonth() + 1, year: today.getFullYear(), value: 0 })
-	}
-	
-  const months = data.map(item => ({ month: item.month, year: item.year }))
-
-  let currentMonth = months[months.length - 1].month
-  let currentYear = months[months.length - 1].year
-
-  for (let i = months.length - 1; i >= 0; i--) {
-    while (currentMonth !== months[i].month || currentYear !== months[i].year) {
-      result.unshift({ month: currentMonth, year: currentYear, value: 0 })
-
-      if (currentMonth === 1) {
-        currentMonth = 12
-        currentYear--
-      } else {
-        currentMonth--
-      }
-
-      if (result.length >= 12) return formatResult(result, 'monthly')
-    }
-
-    result.unshift({ ...data[i], date: new Date(data[i].year, data[i].month - 1).toLocaleString('en-US', { month: 'short' }) })
-
-    if (currentMonth === 1) {
-      currentMonth = 12
-      currentYear--
-    } else {
-      currentMonth--
-    }
-
-    if (result.length >= 12) return formatResult(result, 'monthly')
-  }
-
-  if (result.length < 12) {
-    const firstMonth = result[0].month
-    const firstYear = result[0].year
-
-    if (firstMonth === 1) {
-      result.unshift({ month: 12, year: firstYear - 1, value: 0 })
-    } else {
-      result.unshift({ month: firstMonth - 1, year: firstYear, value: 0 })
-    }
-  }
-
-  return formatResult(result, 'monthly')
-}
-
-const fillYearly = (data) => {
-  const result = []
-	
-	const today = new Date()
-  if (data.every(item => item.year < today.getFullYear())) {
-    data.push({ year: today.getFullYear(), value: 0 })
-  }
-	
-  const years = data.map(item => item.year)
-
-  let currentYear = years[years.length - 1]
-
-  for (let i = years.length - 1; i >= 0; i--) {
-    while (currentYear !== years[i]) {
-      result.unshift({ year: currentYear, value: 0 })
-
-      currentYear--
-
-      if (result.length >= 5) return formatResult(result, 'yearly')
-    }
-
-    result.unshift({ ...data[i], date: new Date(data[i].year, 0).toLocaleString('en-US', { year: 'numeric' }) })
-
-    currentYear--
-
-    if (result.length >= 5) return formatResult(result, 'yearly')
-  }
-
-  if (result.length < 5) {
-    const firstYear = result[0].year
-
-    result.unshift({ year: firstYear - 1, value: 0 })
-  }
-
-  return formatResult(result, 'yearly')
-}
-
-const formatResult = (result, type) => {
-  if (type === 'daily') {
-    return {
-			points: result.map(item => item.value),
-      xAxis: result.map(item => item.formattedDate),
-    }
-  } else if (type === 'monthly') {
-		return {
-			points: result.map(item => item.value),
-			xAxis: result.map(item => new Date(item.year, item.month - 1).toLocaleString('en-US', { month: 'short' })),
-		}
-  } else if (type === 'yearly') {
-    return {
-			points: result.map(item => item.value),
-      xAxis: result.map(item => item.year),
-    }
-  }
-}
-
 export default function App() {
 	const currentEmail = useSelector((state) => state.navigation.currentEmail)
 	const isAuthenticated = useSelector((state) => state.navigation.isAuthenticated)
@@ -199,28 +45,19 @@ export default function App() {
 		fetchApi : fetchUserDataApi,
 		apiData: userDataApiData,
 		apiError: userDataApiError,
-		apiLoading: userDataApiLoading
 	} = useApi(userDataApi)
 
 	const {
 		fetchApi : fetchRankApi,
 		apiData: rankApiData,
 		apiError: rankApiError,
-		apiLoading: rankApiLoading
 	} = useApi(rankApi)
 
 	const {
 		fetchApi : fetchTagsApi,
 		apiData: tagsApiData,
 		apiError: tagsApiError,
-		apiLoading: tagsApiLoading
 	} = useApi(allTasksApi)
-
-	const {
-		fetchApi : fetchGetNotificationsApi,
-		apiData: getNotificationsApiData,
-		apiError: getNotificationsApiError,
-	} = useApi(getNotificationsApi)
 	
 	// check if user is authenticated or not
 	useEffect(() => {
@@ -255,28 +92,11 @@ export default function App() {
     }
 	}, [dispatch])
 		
-	useEffect(() => {
-    const handleMessage = async (e) => {
-      const { type } = e.data
-      if (type === 'PUSH_NOTIFICATION_RECEIVED') {
-				await fetchGetNotificationsApi()
-      }
-    }
-
-    navigator.serviceWorker.addEventListener('message', handleMessage)
-
-    return () => {
-      navigator.serviceWorker.removeEventListener('message', handleMessage)
-    }
-  }, [dispatch, fetchGetNotificationsApi])
-		
 	// load account data when the user is authenticated
 	useEffect(() => {
 		const fetchApis = async () => {
 			if (isAuthenticated) {
-				if (renderCount === 1) {
-					setLoading(true)
-				}
+				setLoading(true)
 	
 				await fetchUserDataApi()
 
@@ -287,8 +107,6 @@ export default function App() {
 					size: 0,
 					sortingType: 1
 				})
-
-				await fetchGetNotificationsApi()
 			} else {
 				dispatch(resetNavigationState())
 				dispatch(resetUserState())
@@ -296,7 +114,7 @@ export default function App() {
 		}
 	
 		fetchApis()
-	}, [isAuthenticated, fetchUserDataApi, fetchRankApi, fetchTagsApi, fetchGetNotificationsApi, renderCount, dispatch])
+	}, [isAuthenticated, fetchUserDataApi, fetchRankApi, fetchTagsApi, dispatch])
 
 	// change the account data when the api loads
 	useEffect(() => {
@@ -327,6 +145,9 @@ export default function App() {
 						yearly: filledYearly
 					}
 				))
+				dispatch(setLevel(Math.floor(userDataApiData.record.points.totalPoints / 100) + 1))
+				dispatch(setCompletedTasks(userDataApiData.record.tasks.completedTasks))
+				dispatch(setInProgressTasks(userDataApiData.record.tasks.onGoingTasks))
 			}
 		}
   }, [userDataApiData, isAuthenticated, dispatch]) 
@@ -336,15 +157,11 @@ export default function App() {
 		if (isAuthenticated) {
 			if (rankApiData) {
 				dispatch(setRank(rankApiData.myRank + 1))
-				dispatch(setLevel(Math.floor(rankApiData.rankedUser[rankApiData.myRank].points.totalPoints / 100) + 1))
-				dispatch(setCompletedTasks(rankApiData.rankedUser[rankApiData.myRank].tasks.completedTasks))
-				dispatch(setInProgressTasks(rankApiData.rankedUser[rankApiData.myRank].tasks.onGoingTasks))
-
 				dispatch(setAllRanks(rankApiData.rankedUser))
 			}
 		}
 	}, [rankApiData, isAuthenticated, dispatch])
-
+	
 	// change the tags data when the api loads
 	useEffect(() => {
 		if (isAuthenticated) {
@@ -363,15 +180,6 @@ export default function App() {
 			}
 		}
 	}, [tagsApiData, isAuthenticated, dispatch])
-
-	// change the tags data when the api loads
-	useEffect(() => {
-		if (isAuthenticated) {
-			if (getNotificationsApiData?.record) {
-				dispatch(setNotifications(getNotificationsApiData.record.notifications))
-			}
-		}
-	}, [getNotificationsApiData, isAuthenticated, dispatch])
 
 	// disable enter button when a button is focused
 	useEffect(() => {
@@ -419,7 +227,7 @@ export default function App() {
 		return currentEmail ? children : <Navigate to='/signin' />
 	}
 
-	if (renderCount === 1 && (loading || userDataApiLoading || rankApiLoading || tagsApiLoading)) {
+	if (loading) {
 		return (
 			<div
 				style={{ 
@@ -443,15 +251,8 @@ export default function App() {
 		setLoading(false)
 	}
 
-
 	if (tagsApiError) {
 		console.log(tagsApiError)
-
-		setLoading(false)
-	}
-
-	if (getNotificationsApiError) {
-		console.log(getNotificationsApiError)
 
 		setLoading(false)
 	}

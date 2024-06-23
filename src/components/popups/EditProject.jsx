@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { addPopup, removePopup, setUncroppedProjectImage, setCroppedProjectImage, setCurrentProject, incrementRenderCount } from '../../features/navigation/navigationSlice'
+import { addPopup, removePopup, setUncroppedProjectImage, setCroppedProjectImage, setCurrentProject, setActionDone } from '../../features/navigation/navigationSlice'
 import { useEffect, useState, useRef } from 'react'
 import { editProjectApi, deleteProjectImageApi } from '../../apis/projectsApi'
 import useApi from '../../hooks/useApi'
@@ -59,7 +59,7 @@ export default function EditProject({ currentProject }) {
 
       dispatch(removePopup('edit project'))
 
-      dispatch(incrementRenderCount())
+      dispatch(setActionDone('edit project'))
     }
     // eslint-disable-next-line
 	}, [editProjectApiData, dispatch, values])
@@ -155,7 +155,6 @@ export default function EditProject({ currentProject }) {
       <div  className='edit-project-content'>
         <div className='edit-project-input-block'>
           <input
-            autoFocus
             spellCheck='false'
             autoComplete='off'
             required={true}

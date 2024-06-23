@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux'
-import { incrementRenderCount, removeAllPopups, removePopup } from '../../features/navigation/navigationSlice'
+import { setActionDone, removeAllPopups, removePopup } from '../../features/navigation/navigationSlice'
 import { useEffect } from 'react'
 import { deleteTaskApi } from '../../apis/tasksApi'
 import useApi from '../../hooks/useApi'
@@ -21,7 +21,7 @@ export default function VerifyTaskDeletionMessage({ task }) {
     if (deleteTaskApiData) {
       dispatch(removeAllPopups())
 
-      dispatch(incrementRenderCount())
+      dispatch(setActionDone('remove task'))
 
     }
   }, [deleteTaskApiData, dispatch])

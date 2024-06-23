@@ -271,8 +271,6 @@ export const getProjectTasksApi = async (projectId) => {
 
 export const deleteProjectMemberApi = async (projectId, memberId) => {
   try {
-
-    console.log(projectId, memberId)
     const accessToken = localStorage.getItem('accessToken')
     
     const response = await axios.delete(`${API_URL}/removeMember/${projectId}/${memberId}`, 

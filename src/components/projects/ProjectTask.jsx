@@ -24,11 +24,13 @@ export default function ProjectTask({ task, project, user }) {
 
   const projectTaskStyles = {
     borderColor: 
-      task.completed
-        ? '#00FF29'
-        : new Date(task.startAt) > new Date()
-        ? '#5468E7'
-        : '#585A66'
+      task.backlog
+        ? '#D20000'
+        : task.completed
+          ? '#00FF29'
+          : new Date(task.startAt) > new Date()
+            ? '#5468E7'
+            : '#585A66'
   }
 
   const endDate = new Date(task.endAt).setHours(0, 0, 0, 0)
@@ -72,6 +74,11 @@ export default function ProjectTask({ task, project, user }) {
         }
 
         {
+          task.backlog ? (
+            <div className='project-page-single-task-state-backlog'>
+              Backlog
+            </div>
+          ) :
           task.completed ? (
             <div className='project-page-single-task-state-finished'>
               Finished

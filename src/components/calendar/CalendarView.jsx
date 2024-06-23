@@ -1,7 +1,12 @@
 import { Link } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
+import { setTotalPoints, setLevel, setCompletedTasks, setInProgressTasks, setPoints, setTags } from '../../features/user/userSlice'
+import { setActionDone } from '../../features/navigation/navigationSlice'
 import { useState, useEffect } from 'react'
+import { userDataApi } from '../../apis/userApi'
 import { allTasksApi } from '../../apis/tasksApi'
 import useApi from '../../hooks/useApi'
+import { fillDaily, fillMonthly, fillYearly } from '../../functions/pointsFunctions'
 import { format } from 'date-fns'
 import PrevMonthIcon from '../../svg/calendar/PrevMonthIcon'
 import NextMonthIcon from '../../svg/calendar/NextMonthIcon'
@@ -9,6 +14,10 @@ import CalendarGroupIcon from '../../svg/calendar/CalendarGroupIcon'
 import '../../css//pages/Calendar.css'
 
 export default function CalendarView() {
+  const actionDone = useSelector((state) => state.navigation.actionDone)
+
+  const dispatch = useDispatch()
+
   const [currentDate, setCurrentDate] = useState(new Date())
   const [tasks, setTasks] = useState([])
   const [loading, setLoading] = useState(true)
@@ -18,6 +27,83 @@ export default function CalendarView() {
 		apiData: allTasksApiData,
 		apiError: allTasksApiError,
 	} = useApi(allTasksApi)
+
+  const {
+    fetchApi : fetchUserDataApi,
+    apiData: userDataApiData,
+    apiError: userDataApiError,
+  } = useApi(userDataApi)
+  
+  const {
+    fetchApi : fetchTagsApi,
+    apiData: tagsApiData,
+    apiError: tagsApiError,
+  } = useApi(allTasksApi)
+
+  // change data when action is done
+  useEffect(() => {
+    const fetchApis = async () => {
+      if (actionDone === 'add task') {
+        await fetchAllTasksApi({
+          sortingType: -1,
+          sortBy: 'createdAt'
+        })
+
+        await fetchUserDataApi()
+
+        await fetchTagsApi({
+          page: 1,
+          size: 0,
+          sortingType: 1
+        })
+
+        dispatch(setActionDone(''))
+      }
+    }
+  
+    fetchApis()
+  }, [actionDone, fetchAllTasksApi, fetchTagsApi, fetchUserDataApi, dispatch])
+
+  // change the account data when the api loads
+  useEffect(() => {
+    if (userDataApiData?.success) {
+      const filledDaily = fillDaily(userDataApiData.record.points.daily)
+      const filledMonthly = fillMonthly(userDataApiData.record.points.monthly)
+      const filledYearly = fillYearly(userDataApiData.record.points.yearly)
+      dispatch(setTotalPoints(
+        {
+          overall: userDataApiData.record.points.totalPoints,
+          thisMonth: filledMonthly.points[filledMonthly.points.length - 1],
+          lastMonth: filledMonthly.points[filledMonthly.points.length - 2]
+        }
+      ))
+      dispatch(setPoints(
+        {
+          daily: filledDaily,
+          monthly: filledMonthly,
+          yearly: filledYearly
+        }
+      ))
+      dispatch(setLevel(Math.floor(userDataApiData.record.points.totalPoints / 100) + 1))
+      dispatch(setCompletedTasks(userDataApiData.record.tasks.completedTasks))
+      dispatch(setInProgressTasks(userDataApiData.record.tasks.onGoingTasks))
+    }
+  }, [userDataApiData, dispatch]) 
+  
+  // change the tags data when the api loads
+  useEffect(() => {
+    if (tagsApiData) {
+      dispatch(setTags(
+        tagsApiData.tags
+          .filter((item) => item.name.trim() !== '')
+          .filter((item, index, self) =>
+            index === self.findIndex((t) => (
+              t.name.trim().toLowerCase() === item.name.trim().toLowerCase()
+            ))
+          )
+      ))
+    }
+  }, [tagsApiData, dispatch])
 
   // load tasks
 	useEffect(() => {
@@ -280,6 +366,15 @@ export default function CalendarView() {
   if (allTasksApiError) {
 		console.log(allTasksApiError)
 	}
+
+  if (userDataApiError) {
+    console.log(userDataApiError)
+  }
+  
+  if (tagsApiError) {
+    console.log(tagsApiError)
+  }
+
   
   return (
     <div className="calendar-view">

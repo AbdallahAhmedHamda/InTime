@@ -1,7 +1,6 @@
 self.addEventListener('push', function(e) {
   const data = e.data.json()
   
-  console.log(data.message)
   self.registration.showNotification(data.title, {
     body: data.message,
     icon: './icons/logo64.png',

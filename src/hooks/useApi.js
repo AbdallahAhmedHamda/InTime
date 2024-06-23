@@ -56,5 +56,5 @@ export default function useApi(apiFunction) {
     }
   }, [dispatch, apiFunction])
 
-  return { fetchApi, apiLoading, apiError, apiData }
+  return { fetchApi, setApiData, apiLoading, apiError, apiData }
 }

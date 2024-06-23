@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { addPopup, removePopup, setUncroppedTaskImage, setCroppedTaskImage, incrementRenderCount } from '../../features/navigation/navigationSlice'
+import { addPopup, removePopup, setUncroppedTaskImage, setCroppedTaskImage, setActionDone } from '../../features/navigation/navigationSlice'
 import { useEffect, useState, useRef } from 'react'
 import { createTaskApi } from '../../apis/tasksApi'
 import useApi from '../../hooks/useApi'
@@ -107,7 +107,7 @@ export default function AddTask() {
     if (createTaskApiData) {
       dispatch(removePopup('add'))
 
-      dispatch(incrementRenderCount())
+      dispatch(setActionDone('add task'))
     }
 	}, [createTaskApiData, dispatch])
 
@@ -256,7 +256,7 @@ export default function AddTask() {
       }))
     }
     // eslint-disable-next-line
-  }, [minEndDateTime])
+  }, [values.startAt])
     
   return (
     <form
@@ -450,7 +450,7 @@ export default function AddTask() {
                       ...values,
                       startAt: newStartDate,
                       endAt:
-                        newStartDate > values.endAt
+                        newStartDate >= values.endAt
                           ? newStartDate.add(60, 'minutes')
                           : values.endAt
                     }
@@ -482,7 +482,7 @@ export default function AddTask() {
                   slotProps={{ field: { shouldRespectLeadingZeros: true } }}
                   onChange={(newEndDate) => setValues({
                     ...values,
-                    endAt: newEndDate
+                    endAt: newEndDate < minEndDateTime ? minEndDateTime : newEndDate
                   })}
                 />
               </LocalizationProvider>

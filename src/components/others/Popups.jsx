@@ -385,12 +385,6 @@ export default function Popups() {
                 bestHeight={128}
                 imageFor='task'
               /> :
-              item === 'only one step' ?
-              <Message 
-                popup='only one step'
-                heading='Change the amount of steps'
-                content="There can't be only one step, Please remove it or add another one"
-              /> :
               ''
             }
           </animated.div>

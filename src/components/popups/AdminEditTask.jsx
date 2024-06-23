@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux'
-import { removePopup, incrementRenderCount } from '../../features/navigation/navigationSlice'
+import { removePopup, setActionDone, removeAllPopups } from '../../features/navigation/navigationSlice'
 import { useEffect, useState } from 'react'
 import { editProjectTaskApi } from '../../apis/projectsApi'
 import useApi from '../../hooks/useApi'
@@ -35,9 +35,9 @@ export default function AdminEditTask({ currentProject, currentTask, currentMemb
   // close popup when task is edited correctly
 	useEffect(() => {
     if (editProjectTaskApiData) {
-      dispatch(removePopup('admin edit project task'))
+      dispatch(removeAllPopups())
 
-      dispatch(incrementRenderCount())
+      dispatch(setActionDone('admin edit project task'))
     }
 	}, [editProjectTaskApiData, dispatch])
 
@@ -109,7 +109,7 @@ export default function AdminEditTask({ currentProject, currentTask, currentMemb
       }))
     }
     // eslint-disable-next-line
-  }, [minEndDateTime])
+  }, [values.startAt])
     
   return (
     <form
@@ -133,7 +133,6 @@ export default function AdminEditTask({ currentProject, currentTask, currentMemb
           <label htmlFor='title'>Title</label>
 
           <input
-            autoFocus
             spellCheck='false'
             autoComplete='off'
             required={true}
@@ -198,7 +197,7 @@ export default function AdminEditTask({ currentProject, currentTask, currentMemb
                       ...values,
                       startAt: newStartDate,
                       endAt:
-                        newStartDate > values.endAt
+                        newStartDate >= values.endAt
                           ? newStartDate.add(60, 'minutes')
                           : values.endAt
                     }
@@ -230,7 +229,7 @@ export default function AdminEditTask({ currentProject, currentTask, currentMemb
                   slotProps={{ field: { shouldRespectLeadingZeros: true } }}
                   onChange={(newEndDate) => setValues({
                     ...values,
-                    endAt: newEndDate
+                    endAt: newEndDate < minEndDateTime ? minEndDateTime : newEndDate
                   })}
                 />
               </LocalizationProvider>

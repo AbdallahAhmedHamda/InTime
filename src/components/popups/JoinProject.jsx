@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux'
-import { incrementRenderCount, removeAllPopups, removePopup } from '../../features/navigation/navigationSlice'
+import { setActionDone, removeAllPopups, removePopup } from '../../features/navigation/navigationSlice'
 import { useEffect, useState } from 'react'
 import { joinProjectApi } from '../../apis/projectsApi'
 import useApi from '../../hooks/useApi'
@@ -25,7 +25,7 @@ export default function JoinProject() {
     if (joinProjectApiData) {
       dispatch(removeAllPopups())
 
-      dispatch(incrementRenderCount())
+      dispatch(setActionDone('join project'))
     }
   }, [joinProjectApiData, dispatch])
 

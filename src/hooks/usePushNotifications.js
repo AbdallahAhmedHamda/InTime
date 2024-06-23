@@ -19,7 +19,7 @@ function urlBase64ToUint8Array(base64String) {
   return outputArray
 }
 
-export function usePushNotifications() {
+export default function usePushNotifications() {
   const {
     fetchApi: fetchPushNotificationApi,
   } = useApi(pushNotificationApi)

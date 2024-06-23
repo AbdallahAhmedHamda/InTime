@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux'
-import { incrementRenderCount, removeAllPopups, removePopup } from '../../features/navigation/navigationSlice'
+import { setActionDone, removeAllPopups, removePopup } from '../../features/navigation/navigationSlice'
 import { useEffect } from 'react'
 import { deleteProjectApi } from '../../apis/projectsApi'
 import useApi from '../../hooks/useApi'
@@ -21,7 +21,7 @@ export default function VerifyProjectDeletionMessage({ project }) {
     if (deleteProjectApiData) {
       dispatch(removeAllPopups())
 
-      dispatch(incrementRenderCount())
+      dispatch(setActionDone('remove project'))
 
     }
   }, [deleteProjectApiData, dispatch])

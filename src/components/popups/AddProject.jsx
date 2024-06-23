@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { addPopup, removePopup, setUncroppedProjectImage, setCroppedProjectImage, incrementRenderCount } from '../../features/navigation/navigationSlice'
+import { addPopup, removePopup, setUncroppedProjectImage, setCroppedProjectImage, setActionDone } from '../../features/navigation/navigationSlice'
 import { useEffect, useState, useRef } from 'react'
 import { createProjectApi } from '../../apis/projectsApi'
 import useApi from '../../hooks/useApi'
@@ -51,7 +51,7 @@ export default function AddProject() {
     if (createProjectApiData) {
       dispatch(removePopup('add project'))
 
-      dispatch(incrementRenderCount())
+      dispatch(setActionDone('add project'))
     }
 	}, [createProjectApiData, dispatch])
 

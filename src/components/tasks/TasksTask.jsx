@@ -42,7 +42,7 @@ export default function TasksTask({ task }) {
   const endDate = new Date(task.endAt).setHours(0, 0, 0, 0)
 
   return (
-    <div className='tasks-task-container' onClick={openTaskPreview}>
+    <div className='tasks-task-container' onClick={openTaskPreview} style={{ outline: task.completed ? '2px solid #00FF29' : 'none'}}>
       { 
         (task?.tag?.name || task?.projectId) && (
           <div className='tasks-task-upper-section'>

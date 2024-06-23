@@ -18,7 +18,7 @@ const initialState = {
 	currentPassword: '',
 	currentPage: trimPath(window.location.pathname),
 	isAuthenticated: false,
-	renderCount: 1,
+	actionDone: '',
 	popups: [],
 	currentTask: '',
 	currentInviteLink: '',
@@ -52,8 +52,8 @@ const navigationSlice = createSlice({
 		setIsAuthenticated: (state, action) => {
 			state.isAuthenticated = action.payload
 		},
-		incrementRenderCount: (state) => {
-			state.renderCount += 1
+		setActionDone: (state, action) => {
+			state.actionDone = action.payload
 		},
 		addPopup: (state, action) => {
 			if (state.popups[state.popups.length - 1] !== action.payload) {
@@ -111,7 +111,7 @@ export const {
 	setCurrentPassword,
 	setCurrentPage,
 	setIsAuthenticated,
-	incrementRenderCount,
+	setActionDone,
 	addPopup,
 	removePopup,
 	removeAllPopups,

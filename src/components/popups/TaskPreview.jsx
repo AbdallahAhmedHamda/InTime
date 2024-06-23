@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { addPopup, removePopup, setCurrentTask, incrementRenderCount } from '../../features/navigation/navigationSlice'
+import { addPopup, removePopup, setCurrentTask, setActionDone } from '../../features/navigation/navigationSlice'
 import { useState, useEffect } from 'react'
 import { toggleStepApi } from '../../apis/tasksApi'
 import useApi from '../../hooks/useApi'
@@ -81,8 +81,8 @@ export default function TaskPreview({ currentTask }) {
           onClick={() => {
             dispatch(removePopup('task preview'))
             
-            if (toggleStepApiData?.record) {
-              dispatch(incrementRenderCount())
+            if (toggleStepApiData?.record || toggleStepApiError) {
+              dispatch(setActionDone('edit steps'))
             }
           }}
         />

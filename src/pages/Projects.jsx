@@ -1,5 +1,5 @@
-import { useDispatch } from 'react-redux'
-import { setCurrentPage, removeAllPopups, addPopup } from '../features/navigation/navigationSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { setCurrentPage, removeAllPopups, addPopup, setActionDone } from '../features/navigation/navigationSlice'
 import { useEffect, useState } from 'react'
 import { showProjectsApi } from '../apis/projectsApi'
 import useApi from '../hooks/useApi'
@@ -8,8 +8,9 @@ import ProjectsProject from '../components/projects/ProjectsProject'
 import ProjectsFilters from '../components/projects/ProjectsFilters'
 import '../css/pages/Projects.css'
 
-
 export default function Projects() {
+  const actionDone = useSelector((state) => state.navigation.actionDone)
+
   const dispatch = useDispatch()
   
   const [role, setRole] = useState('')
@@ -20,14 +21,30 @@ export default function Projects() {
 		fetchApi : fetchShowProjectsApi,
 		apiData: showProjectsApiData,
 		apiError: showProjectsApiError,
-    apiLoading: showProjectsApiLoading
 	} = useApi(showProjectsApi)
 
   // change the current page so the app can rerender and update sidenav active icon and remove all popups
   useEffect(() => {
     dispatch(setCurrentPage('projects'))
     dispatch(removeAllPopups())
+
+    return () => {
+      dispatch(setActionDone(''))
+    }
   }, [dispatch])
+
+  // change data when action is done
+  useEffect(() => {
+    const fetchApis = async () => {
+      if (actionDone === 'remove project' || actionDone === 'edit project' || actionDone === 'add project' || actionDone === 'join project' || actionDone === 'remove member') {
+        await fetchShowProjectsApi(role)
+
+        dispatch(setActionDone(''))
+      }
+    }
+  
+    fetchApis()
+  }, [actionDone, role, fetchShowProjectsApi, dispatch])
 
   // load projects
 	useEffect(() => {
@@ -49,7 +66,7 @@ export default function Projects() {
 	}, [showProjectsApiData])
  
 
-  if (loading || showProjectsApiLoading) {
+  if (loading) {
     return (
       <div />
     )

@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux'
-import { removePopup, incrementRenderCount } from '../../features/navigation/navigationSlice'
+import { removePopup, setActionDone } from '../../features/navigation/navigationSlice'
 import { useEffect, useState } from 'react'
 import { assignTaskApi } from '../../apis/projectsApi'
 import useApi from '../../hooks/useApi'
@@ -41,7 +41,7 @@ export default function AssignTask({ currentProject, currentMember }) {
     if (assignTaskApiData) {
       dispatch(removePopup('assign task'))
 
-      dispatch(incrementRenderCount())
+      dispatch(setActionDone('assign task'))
     }
 	}, [assignTaskApiData, dispatch])
 
@@ -105,7 +105,7 @@ export default function AssignTask({ currentProject, currentMember }) {
       }))
     }
     // eslint-disable-next-line
-  }, [minEndDateTime])
+  }, [values.startAt])
     
   return (
     <form
@@ -194,7 +194,7 @@ export default function AssignTask({ currentProject, currentMember }) {
                       ...values,
                       startAt: newStartDate,
                       endAt:
-                        newStartDate > values.endAt
+                        newStartDate >= values.endAt
                           ? newStartDate.add(60, 'minutes')
                           : values.endAt
                     }
@@ -226,7 +226,7 @@ export default function AssignTask({ currentProject, currentMember }) {
                   slotProps={{ field: { shouldRespectLeadingZeros: true } }}
                   onChange={(newEndDate) => setValues({
                     ...values,
-                    endAt: newEndDate
+                    endAt: newEndDate < minEndDateTime ? minEndDateTime : newEndDate
                   })}
                 />
               </LocalizationProvider>

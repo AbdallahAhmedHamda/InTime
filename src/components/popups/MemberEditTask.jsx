@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { addPopup, removePopup, setUncroppedTaskImage, setCroppedTaskImage, incrementRenderCount } from '../../features/navigation/navigationSlice'
+import { addPopup, removePopup, removeAllPopups, setUncroppedTaskImage, setCroppedTaskImage, setActionDone } from '../../features/navigation/navigationSlice'
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { deleteTaskImageApi } from '../../apis/tasksApi'
 import { updateTaskApi } from '../../apis/tasksApi'
@@ -86,9 +86,9 @@ export default function MemberEditTask({ currentTask, selectZIndex }) {
   // close popup when task is edited correctly
 	useEffect(() => {
     if (updateTaskApiData) {
-      dispatch(removePopup('member edit project task'))
+      dispatch(removeAllPopups())
 
-      dispatch(incrementRenderCount())
+      dispatch(setActionDone('member edit project task'))
     }
 	}, [updateTaskApiData, dispatch])
 
@@ -270,7 +270,6 @@ export default function MemberEditTask({ currentTask, selectZIndex }) {
           </label>
 
           <textarea
-            autoFocus
             className='disc-input'
             name='disc'
             id='disc'

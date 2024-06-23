@@ -1,10 +1,14 @@
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { setCurrentPage, removeAllPopups, setCurrentInviteLink, addPopup, setCurrentMember, setCurrentProject } from '../features/navigation/navigationSlice'
+import { setRank, setTotalPoints, setLevel, setCompletedTasks, setInProgressTasks, setPoints, setTags } from '../features/user/userSlice'
+import { setCurrentPage, removeAllPopups, setCurrentInviteLink, addPopup, setCurrentMember, setCurrentProject, setActionDone, setAllRanks } from '../features/navigation/navigationSlice'
 import { useEffect, useState } from 'react'
 import { getProjectMembersApi, getProjectTasksApi, getProjectByIdApi, inviteLinkApi } from '../apis/projectsApi'
+import { userDataApi, rankApi } from '../apis/userApi'
+import { allTasksApi } from '../apis/tasksApi'
 import useApi from '../hooks/useApi'
 import ProjectProgressBar from '../components/projects/ProjectProgressBar'
+import { fillDaily, fillMonthly, fillYearly } from '../functions/pointsFunctions'
 import ProjectTask from '../components/projects/ProjectTask'
 import AssignTaskIcon from '../svg/projects/AssignTaskIcon'
 import RemoveMember from '../svg/projects/RemoveMember'
@@ -15,6 +19,8 @@ import '../css/pages/Project.css'
 
 
 export default function Project() {
+  const actionDone = useSelector((state) => state.navigation.actionDone)
+
   const { projectId } = useParams()
 
   const navigate = useNavigate()
@@ -56,11 +62,115 @@ export default function Project() {
 		apiLoading: inviteLinkApiLoading,
 	} = useApi(inviteLinkApi)
 
+  const {
+    fetchApi : fetchUserDataApi,
+    apiData: userDataApiData,
+    apiError: userDataApiError,
+  } = useApi(userDataApi)
+  
+  const {
+    fetchApi : fetchRankApi,
+    apiData: rankApiData,
+    apiError: rankApiError,
+  } = useApi(rankApi)
+  
+  const {
+    fetchApi : fetchTagsApi,
+    apiData: tagsApiData,
+    apiError: tagsApiError,
+  } = useApi(allTasksApi)
+
   // change the current page so the app can rerender and update sidenav active icon and remove all popups
   useEffect(() => {
     dispatch(setCurrentPage('project'))
     dispatch(removeAllPopups())
+    
+    return () => {
+      dispatch(setActionDone(''))
+    }
   }, [dispatch])
+
+  // change data when action is done
+  useEffect(() => {
+    const fetchApis = async () => {
+      if (actionDone === 'edit steps' || actionDone === 'complete task' || actionDone === 'remove project task' || actionDone === 'member edit project task' || actionDone === 'assign task' || actionDone === 'remove member' || actionDone === 'admin edit project task') {
+        await fetchGetProjectByIdApi(projectId)
+
+        await fetchGetProjectMembersApi(projectId)
+  
+        await fetchGetProjectTasksApi(projectId)
+
+        if (actionDone === 'complete task' || actionDone === 'remove project task' || actionDone === 'assign task') {
+          await fetchUserDataApi()
+        }
+
+        if (actionDone === 'remove project task' || actionDone === 'member edit project task') {
+          await fetchTagsApi({
+            page: 1,
+            size: 0,
+            sortingType: 1
+          })
+        }
+
+        if (actionDone === 'complete task') {
+          await fetchRankApi()
+        }
+
+        dispatch(setActionDone(''))
+      }
+    }
+  
+    fetchApis()
+  }, [actionDone, projectId, fetchRankApi, fetchTagsApi, fetchUserDataApi, fetchGetProjectByIdApi, fetchGetProjectMembersApi, fetchGetProjectTasksApi, dispatch])
+
+  // change the account data when the api loads
+  useEffect(() => {
+    if (userDataApiData?.success) {
+      const filledDaily = fillDaily(userDataApiData.record.points.daily)
+      const filledMonthly = fillMonthly(userDataApiData.record.points.monthly)
+      const filledYearly = fillYearly(userDataApiData.record.points.yearly)
+      dispatch(setTotalPoints(
+        {
+          overall: userDataApiData.record.points.totalPoints,
+          thisMonth: filledMonthly.points[filledMonthly.points.length - 1],
+          lastMonth: filledMonthly.points[filledMonthly.points.length - 2]
+        }
+      ))
+      dispatch(setPoints(
+        {
+          daily: filledDaily,
+          monthly: filledMonthly,
+          yearly: filledYearly
+        }
+      ))
+      dispatch(setLevel(Math.floor(userDataApiData.record.points.totalPoints / 100) + 1))
+      dispatch(setCompletedTasks(userDataApiData.record.tasks.completedTasks))
+      dispatch(setInProgressTasks(userDataApiData.record.tasks.onGoingTasks))
+    }
+  }, [userDataApiData, dispatch]) 
+
+  // change the ranks data when the api loads
+  useEffect(() => {
+    if (rankApiData) {
+      dispatch(setRank(rankApiData.myRank + 1))
+      dispatch(setAllRanks(rankApiData.rankedUser))
+    }
+  }, [rankApiData, dispatch])
+
+  // change the tags data when the api loads
+  useEffect(() => {
+    if (tagsApiData) {
+      dispatch(setTags(
+        tagsApiData.tags
+          .filter((item) => item.name.trim() !== '')
+          .filter((item, index, self) =>
+            index === self.findIndex((t) => (
+              t.name.trim().toLowerCase() === item.name.trim().toLowerCase()
+            ))
+          )
+      ))
+    }
+  }, [tagsApiData, dispatch])
 
   // updated shown members whenever the search changes
   useEffect(() => {
@@ -147,6 +257,18 @@ export default function Project() {
 
   if (inviteLinkApiError) {
     console.log(inviteLinkApiError)
+  }
+  
+  if (userDataApiError) {
+    console.log(userDataApiError)
+  }
+  
+  if (rankApiError) {
+    console.log(rankApiError)
+  }
+  
+  if (tagsApiError) {
+    console.log(tagsApiError)
   }
 
   const adminId = project.members.find((projectMember) => projectMember.role === 'admin')?.memberId
