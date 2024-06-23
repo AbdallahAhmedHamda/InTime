@@ -242,7 +242,21 @@ export default function AddTask() {
   const today = dayjs()
     .startOf('minute')
     .add(1, 'minutes')
-  const minEndDateTime = today.isAfter(values.startAt) ? today : values.startAt
+  const minEndDateTime = today.isAfter(values.startAt) ? today : 
+    dayjs(values.startAt)
+      .startOf('minute')
+      .add(1, 'minutes')
+
+  useEffect(() => {
+    if (values.startAt.isAfter(values.endAt) && !today.isAfter(values.startAt)) {
+      const updatedEndAt = dayjs(values.startAt).startOf('minute').add(1, 'minute')
+      setValues((oldValues) => ({
+        ...oldValues,
+        endAt: updatedEndAt
+      }))
+    }
+    // eslint-disable-next-line
+  }, [minEndDateTime])
     
   return (
     <form

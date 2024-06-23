@@ -258,7 +258,6 @@ export default function App() {
 		
 	useEffect(() => {
     const handleMessage = async (e) => {
-			console.log('here')
       const { type } = e.data
       if (type === 'PUSH_NOTIFICATION_RECEIVED') {
 				await fetchGetNotificationsApi()
@@ -270,7 +269,7 @@ export default function App() {
     return () => {
       navigator.serviceWorker.removeEventListener('message', handleMessage)
     }
-  }, [dispatch])
+  }, [dispatch, fetchGetNotificationsApi])
 		
 	// load account data when the user is authenticated
 	useEffect(() => {
@@ -298,7 +297,7 @@ export default function App() {
 		}
 	
 		fetchApis()
-	}, [isAuthenticated, fetchUserDataApi, fetchRankApi, fetchTagsApi, renderCount, dispatch])
+	}, [isAuthenticated, fetchUserDataApi, fetchRankApi, fetchTagsApi, fetchGetNotificationsApi, renderCount, dispatch])
 
 	// change the account data when the api loads
 	useEffect(() => {
