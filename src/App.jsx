@@ -190,7 +190,6 @@ const formatResult = (result, type) => {
 export default function App() {
 	const currentEmail = useSelector((state) => state.navigation.currentEmail)
 	const isAuthenticated = useSelector((state) => state.navigation.isAuthenticated)
-	const renderCount = useSelector((state) => state.navigation.renderCount)
 	
 	const dispatch = useDispatch()
 	
