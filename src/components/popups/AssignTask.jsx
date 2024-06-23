@@ -90,7 +90,7 @@ export default function AssignTask({ currentProject, currentMember }) {
 
   const today = dayjs()
     .startOf('minute')
-    .add(30 - dayjs().minute() % 30, 'minutes')
+    .add(1, 'minutes')
   const minEndDateTime = today.isAfter(values.startAt) ? today : values.startAt
     
   return (
