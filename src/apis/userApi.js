@@ -193,11 +193,8 @@ export const pushNotificationApi = async (subscription) => {
   try {
     const accessToken = localStorage.getItem('accessToken')
     
-    console.log(subscription)
     const response = await axios.post(`${API_URL}/subscribe`,
-      {
-        subscription: JSON.stringify(subscription)
-      },
+      subscription,
       {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
