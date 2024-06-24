@@ -111,7 +111,7 @@ export default function ResetPassword() {
       name: 'password',
       type: 'password',
       errorMessage:
-        'Password should be 8-20 characters and include at least 1 letter, 1 number and 1 special character!',
+        'Password should be at least 8 characters and include both upper and lowercase letters, 1 number, 1 special character (!, @, #, $, %, ^, &) and not contain spaces!',
       placeholder: 'Password',
       pattern: /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&])[a-zA-Z0-9!@#$%^&]{8,}$/,
       required: true,
