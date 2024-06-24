@@ -88,7 +88,6 @@ export default function Tasks() {
   useEffect(() => {
     const fetchApis = async () => {
       if (actionDone === 'add task' || actionDone === 'edit task' || actionDone === 'edit steps' || actionDone === 'complete task' || actionDone === 'remove task' || actionDone === 'member edit project task') {
-        console.log(shownTasks)
         if (actionDone === 'add task') {
           await fetchAllTasksApi({
             page: 1,
