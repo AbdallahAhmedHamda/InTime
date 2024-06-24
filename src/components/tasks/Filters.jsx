@@ -8,12 +8,18 @@ export default function Filters({ applyFilters, disabled, filters, setFilters })
   const completedTasks = useSelector((state) => state.user.completedTasks)
   const inProgressTasks = useSelector((state) => state.user.inProgressTasks)
   const tags = useSelector((state) => state.user.tags)
+
+  console.log('here')
     
   const [showMoreHovered, setShowMoreHovered] = useState(false)
   const [showLessHovered, setShowLessHovered] = useState(false)
   const [tagsSearchValue, setTagsSearchValue] = useState('')
   const [displayedTags, setDisplayedTags] = useState(tags)
   const [tagsToShow, setTagsToShow] = useState(6)
+
+  useEffect(() => {
+    setDisplayedTags(tags)
+  }, [tags])
 
   // updated shown tags whenever the search changes
   useEffect(() => {

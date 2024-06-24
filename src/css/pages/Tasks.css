@@ -267,7 +267,7 @@
 
 .tasks-right-section {
   background: #FFF;
-  width: fit-content;
+  min-width: fit-content;
   height: fit-content;
   width: 290px;
   box-sizing: border-box;
