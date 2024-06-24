@@ -1,7 +1,7 @@
 import '../css/pages/MobileRedirect.css'
 
 export default function MobileRedirect() {
-  const downloadLink = 'https://mega.nz/file/MjoSkYgQ#rYBs2-h3DTy218jpemxrKLhXqstqYQuM_G2jYLzd29c'
+  const downloadLink = 'https://mega.nz/file/YuRwBYxR#TVyWkKoBmY_r7xnW809OPbRFIQ9YYVyJiJ-JQ77geyQ'
 
   const handleDownload = () => {
     window.location.href = downloadLink
