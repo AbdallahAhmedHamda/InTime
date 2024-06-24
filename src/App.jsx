@@ -45,18 +45,21 @@ export default function App() {
 		fetchApi : fetchUserDataApi,
 		apiData: userDataApiData,
 		apiError: userDataApiError,
+		apiLoading: userDataApiLoading,
 	} = useApi(userDataApi)
 
 	const {
 		fetchApi : fetchRankApi,
 		apiData: rankApiData,
 		apiError: rankApiError,
+		apiLoading: rankApiLoading,
 	} = useApi(rankApi)
 
 	const {
 		fetchApi : fetchTagsApi,
 		apiData: tagsApiData,
 		apiError: tagsApiError,
+		apiLoading: tagsApiLoading,
 	} = useApi(allTasksApi)
 	
 	// check if user is authenticated or not
@@ -105,8 +108,6 @@ export default function App() {
 					size: 0,
 					sortingType: 1
 				})
-
-				console.log(isAuthenticated)
 			} else {
 				dispatch(resetNavigationState())
 				dispatch(resetUserState())
@@ -227,7 +228,7 @@ export default function App() {
 		return currentEmail ? children : <Navigate to='/signin' />
 	}
 
-	if (loading) {
+	if (loading || userDataApiLoading || tagsApiLoading || rankApiLoading) {
 		return (
 			<div
 				style={{ 
