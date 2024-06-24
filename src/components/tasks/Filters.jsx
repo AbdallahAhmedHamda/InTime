@@ -8,8 +8,6 @@ export default function Filters({ applyFilters, disabled, filters, setFilters })
   const completedTasks = useSelector((state) => state.user.completedTasks)
   const inProgressTasks = useSelector((state) => state.user.inProgressTasks)
   const tags = useSelector((state) => state.user.tags)
-
-  console.log('here')
     
   const [showMoreHovered, setShowMoreHovered] = useState(false)
   const [showLessHovered, setShowLessHovered] = useState(false)

@@ -88,12 +88,22 @@ export default function Tasks() {
   useEffect(() => {
     const fetchApis = async () => {
       if (actionDone === 'add task' || actionDone === 'edit task' || actionDone === 'edit steps' || actionDone === 'complete task' || actionDone === 'remove task' || actionDone === 'member edit project task') {
-        await fetchAllTasksApi({
-          page: 1,
-          size: shownTasks,
-          ...sorting,
-          ...filters
-        })
+        console.log(shownTasks)
+        if (actionDone === 'add task') {
+          await fetchAllTasksApi({
+            page: 1,
+            size: (shownTasks < 12 || shownTasks % 3 !== 0) ? shownTasks + 1 : shownTasks,
+            ...sorting,
+            ...filters
+          })
+        } else {
+          await fetchAllTasksApi({
+            page: 1,
+            size: shownTasks,
+            ...sorting,
+            ...filters
+          })
+        }
 
         if (actionDone === 'add task' || actionDone === 'complete task' || actionDone === 'remove task' || actionDone === 'member edit project task') {
           await fetchUserDataApi()
@@ -204,7 +214,6 @@ export default function Tasks() {
     }
     // eslint-disable-next-line
 	}, [allTasksApiData])
-
 
   // fetch filtered tasks api data
 	useEffect(() => {
